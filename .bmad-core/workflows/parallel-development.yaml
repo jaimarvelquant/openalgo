@@ -1,0 +1,162 @@
+# <!-- Powered by BMAD™ Core -->
+workflow:
+  id: parallel-development
+  name: Parallel Development Workflow
+  description: >-
+    High-speed development workflow using Git worktrees for parallel story execution.
+    Enables 2-3x faster development through simultaneous work on independent features.
+  type: development-acceleration
+  project_types:
+    - web-app
+    - enterprise-app
+    - saas
+    - mvp
+
+  prerequisites:
+    - Epic analysis completed
+    - Architecture dependencies mapped
+    - Team capacity assessed (3-4 parallel developers available)
+    - Git worktrees supported in environment
+
+  sequence:
+    - step: epic-analysis
+      agent: sm
+      action: analyze-epic-for-parallel
+      requires: epic.md
+      notes: |
+        Analyze epic for parallel development opportunities:
+        - Identify independent features/modules
+        - Map inter-story dependencies
+        - Assess conflict risk by module
+        - Determine optimal parallel sets
+
+    - step: parallel-story-creation
+      agent: sm
+      action: create-parallel-stories
+      creates: parallel-story-set
+      requires: epic-analysis
+      notes: |
+        Generate parallel-safe story set:
+        - story-{epic}-{set}-{num}[Feature-Name] naming
+        - Branch: feature/story-{epic}-{set}-{num}-{feature-slug}
+        - Dependencies and conflict analysis
+        - Module assignment for conflict prevention
+
+    - step: worktree-setup
+      action: setup-git-worktrees
+      requires: parallel-story-set
+      notes: |
+        Create Git worktrees for parallel development:
+        ```bash
+        git worktree add ../worktree-story-{id} feature/story-{id}-{slug}
+        ```
+        - One worktree per parallel story
+        - Isolated development environments
+        - Easy context switching
+
+    - step: developer-assignment
+      action: assign-parallel-stories
+      requires: worktree-setup
+      notes: |
+        Assign developers to parallel stories:
+        - Match developer expertise to story requirements
+        - Balance workload across parallel stories
+        - Establish daily sync schedule
+
+    - step: parallel-development
+      action: concurrent-implementation
+      requires: developer-assignment
+      notes: |
+        Parallel development execution:
+        - Independent SM → Dev → QA cycles in each worktree
+        - Daily standup for parallel story status
+        - Early identification of integration issues
+        - Independent testing and validation
+
+    - step: integration-gates
+      agent: qa
+      action: cross-story-integration-testing
+      requires: parallel-development
+      notes: |
+        Test cross-story integrations:
+        - API contract validation
+        - Shared component compatibility
+        - Database migration conflicts
+        - End-to-end flow validation
+
+    - step: merge-coordination
+      action: coordinate-parallel-merges
+      requires: integration-gates
+      notes: |
+        Coordinate final merges to main:
+        - Merge order based on dependencies
+        - Feature flag management
+        - Rollback planning
+        - Final integration testing
+
+    - step: parallel-set-completion
+      agent: po
+      action: validate-parallel-set
+      requires: merge-coordination
+      notes: |
+        Validate complete parallel set:
+        - All stories meet acceptance criteria
+        - Integration testing passes
+        - Performance requirements met
+        - Documentation updated
+
+  parallel-execution-rules:
+    communication:
+      - Daily standup for parallel story status
+      - Early escalation of integration issues
+      - Regular code reviews across stories
+      - Merge conflict resolution planning
+
+    quality-assurance:
+      - Independent testing for each story
+      - Cross-story interface validation
+      - Integration testing before final merge
+      - Performance validation across stories
+
+    conflict-prevention:
+      - Module boundary agreements
+      - API contract definitions
+      - Database migration coordination
+      - Shared component freeze
+
+  success-metrics:
+    - Development velocity: 2-3x faster than sequential
+    - Merge conflicts: <10% of sequential approach
+    - Quality maintenance: Same or better quality gates
+    - Team satisfaction: Higher due to independent work
+
+  flow_diagram: |
+    ```mermaid
+    graph TD
+        A[Epic Analysis] --> B[Create Parallel Stories]
+        B --> C[Setup Worktrees]
+        C --> D[Assign Developers]
+        D --> E[Parallel Development]
+        E --> F[Integration Gates]
+        F --> G[Merge Coordination]
+        G --> H[Parallel Set Complete]
+
+        I[Daily Standup] -.-> E
+        J[Cross-Story Testing] -.-> F
+        K[Conflict Resolution] -.-> G
+    ```
+
+  best-practices:
+    - story-sizing: Keep parallel stories 3-5 days each for balance
+    - team-capacity: 3-4 parallel developers maximum for coordination
+    - dependency-mapping: Explicit dependency tracking prevents issues
+    - communication-cadence: Daily sync + early issue escalation
+    - quality-gates: Independent QA for each story + integration testing
+    - merge-strategy: Feature flags for gradual rollouts
+
+  risk-mitigation:
+    - merge-conflicts: Module isolation and dependency mapping
+    - integration-issues: API contracts and interface validation
+    - quality-degradation: Independent QA with integration gates
+    - team-coordination: Daily standups and clear ownership
+    - timeline-slippage: Early issue identification and escalation

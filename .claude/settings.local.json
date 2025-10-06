@@ -19,9 +19,15 @@
       "Read(//c/Users/Admin1/Downloads/**)",
       "Read(//c/Users/Admin1/Desktop/**)",
       "Bash(sqlite3:*)",
-      "Bash(python:*)"
+      "Bash(python:*)",
+      "Bash(system_profiler:*)",
+      "Bash(ssh:*)",
+      "Bash(find:*)",
+      "Bash(python3:*)",
+      "Bash(pip install:*)",
+      "Bash(pip3 install:*)",
+      "mcp__sequential-thinking__sequentialthinking"
     ],
-    "deny": [],
-    "ask": []
+    "deny": []
   }
 }
