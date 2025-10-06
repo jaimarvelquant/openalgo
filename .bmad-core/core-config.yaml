@@ -1,26 +1,25 @@
 # <!-- Powered by BMAD™ Core -->
+# Configuration for OpenAlgo Jainam Prop Integration Completion
+# Updated to use /docs/bmad/ for all BMAD-generated documents
 markdownExploder: true
 qa:
-  qaLocation: docs/qa
+  qaLocation: docs/bmad/qa
 prd:
-  prdFile: docs/refactoring-prd.md
-  prdVersion: v4
+  prdFile: docs/bmad/jainam-prop-completion-prd.md
+  prdVersion: v2
   prdSharded: true
-  prdShardedLocation: docs/prd
+  prdShardedLocation: docs/bmad/stories
   epicFilePattern: epic-{n}*.md
 architecture:
-  architectureFile: docs/refactoring-architecture.md
-  architectureVersion: v4
-  architectureSharded: true
-  architectureShardedLocation: docs/architecture
+  architectureFile: null  # Not needed for integration completion
+  architectureVersion: null
+  architectureSharded: false
+  architectureShardedLocation: docs/bmad/architecture
 customTechnicalDocuments: null
 devLoadAlwaysFiles:
-  - docs/architecture/coding-standards.md
-  - docs/architecture/tech-stack.md
-  - docs/architecture/project-structure.md
-  - docs/architecture/performance-optimization.md
-  - docs/refactoring-prd.md
-  - docs/refactoring-architecture.md
+  - docs/bmad/jainam-prop-completion-prd.md
+  - docs/broker_factory.md
+  - docs/international_broker_integration.md
 devDebugLog: .ai/debug-log.md
-devStoryLocation: docs/stories
+devStoryLocation: docs/bmad/stories
 slashPrefix: BMad
