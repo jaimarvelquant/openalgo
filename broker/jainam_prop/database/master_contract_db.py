@@ -4,13 +4,27 @@ Handles downloading and managing symbol database
 """
 
 import os
-import pandas as pd
-import json
+import time
 from datetime import datetime
+from typing import Dict, List, Optional
+
+import pandas as pd
+from sqlalchemy import text
+from sqlalchemy.exc import SQLAlchemyError
+
+from database.symbol import engine
 from utils.logging import get_logger
 from utils.httpx_client import get_httpx_client
 
+from broker.jainam_prop.mapping.transform_data import (
+    clear_token_lookup_cache,
+    map_jainam_to_exchange,
+)
+
 logger = get_logger(__name__)
+
+_BROKER_CODE = "jainam_prop"
+_INSERT_BATCH_SIZE = 5_000
 
 def get_master_contract():
     """
@@ -226,31 +240,234 @@ def _convert_data_types(df):
 
     return df
 
-def save_master_contract_to_db(df):
-    """
-    Save master contract data to database
+def _coerce_int(value: Optional[object], default: int = 0) -> int:
+    """Best-effort conversion of *value* to integer."""
 
-    Args:
-        df: DataFrame with instrument data
-    """
+    if value is None or (isinstance(value, float) and pd.isna(value)):
+        return default
     try:
-        # This should be implemented to save to the actual database
-        # For now, just log the operation
-        logger.info(f"Would save {len(df)} instruments to database")
+        return int(float(value))
+    except (TypeError, ValueError):
+        return default
 
-        # In a real implementation, you would:
-        # 1. Connect to the database
-        # 2. Clear existing data for this broker
-        # 3. Insert new data
-        # 4. Create indexes for fast lookup
 
-        # Placeholder implementation
-        output_file = f"master_contract_jainam_{datetime.now().strftime('%Y%m%d_%H%M%S')}.csv"
-        df.to_csv(output_file, index=False)
-        logger.info(f"Master contract saved to {output_file}")
+def _coerce_float(value: Optional[object]) -> Optional[float]:
+    """Convert value to float when possible, otherwise return ``None``."""
 
-    except Exception as e:
-        logger.error(f"Error saving master contract to database: {e}")
+    if value is None or (isinstance(value, float) and pd.isna(value)):
+        return None
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        return None
+
+
+def _format_expiry(value: Optional[object]) -> Optional[str]:
+    """Normalise expiry date representations to ISO-8601 strings."""
+
+    if value is None or (isinstance(value, float) and pd.isna(value)):
+        return None
+
+    if isinstance(value, pd.Timestamp):
+        return value.date().isoformat()
+    if isinstance(value, datetime):
+        return value.date().isoformat()
+
+    text_value = str(value).strip()
+    if not text_value:
+        return None
+
+    try:
+        parsed = pd.to_datetime(text_value, errors="raise")
+    except (ValueError, TypeError):
+        return text_value.upper()
+    return parsed.date().isoformat()
+
+
+def _normalise_exchange_segment(segment: Optional[str]) -> str:
+    if not segment:
+        return ""
+    return str(segment).strip().upper()
+
+
+def _prepare_symbol_token_records(df: pd.DataFrame) -> List[Dict[str, object]]:
+    """Transform raw master contract dataframe into DB-ready mappings."""
+
+    if df.empty:
+        return []
+
+    column_map = {col.lower(): col for col in df.columns}
+
+    def get(row: pd.Series, *candidates: str) -> Optional[object]:
+        for candidate in candidates:
+            column = column_map.get(candidate.lower())
+            if column is None:
+                continue
+            value = row[column]
+            if isinstance(value, str):
+                value = value.strip()
+            if value is not None and value != "":
+                return value
+        return None
+
+    prepared: Dict[tuple, Dict[str, object]] = {}
+
+    for _, row in df.iterrows():
+        token_value = get(
+            row,
+            "ExchangeInstrumentID",
+            "InstrumentID",
+            "sec_id",
+            "token",
+        )
+        if token_value is None:
+            continue
+
+        symbol_value = get(
+            row,
+            "NameWithSeries",
+            "symbol",
+            "DisplayName",
+            "Name",
+            "Description",
+        )
+        if symbol_value is None:
+            continue
+
+        brsymbol_value = get(
+            row,
+            "DisplayName",
+            "Description",
+            "NameWithSeries",
+            "symbol",
+        ) or symbol_value
+
+        segment_value = _normalise_exchange_segment(
+            get(row, "ExchangeSegment", "exchange")
+        )
+        exchange_value = _map_segment_to_openalgo_exchange(segment_value)
+
+        lotsize_value = _coerce_int(get(row, "LotSize", "lot_size"), default=1)
+        instrument_value = get(
+            row,
+            "InstrumentType",
+            "instrument_type",
+            "Series",
+        )
+        tick_size_value = _coerce_float(get(row, "TickSize", "tick_size"))
+        expiry_value = _format_expiry(get(row, "ContractExpiration", "expiry_date"))
+        strike_value = _coerce_float(get(row, "StrikePrice", "strike_price"))
+        name_value = get(row, "Name", "Description")
+
+        key = (
+            str(symbol_value).strip().upper(),
+            exchange_value,
+            _coerce_int(token_value),
+        )
+
+        prepared[key] = {
+            "broker": _BROKER_CODE,
+            "symbol": key[0],
+            "brsymbol": str(brsymbol_value).strip(),
+            "token": key[2],
+            "exchange": exchange_value,
+            "brexchange": segment_value,
+            "lotsize": lotsize_value,
+            "instrumenttype": str(instrument_value).strip().upper()
+            if instrument_value
+            else None,
+            "expiry": expiry_value,
+            "strike": strike_value,
+            "name": str(name_value).strip() if name_value else None,
+            "tick_size": tick_size_value,
+        }
+
+    return list(prepared.values())
+
+
+def _map_segment_to_openalgo_exchange(segment: str) -> str:
+    """Wrapper that reuses existing mapping but ensures uppercase input."""
+
+    if not segment:
+        return ""
+
+    normalised_segment = segment.upper()
+    mapped_exchange = map_jainam_to_exchange(normalised_segment)
+
+    if not mapped_exchange:
+        logger.warning(
+            "Unknown Jainam exchange segment '%s'; defaulting to original value",
+            normalised_segment,
+        )
+        return normalised_segment
+
+    return mapped_exchange
+
+
+def save_master_contract_to_db(df: pd.DataFrame) -> None:
+    """Persist Jainam master contract data into the shared database table."""
+
+    if df is None or df.empty:
+        logger.warning("Received empty DataFrame while saving master contract")
+        return
+
+    records = _prepare_symbol_token_records(df)
+    if not records:
+        logger.error("No valid Jainam records prepared for persistence")
+        raise ValueError("No valid instruments to persist")
+
+    delete_query = text(
+        "DELETE FROM symbol_token WHERE broker = :broker"
+    )
+    insert_query = text(
+        """
+        INSERT INTO symbol_token (
+            broker, symbol, brsymbol, token, exchange, brexchange,
+            lotsize, instrumenttype, expiry, strike, name, tick_size
+        )
+        VALUES (
+            :broker, :symbol, :brsymbol, :token, :exchange, :brexchange,
+            :lotsize, :instrumenttype, :expiry, :strike, :name, :tick_size
+        )
+        """
+    )
+    index_queries = [
+        text(
+            "CREATE INDEX IF NOT EXISTS idx_symbol_token_broker_symbol_exchange "
+            "ON symbol_token (broker, symbol, exchange)"
+        ),
+        text(
+            "CREATE INDEX IF NOT EXISTS idx_symbol_token_broker_token "
+            "ON symbol_token (broker, token)"
+        ),
+    ]
+
+    start = time.perf_counter()
+
+    try:
+        with engine.begin() as connection:
+            connection.execute(delete_query, {"broker": _BROKER_CODE})
+
+            for chunk_start in range(0, len(records), _INSERT_BATCH_SIZE):
+                chunk = records[chunk_start : chunk_start + _INSERT_BATCH_SIZE]
+                connection.execute(insert_query, chunk)
+
+            for index_query in index_queries:
+                connection.execute(index_query)
+
+    except SQLAlchemyError as exc:  # pragma: no cover - requires DB failures
+        logger.error("Failed to persist Jainam master contract: %s", exc)
+        raise RuntimeError("Error persisting Jainam master contract") from exc
+
+    duration_ms = (time.perf_counter() - start) * 1000
+    logger.info(
+        "Persisted %s Jainam instruments in %.2f ms",
+        len(records),
+        duration_ms,
+    )
+
+    clear_token_lookup_cache()
+    logger.debug("Cleared Jainam token lookup cache after refresh")
 
 def search_instruments(query, exchange=None, limit=50):
     """
