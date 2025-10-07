@@ -1,8 +1,10 @@
 import json
-import os
+import time
+import httpx
 from types import SimpleNamespace
 from database.auth_db import get_auth_token
 from broker.jainam_prop.mapping.transform_data import transform_data, transform_response
+from broker.jainam_prop.api.config import get_jainam_base_url
 from utils.logging import get_logger
 from utils.httpx_client import get_httpx_client
 
@@ -12,7 +14,7 @@ class JainamAPI:
     """Jainam XTS Connect API wrapper"""
 
     def __init__(self):
-        self.root_url = "http://ctrade.jainam.in:3000"
+        self.root_url = get_jainam_base_url()
         self.interactive_token = None
         self.market_token = None
         self.client = get_httpx_client()
@@ -269,3 +271,419 @@ def get_order_book(auth_token):
     except Exception as e:
         logger.error(f"Error getting Jainam order book: {e}")
         return {'status': 'error', 'message': str(e)}
+
+def get_positions(auth_token):
+    """
+    Get current positions from Jainam (NetWise)
+
+    Args:
+        auth_token: Authentication token (string or dict)
+
+    Returns:
+        dict: Position data in Jainam format
+
+    Example Response:
+        {
+            'status': 'success',
+            'data': [
+                {
+                    'symbol': 'SBIN-EQ',
+                    'exchange': 'NSE',
+                    'product': 'MIS',
+                    'quantity': 100,
+                    'averagePrice': 550.50,
+                    'ltp': 552.00,
+                    'pnl': 150.00
+                }
+            ]
+        }
+    """
+    try:
+        # Parse auth_token
+        if isinstance(auth_token, str):
+            try:
+                credentials = json.loads(auth_token)
+            except:
+                credentials = {'token': auth_token}
+        else:
+            credentials = auth_token
+
+        # Initialize Jainam API
+        jainam_api = JainamAPI()
+        jainam_api.interactive_token = credentials.get('token', auth_token)
+
+        # API endpoint with NetWise parameter (as per XTS API and story requirements)
+        url = f"{jainam_api.root_url}/interactive/portfolio/positions?dayOrNet=NetWise"
+
+        logger.info(f"Fetching positions from Jainam: {url}")
+
+        # Make GET request with 10-second timeout
+        response = jainam_api.client.get(
+            url,
+            headers=jainam_api._get_headers(),
+            timeout=10.0
+        )
+
+        response.raise_for_status()
+        response_data = response.json()
+
+        logger.info(f"Positions retrieved successfully")
+        return response_data
+
+    except httpx.HTTPStatusError as e:
+        logger.error(f"HTTP error getting Jainam positions: {e.response.status_code} - {e.response.text}")
+        return {
+            'status': 'error',
+            'message': f'HTTP error: {e.response.status_code}'
+        }
+    except httpx.TimeoutException as e:
+        logger.error(f"Timeout error getting Jainam positions: {e}")
+        return {
+            'status': 'error',
+            'message': 'Request timeout - please try again'
+        }
+    except httpx.RequestError as e:
+        logger.error(f"Connection error getting Jainam positions: {e}")
+        return {
+            'status': 'error',
+            'message': 'Connection error - please check network'
+        }
+    except Exception as e:
+        logger.error(f"Unexpected error getting Jainam positions: {e}")
+        return {
+            'status': 'error',
+            'message': f'Error retrieving positions: {str(e)}'
+        }
+
+def get_holdings(auth_token):
+    """
+    Get long-term holdings from Jainam
+
+    Args:
+        auth_token: Authentication token (string or dict)
+
+    Returns:
+        dict: Holdings data in Jainam format
+
+    Example Response:
+        {
+            'status': 'success',
+            'data': [
+                {
+                    'symbol': 'RELIANCE-EQ',
+                    'exchange': 'NSE',
+                    'quantity': 50,
+                    'averagePrice': 2400.00,
+                    'ltp': 2450.00,
+                    'pnl': 2500.00
+                }
+            ]
+        }
+    """
+    try:
+        # Parse auth_token
+        if isinstance(auth_token, str):
+            try:
+                credentials = json.loads(auth_token)
+            except:
+                credentials = {'token': auth_token}
+        else:
+            credentials = auth_token
+
+        # Initialize Jainam API
+        jainam_api = JainamAPI()
+        jainam_api.interactive_token = credentials.get('token', auth_token)
+
+        # API endpoint (as per XTS API)
+        url = f"{jainam_api.root_url}/interactive/portfolio/holdings"
+
+        logger.info(f"Fetching holdings from Jainam: {url}")
+
+        # Make GET request with 10-second timeout
+        response = jainam_api.client.get(
+            url,
+            headers=jainam_api._get_headers(),
+            timeout=10.0
+        )
+
+        response.raise_for_status()
+        response_data = response.json()
+
+        logger.info(f"Holdings retrieved successfully")
+        return response_data
+
+    except httpx.HTTPStatusError as e:
+        logger.error(f"HTTP error getting Jainam holdings: {e.response.status_code} - {e.response.text}")
+        return {
+            'status': 'error',
+            'message': f'HTTP error: {e.response.status_code}'
+        }
+    except httpx.TimeoutException as e:
+        logger.error(f"Timeout error getting Jainam holdings: {e}")
+        return {
+            'status': 'error',
+            'message': 'Request timeout - please try again'
+        }
+    except httpx.RequestError as e:
+        logger.error(f"Connection error getting Jainam holdings: {e}")
+        return {
+            'status': 'error',
+            'message': 'Connection error - please check network'
+        }
+    except Exception as e:
+        logger.error(f"Unexpected error getting Jainam holdings: {e}")
+        return {
+            'status': 'error',
+            'message': f'Error retrieving holdings: {str(e)}'
+        }
+
+def get_trade_book(auth_token):
+    """
+    Get executed trades from Jainam
+
+    Args:
+        auth_token: Authentication token (string or dict)
+
+    Returns:
+        dict: Trade book data transformed to OpenAlgo format using transform_trade_book()
+
+    Example Response:
+        {
+            'status': 'success',
+            'trades': [
+                {
+                    'orderid': '123456',
+                    'trade_id': 'T001',
+                    'symbol': 'SBIN-EQ',
+                    'exchange': 'NSE',
+                    'action': 'BUY',
+                    'quantity': 100,
+                    'price': 550.50,
+                    'trade_timestamp': '2025-10-07T10:15:30',
+                    'exchange_trade_id': 'EXT001'
+                }
+            ]
+        }
+    """
+    try:
+        # Parse auth_token
+        if isinstance(auth_token, str):
+            try:
+                credentials = json.loads(auth_token)
+            except:
+                credentials = {'token': auth_token}
+        else:
+            credentials = auth_token
+
+        # Initialize Jainam API
+        jainam_api = JainamAPI()
+        jainam_api.interactive_token = credentials.get('token', auth_token)
+
+        # API endpoint for trade book (as per XTS API pattern)
+        url = f"{jainam_api.root_url}/interactive/trades"
+
+        logger.info(f"Fetching trade book from Jainam: {url}")
+
+        # Make GET request with 10-second timeout
+        response = jainam_api.client.get(
+            url,
+            headers=jainam_api._get_headers(),
+            timeout=10.0
+        )
+
+        response.raise_for_status()
+        response_data = response.json()
+
+        if not isinstance(response_data, dict):
+            logger.error("Unexpected response format received from Jainam trade book API")
+            return {
+                'status': 'error',
+                'message': 'Unexpected response format from Jainam trade book API'
+            }
+
+        # Jainam/XTS payloads include a 'type' field to indicate success or error
+        response_type = response_data.get('type')
+        if response_type and response_type.lower() != 'success':
+            error_message = (
+                response_data.get('description')
+                or response_data.get('message')
+                or 'Jainam API reported an error while fetching trades'
+            )
+            error_payload = {
+                'status': 'error',
+                'message': error_message
+            }
+            error_code = response_data.get('code') or response_data.get('errorcode')
+            if error_code:
+                error_payload['code'] = error_code
+            logger.error(f"Jainam trade book returned error payload: {error_message}")
+            return error_payload
+
+        # Extract trade data from either 'result' or 'data' key (Jainam/XTS uses 'result')
+        trade_data = response_data.get('result', response_data.get('data', []))
+
+        # Handle empty trade book (return empty list)
+        if not response_data or not trade_data:
+            logger.info("Trade book is empty")
+            return {
+                'status': 'success',
+                'trades': []
+            }
+
+        # Transform response using transform_trade_book from mapping/order_data.py
+        from broker.jainam_prop.mapping.order_data import transform_trade_book
+        transformed_data = transform_trade_book(trade_data)
+
+        logger.info(f"Trade book retrieved successfully with {len(transformed_data.get('trades', []))} trades")
+        return transformed_data
+
+    except httpx.HTTPStatusError as e:
+        logger.error(f"HTTP error getting Jainam trade book: {e.response.status_code} - {e.response.text}")
+        return {
+            'status': 'error',
+            'message': f'HTTP error: {e.response.status_code}'
+        }
+    except httpx.TimeoutException as e:
+        logger.error(f"Timeout error getting Jainam trade book: {e}")
+        return {
+            'status': 'error',
+            'message': 'Request timeout - please try again'
+        }
+    except httpx.RequestError as e:
+        logger.error(f"Connection error getting Jainam trade book: {e}")
+        return {
+            'status': 'error',
+            'message': 'Connection error - please check network'
+        }
+    except Exception as e:
+        logger.error(f"Unexpected error getting Jainam trade book: {e}")
+        return {
+            'status': 'error',
+            'message': f'Error retrieving trade book: {str(e)}'
+        }
+
+def get_open_position(tradingsymbol, exchange, producttype, auth_token):
+    """
+    Get the net quantity for a specific symbol from positions
+
+    This function is used by smart order placement to calculate position delta
+    and determine order action/quantity. It filters positions by exact symbol,
+    exchange, and product type match.
+
+    Args:
+        tradingsymbol (str): Trading symbol in OpenAlgo format (e.g., 'SBIN-EQ')
+        exchange (str): Exchange code (e.g., 'NSE', 'BSE')
+        producttype (str): Product type (e.g., 'CNC', 'MIS', 'NRML')
+        auth_token: Authentication token (string or dict)
+
+    Returns:
+        str: Net quantity as string (e.g., "100" for long, "-50" for short, "0" for flat/not found)
+
+    Notes:
+        - Returns "0" if position not found or if get_positions() fails
+        - Matches Jainam/XTS API field names: TradingSymbol, ExchangeSegment, ProductType
+        - Logs all lookup attempts for debugging smart order placement
+        - Execution time target: <5 seconds (depends on get_positions() API call)
+    """
+    start_time = time.perf_counter()
+
+    def _finish(value, detail):
+        duration_ms = (time.perf_counter() - start_time) * 1000
+        logger.info(f"Position lookup completed in {duration_ms:.2f} ms - {detail}")
+        return value
+
+    try:
+        # Log position lookup request
+        logger.info(f"Position lookup: symbol={tradingsymbol}, exchange={exchange}, product={producttype}")
+
+        # Get all positions from Jainam API
+        positions_data = get_positions(auth_token)
+
+        if positions_data is None:
+            logger.error("get_positions() returned no data during position lookup")
+            return _finish('0', 'no data returned')
+
+        if isinstance(positions_data, dict):
+            if positions_data.get('status') == 'error':
+                error_msg = positions_data.get('message', 'Unknown error')
+                logger.error(f"get_positions() failed during position lookup: {error_msg}")
+                return _finish('0', 'error status from get_positions')
+        elif not isinstance(positions_data, list):
+            payload_type = type(positions_data).__name__
+            logger.error(f"get_positions() returned unsupported payload type: {payload_type}")
+            return _finish('0', f'unexpected payload type: {payload_type}')
+
+        # Extract position list from response (Jainam/XTS uses 'result' key)
+        # Response structure: {'type': 'success', 'result': [position_objects]}
+        position_list = []
+        if isinstance(positions_data, dict):
+            # Check if response has 'result' key (XTS format)
+            if 'result' in positions_data:
+                result = positions_data['result']
+                # Result could be list or dict with nested list
+                if isinstance(result, list):
+                    position_list = result
+                elif isinstance(result, dict) and 'positions' in result:
+                    position_list = result['positions']
+            # Fallback to 'data' key (alternative format)
+            elif 'data' in positions_data:
+                data = positions_data['data']
+                if isinstance(data, list):
+                    position_list = data
+                elif isinstance(data, dict) and 'positions' in data:
+                    position_list = data['positions']
+        elif isinstance(positions_data, list):
+            # Direct list response
+            position_list = positions_data
+
+        if not position_list:
+            logger.info(f"No positions found in position book")
+            return _finish('0', 'no positions available')
+
+        logger.info(f"Searching through {len(position_list)} positions for exact match")
+
+        # Search for matching position with exact symbol, exchange, and product type
+        for position in position_list:
+            # Extract position fields (handle different possible field names)
+            pos_symbol = position.get('TradingSymbol') or position.get('tradingsymbol') or position.get('symbol', '')
+            pos_exchange = position.get('ExchangeSegment') or position.get('exchange') or position.get('exch', '')
+            pos_product = position.get('ProductType') or position.get('producttype') or position.get('product', '')
+
+            # Normalize exchange comparison (XTS uses segments like 'NSECM' for NSE Cash Market)
+            # Convert NSE -> NSECM, BSE -> BSECM, etc. for comparison
+            exchange_normalized = exchange
+            if exchange == 'NSE':
+                exchange_normalized = 'NSECM'
+            elif exchange == 'BSE':
+                exchange_normalized = 'BSECM'
+            elif exchange == 'NFO':
+                exchange_normalized = 'NSEFO'
+            elif exchange == 'MCX':
+                exchange_normalized = 'MCXFO'
+
+            # Check for exact match (support both formats)
+            if (pos_symbol == tradingsymbol and
+                (pos_exchange == exchange or pos_exchange == exchange_normalized) and
+                pos_product == producttype):
+
+                # Extract net quantity (try multiple field names)
+                net_qty = (position.get('NetQty') or
+                          position.get('netQty') or
+                          position.get('netqty') or
+                          position.get('Quantity') or
+                          position.get('quantity') or
+                          '0')
+
+                # Ensure return value is string
+                net_qty_str = str(net_qty)
+
+                logger.info(f"Position found: symbol={pos_symbol}, exchange={pos_exchange}, product={pos_product}, netqty={net_qty_str}")
+                return _finish(net_qty_str, 'position matched')
+
+        # Position not found
+        logger.info(f"Position not found for symbol={tradingsymbol}, exchange={exchange}, product={producttype}")
+        return _finish('0', 'position not found')
+
+    except Exception as e:
+        logger.error(f"Error in get_open_position: {e}", exc_info=True)
+        return _finish('0', 'exception encountered')

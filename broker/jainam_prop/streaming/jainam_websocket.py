@@ -7,6 +7,7 @@ import socketio
 import json
 import logging
 from datetime import datetime
+from broker.jainam_prop.api.config import get_jainam_base_url
 
 logger = logging.getLogger(__name__)
 
@@ -15,10 +16,10 @@ class JainamWebSocketClient:
     Jainam WebSocket client using Socket.IO
     """
 
-    def __init__(self, market_token, user_id, root_url="http://ctrade.jainam.in:3000"):
+    def __init__(self, market_token, user_id, root_url=None):
         self.market_token = market_token
         self.user_id = user_id
-        self.root_url = root_url
+        self.root_url = root_url.rstrip("/") if root_url else get_jainam_base_url()
         self.sio = None
         self.connected = False
 

@@ -1,5 +1,6 @@
 import json
 from broker.jainam_prop.mapping.transform_data import get_token_from_symbol, map_exchange_to_jainam
+from broker.jainam_prop.api.config import get_jainam_base_url
 from utils.logging import get_logger
 from utils.httpx_client import get_httpx_client
 
@@ -28,7 +29,7 @@ def get_quotes(symbol, exchange, auth_token):
             credentials = auth_token
 
         market_token = credentials.get('market_token', auth_token)
-        root_url = "http://ctrade.jainam.in:3000"
+        root_url = get_jainam_base_url()
 
         # Get token for symbol
         token = get_token_from_symbol(symbol, exchange)
@@ -115,7 +116,7 @@ def get_historical_data(symbol, exchange, from_date, to_date, interval, auth_tok
             credentials = auth_token
 
         market_token = credentials.get('market_token', auth_token)
-        root_url = "http://ctrade.jainam.in:3000"
+        root_url = get_jainam_base_url()
 
         # Get token for symbol
         token = get_token_from_symbol(symbol, exchange)
@@ -208,7 +209,7 @@ def search_instruments(search_string, auth_token):
             credentials = auth_token
 
         market_token = credentials.get('market_token', auth_token)
-        root_url = "http://ctrade.jainam.in:3000"
+        root_url = get_jainam_base_url()
 
         # API endpoint
         url = f"{root_url}/apimarketdata/search/instruments"

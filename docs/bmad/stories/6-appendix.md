@@ -4,7 +4,7 @@
 
 - **OpenAlgo Platform**: https://docs.openalgo.in/
 - **Symphony Fintech XTS API**: https://github.com/symphonyfintech
-- **Jainam Prop Trading Platform**: http://ctrade.jainam.in:3000
+- **Jainam Prop Trading Platform**: http://smpb.jainam.in:4143
 - **Broker Factory Documentation**: `/docs/broker_factory.md`
 - **International Broker Integration Guide**: `/docs/international_broker_integration.md`
 - **Comprehensive Audit Report**: Completed October 6, 2025
@@ -33,5 +33,4 @@
 ---
 
 *This PRD was generated using the BMAD™ Core brownfield PRD template v2.0*
-
 

@@ -92,7 +92,7 @@ The Jainam Prop broker integration was initiated but remains incomplete with cri
 
 ✅ **External API Documentation**
 - Symphony Fintech XTS API documentation available on GitHub
-- Jainam Prop trading platform: http://ctrade.jainam.in:3000
+- Jainam Prop trading platform: http://smpb.jainam.in:4143
 
 ✅ **Technical Debt Documentation**
 - Comprehensive audit report identifying all gaps and security issues
@@ -396,7 +396,7 @@ Implementation must work with OpenAlgo's existing infrastructure:
 - Flask development server or production WSGI server (Gunicorn/uWSGI)
 
 **External Dependencies:**
-- **Jainam XTS API**: http://ctrade.jainam.in:3000
+- **Jainam XTS API**: http://smpb.jainam.in:4143
   - Market Data API: `/apimarketdata/*` endpoints
   - Interactive Order API: `/interactive/*` endpoints
   - Authentication: Token-based with dual API keys
@@ -806,7 +806,7 @@ so that **the Jainam Prop integration is robust, reliable, and ready for product
 
 - **OpenAlgo Platform**: https://docs.openalgo.in/
 - **Symphony Fintech XTS API**: https://github.com/symphonyfintech
-- **Jainam Prop Trading Platform**: http://ctrade.jainam.in:3000
+- **Jainam Prop Trading Platform**: http://smpb.jainam.in:4143
 - **Broker Factory Documentation**: `/docs/broker_factory.md`
 - **International Broker Integration Guide**: `/docs/international_broker_integration.md`
 - **Comprehensive Audit Report**: Completed October 6, 2025
@@ -835,5 +835,4 @@ so that **the Jainam Prop integration is robust, reliable, and ready for product
 ---
 
 *This PRD was generated using the BMAD™ Core brownfield PRD template v2.0*
-
 

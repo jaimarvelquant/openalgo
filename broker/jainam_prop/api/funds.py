@@ -1,6 +1,7 @@
 import json
 from utils.logging import get_logger
 from utils.httpx_client import get_httpx_client
+from broker.jainam_prop.api.config import get_jainam_base_url
 
 logger = get_logger(__name__)
 
@@ -25,7 +26,7 @@ def get_margin_data(auth_token):
             credentials = auth_token
 
         interactive_token = credentials.get('token', auth_token)
-        root_url = "http://ctrade.jainam.in:3000"
+        root_url = get_jainam_base_url()
 
         # API endpoint for balance
         url = f"{root_url}/interactive/user/balance"
@@ -91,7 +92,7 @@ def get_profile(auth_token):
             credentials = auth_token
 
         interactive_token = credentials.get('token', auth_token)
-        root_url = "http://ctrade.jainam.in:3000"
+        root_url = get_jainam_base_url()
 
         # API endpoint for profile
         url = f"{root_url}/interactive/user/profile"

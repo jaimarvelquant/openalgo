@@ -15,6 +15,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from database.symbol import engine
 from utils.logging import get_logger
 from utils.httpx_client import get_httpx_client
+from broker.jainam_prop.api.config import get_jainam_base_url
 
 from broker.jainam_prop.mapping.transform_data import (
     clear_token_lookup_cache,
@@ -44,7 +45,7 @@ def get_master_contract():
                 'message': f'Authentication failed: {error}'
             }
 
-        root_url = "http://ctrade.jainam.in:3000"
+        root_url = get_jainam_base_url()
 
         # Define exchanges to download
         exchanges = [

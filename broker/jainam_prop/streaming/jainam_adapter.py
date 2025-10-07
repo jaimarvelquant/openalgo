@@ -6,6 +6,7 @@ from broker.jainam_prop.api.auth_api import authenticate_market_data
 from broker.jainam_prop.mapping.transform_data import map_jainam_to_exchange
 from utils.logging import get_logger
 import socketio
+from broker.jainam_prop.api.config import get_jainam_base_url
 
 logger = get_logger(__name__)
 
@@ -19,7 +20,7 @@ class JainamWebSocketAdapter(BaseBrokerWebSocketAdapter):
         self.user_id = None
         self.broker_name = "jainam_prop"
         self.logger = get_logger(f"{self.broker_name}_websocket")
-        self.root_url = "http://ctrade.jainam.in:3000"
+        self.root_url = get_jainam_base_url()
         self.market_token = None
         self.sio = None
         self.connected = False

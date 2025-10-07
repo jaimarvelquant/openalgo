@@ -83,7 +83,7 @@ The Jainam Prop broker integration was initiated but remains incomplete with cri
 
 ✅ **External API Documentation**
 - Symphony Fintech XTS API documentation available on GitHub
-- Jainam Prop trading platform: http://ctrade.jainam.in:3000
+- Jainam Prop trading platform: http://smpb.jainam.in:4143
 
 ✅ **Technical Debt Documentation**
 - Comprehensive audit report identifying all gaps and security issues

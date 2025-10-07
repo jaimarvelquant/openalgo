@@ -1,11 +1,34 @@
 import importlib
+import inspect
 import traceback
 from typing import Tuple, Dict, Any, Optional, List, Union
 from database.auth_db import get_auth_token_broker
 from utils.logging import get_logger
+from services.auth_payload import build_broker_auth_payload
 
 # Initialize logger
 logger = get_logger(__name__)
+
+
+def _function_accepts_kwarg(func, kwarg: str) -> bool:
+    """
+    Return True if the callable `func` can accept the keyword argument `kwarg`.
+
+    Handles explicit keyword parameters as well as **kwargs catch-alls so that we
+    can pass optional context (like auth_token) without breaking other brokers.
+    """
+    try:
+        signature = inspect.signature(func)
+    except (TypeError, ValueError):
+        # Builtins or objects without signatures – assume conservative False
+        return False
+
+    for param in signature.parameters.values():
+        if param.kind == inspect.Parameter.VAR_KEYWORD:
+            return True
+        if param.kind in (inspect.Parameter.POSITIONAL_OR_KEYWORD, inspect.Parameter.KEYWORD_ONLY) and param.name == kwarg:
+            return True
+    return False
 
 def format_decimal(value):
     """Format numeric value to 2 decimal places"""
@@ -59,7 +82,11 @@ def import_broker_module(broker_name: str) -> Optional[Dict[str, Any]]:
         logger.error(f"Error importing broker modules: {error}")
         return None
 
-def get_holdings_with_auth(auth_token: str, broker: str, original_data: Dict[str, Any] = None) -> Tuple[bool, Dict[str, Any], int]:
+def get_holdings_with_auth(
+    auth_token: Union[str, Dict[str, Any]],
+    broker: str,
+    original_data: Dict[str, Any] = None
+) -> Tuple[bool, Dict[str, Any], int]:
     """
     Get holdings details using provided auth token.
 
@@ -107,8 +134,12 @@ def get_holdings_with_auth(auth_token: str, broker: str, original_data: Dict[str
                 'message': holdings.get('message', 'Error fetching holdings data')
             }, 500
 
-        # Transform data using mapping functions
-        holdings = broker_funcs['map_portfolio_data'](holdings)
+        # Transform data using mapping functions, passing auth_token when supported
+        map_portfolio_fn = broker_funcs['map_portfolio_data']
+        if _function_accepts_kwarg(map_portfolio_fn, 'auth_token'):
+            holdings = map_portfolio_fn(holdings, auth_token=auth_token)
+        else:
+            holdings = map_portfolio_fn(holdings)
         portfolio_stats = broker_funcs['calculate_portfolio_statistics'](holdings)
         holdings = broker_funcs['transform_holdings_data'](holdings)
         
@@ -132,9 +163,10 @@ def get_holdings_with_auth(auth_token: str, broker: str, original_data: Dict[str
         }, 500
 
 def get_holdings(
-    api_key: Optional[str] = None, 
-    auth_token: Optional[str] = None, 
-    broker: Optional[str] = None
+    api_key: Optional[str] = None,
+    auth_token: Optional[Union[str, Dict[str, Any]]] = None,
+    broker: Optional[str] = None,
+    feed_token: Optional[str] = None
 ) -> Tuple[bool, Dict[str, Any], int]:
     """
     Get holdings details.
@@ -153,18 +185,36 @@ def get_holdings(
     """
     # Case 1: API-based authentication
     if api_key and not (auth_token and broker):
-        AUTH_TOKEN, broker_name = get_auth_token_broker(api_key)
-        if AUTH_TOKEN is None:
+        AUTH_TOKEN, FEED_TOKEN, broker_name = get_auth_token_broker(
+            api_key, include_feed_token=True
+        )
+        if AUTH_TOKEN is None or broker_name is None:
             return False, {
                 'status': 'error',
                 'message': 'Invalid openalgo apikey'
             }, 403
+        broker_auth = build_broker_auth_payload(AUTH_TOKEN, FEED_TOKEN)
+        if broker_auth is None:
+            return False, {
+                'status': 'error',
+                'message': 'Broker credentials missing interactive session token'
+            }, 403
         original_data = {'apikey': api_key}
-        return get_holdings_with_auth(AUTH_TOKEN, broker_name, original_data)
+        return get_holdings_with_auth(broker_auth, broker_name, original_data)
 
     # Case 2: Direct internal call with auth_token and broker
     elif auth_token and broker:
-        return get_holdings_with_auth(auth_token, broker, None)
+        effective_auth = auth_token
+        if isinstance(auth_token, dict):
+            if feed_token:
+                # Preserve existing keys while ensuring market token aliases exist
+                effective_auth = dict(auth_token)
+                for alias in ('market_token', 'marketToken', 'marketAuthToken', 'feed_token'):
+                    effective_auth.setdefault(alias, feed_token)
+        else:
+            effective_auth = build_broker_auth_payload(auth_token, feed_token) or auth_token
+
+        return get_holdings_with_auth(effective_auth, broker, None)
     
     # Case 3: Invalid parameters
     else:

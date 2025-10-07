@@ -24,7 +24,7 @@
 - Flask development server or production WSGI server (Gunicorn/uWSGI)
 
 **External Dependencies:**
-- **Jainam XTS API**: http://ctrade.jainam.in:3000
+- **Jainam XTS API**: http://smpb.jainam.in:4143
   - Market Data API: `/apimarketdata/*` endpoints
   - Interactive Order API: `/interactive/*` endpoints
   - Authentication: Token-based with dual API keys

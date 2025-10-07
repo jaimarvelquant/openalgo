@@ -1,0 +1,45 @@
+schema: 1
+story: 1.2-2
+story_title: 'Story 1.2-2: Trade-Book'
+gate: PASS
+status_reason: >
+  Trade retrieval now surfaces Jainam error payloads correctly, the transformation
+  pipeline preserves required timestamp/product fields, and the regression suite
+  passes under pytest.
+reviewer: Quinn (Test Architect)
+updated: '2025-10-07T23:30:00Z'
+top_issues: []
+waiver:
+  active: false
+quality_score: 100
+expires: '2025-10-21'
+evidence:
+  tests_reviewed: 12
+  risks_identified: 0
+  trace:
+    ac_covered:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+    ac_gaps: []
+nfr_validation:
+  security:
+    status: PASS
+    notes: No auth flow changes; token parsing matches existing adapters.
+  performance:
+    status: PASS
+    notes: `test_performance_large_tradebook` and standalone IV3 script stay well under the 5s target.
+  reliability:
+    status: PASS
+    notes: Non-success Jainam payloads now propagate as errors, preventing silent data loss.
+  maintainability:
+    status: PASS
+    notes: Timestamp value guardrails and comprehensive tests reduce regression risk.
+recommendations:
+  immediate: []
+  future:
+    - action: Add an integration test covering a broker error payload to ensure AC5 remains protected end-to-end.
+      refs:
+        - services/tradebook_service.py

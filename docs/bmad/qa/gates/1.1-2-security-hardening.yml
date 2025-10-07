@@ -1,0 +1,47 @@
+schema: 1
+story: 1.1-2
+story_title: 'Story 1.1-2: Security-Hardening'
+gate: PASS
+status_reason: >
+  Import path now loads cleanly and the latency benchmark enforces <10 ms avg/<15 ms
+  p95 thresholds, allowing AC2/IV1/IV3 to be validated by the automated suites.
+reviewer: Quinn (Test Architect)
+updated: '2025-10-07T22:32:00Z'
+top_issues: []
+waiver:
+  active: false
+quality_score: 92
+expires: '2025-10-28'
+evidence:
+  tests_reviewed: 3
+  risks_identified: 0
+  trace:
+    ac_covered:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+    ac_gaps: []
+  performance_benchmark:
+    status: PASS
+    notes: test_authentication_latency_thresholds enforces <10 ms average and <15 ms p95 across 50 iterations.
+nfr_validation:
+  security:
+    status: PASS
+    notes: Env-sourced credentials plus error-message assertions prevent leakage under failure (`broker/jainam_prop/test_auth.py`, `broker/jainam_prop/test_auth_isolated.py`).
+  performance:
+    status: PASS
+    notes: Automated latency thresholds guard regression (`broker/jainam_prop/test_auth_benchmark.py`).
+  reliability:
+    status: PASS
+    notes: Import succeeds and mocked flows cover success and failure cases (`broker/jainam_prop/test_auth.py`).
+  maintainability:
+    status: PASS
+    notes: Patterns align with other brokers; documentation remains current.
+recommendations:
+  immediate: []
+  future:
+    - action: Reintroduce token persistence when the shared database helper is available to restore session caching.
+      refs:
+        - broker/jainam_prop/api/auth_api.py
