@@ -1,42 +1,87 @@
 # Epic 1: Complete Jainam Prop Broker Integration for Production Readiness
 
 **Epic Goal:**
-Complete the partially implemented Jainam Prop broker integration by implementing all missing API functions, fixing database integration for symbol-to-token resolution, resolving security vulnerabilities, and adding comprehensive error handling to achieve production readiness and feature parity with other OpenAlgo broker integrations.
+Complete the Jainam Prop broker integration by implementing SDK-based authentication with token lifecycle management, building REST API parity with centralized HTTP infrastructure, adding Pro-specific dealer and advanced order capabilities, hardening streaming resilience, and conducting comprehensive quality validation to achieve production readiness and feature differentiation vs. retail XTS brokers.
 
 **Integration Requirements:**
 1. Maintain existing functionality without regression
-2. Follow established patterns from other XTS-based brokers
-3. Use existing database schema without modifications
+2. Follow Fivepaisa XTS reference patterns for HTTP, mapping, and streaming
+3. Use existing database schema; extend auth_db for interactive + feed token persistence
 4. Match service layer expectations for function signatures
-5. Ensure WebSocket compatibility (no streaming changes required)
-6. Follow OpenAlgo's environment variable patterns
+5. Implement WebSocket reconnection, subscription replay, and token reuse for streaming resilience
+6. Follow OpenAlgo's environment variable patterns; centralize config via broker/jainam_prop/api/config
+7. Leverage XTS Pro SDK (`_sample_strategy/xts_PRO_SDK`) for authentication and streaming; wrap, don't modify SDK sources
+
+**Timeline Estimate:** 21–24 calendar days, 147–178 engineering hours
 
 ---
 
 ## Story Sequence Overview
 
-**Phase 1: Foundation (Stories 1.1-1.2)** - Fix critical blockers
-- Story 1.1: Database integration (enables all other work)
-- Story 1.2: Security hardening (removes immediate risk)
+**Phase 0: Authentication & Token Lifecycle (Story 1.0-1)** — 5–6 days, 38–44 hours
+- Story 1.0-1: Authentication & Token Lifecycle Overhaul
+  - Replace checksum auth with SDK-based interactive + market login
+  - Persist tokens (interactive, feed, user ID) in `database.auth_db`
+  - Remove placeholder values and require real client context
+  - **Status:** Draft
 
-**Phase 2: Core API Functions (Stories 1.3-1.5)** - Enable basic functionality
-- Story 1.3: Position and holdings retrieval
-- Story 1.4: Trade book retrieval
-- Story 1.5: Open position lookup
+**Phase 1: Foundation (Stories 1.1-1, 1.1-2)** — 3–4 days, 24–30 hours
+- Story 1.1-1: Database integration (token lookup; extend schema for auth tokens) — **Status:** Done ✅
+- Story 1.1-2: Security hardening (credential externalization; validate SDK config alignment) — **Status:** Ready for QA Re-review 🔄
 
-**Phase 3: Advanced Features (Stories 1.6-1.7)** - Enable smart orders
-- Story 1.6: Smart order placement
-- Story 1.7: Emergency position closure
+**Phase 2: Core API Functions (Stories 1.2-1, 1.2-2, 1.2-3, 1.2-4)** — 4–5 days, 30–36 hours
+- Story 1.2-1: Position and holdings retrieval — **Status:** Ready for Review 🔄
+- Story 1.2-2: Trade book retrieval — **Status:** Ready for Review 🔄
+- Story 1.2-3: Open position lookup — **Status:** Done ✅
+- Story 1.2-4: Live integration validation — **Status:** Approved 🔄
 
-**Phase 4: Production Readiness (Story 1.8)** - Polish and validation
-- Story 1.8: Error handling, validation, and testing
+**Phase 2.5: SDK Integration & Pro-Specific Features (Stories 1.2-5, 1.3-1a, 1.4-1)** — 3–4 days, 24–30 hours
+- Story 1.2-5: Token Lifecycle Management Enhancement — **Status:** Draft
+  - Wrap XTS Pro SDK for login; persist tokens to `database.auth_db`
+  - Rehydrate tokens in REST/streaming consumers
+- Story 1.3-1a: Pro-Specific Smart Order Enhancements — **Status:** Draft
+  - Extend smart order with Pro dealer position endpoints (`get_dealerposition_netwise`)
+  - Add `clientID` passthrough for dealer flows
+- Story 1.4-1: HTTP Helper with Retry Logic (centralized `request_with_retry`) — **Status:** Draft
 
-**Dependency Chain:**
+**Phase 3: Advanced Features (Stories 1.3-1, 1.3-2)** — 2–3 days, 18–24 hours
+- Story 1.3-1: Smart order placement (enhance with Pro dealer support) — **Status:** Approved ✅
+- Story 1.3-2: Emergency position closure (expand with Pro dealer closure flows) — **Status:** Draft
+
+**Phase 3.5: Streaming & Realtime Reliability (Stories 1.5-1, 1.5-2)** — 4–5 days, 28–34 hours
+- Story 1.5-1: Streaming Adapter Refactor — **Status:** Draft
+  - Mirror Fivepaisa adapter: reconnect, backoff, subscription replay
+  - Reuse persisted feed tokens
+- Story 1.5-2: Capability Registry & Token Validation — **Status:** Draft
+  - Introduce `JainamCapabilityRegistry` for exchanges/depth/message codes
+  - Parse feed-token JWTs to validate user IDs
+
+**Phase 4: Configuration & SDK Strategy (Stories 1.6-1, 1.6-2)** — 2 days, 7–10 hours
+- Story 1.6-1: Configuration Management — **Status:** Draft
+  - Centralize base URLs, SSL flags, retry tuning via `api/config.py`
+- Story 1.6-2: SDK Integration Strategy — **Status:** Draft
+  - Standardize SDK imports; wrap custom logic in utilities
+  - Document upgrade procedure for future SDK releases
+
+**Phase 5: Quality Hardening & Documentation (Story 1.7-1)** — 3 days, 20–24 hours
+- Story 1.7-1: Comprehensive Quality Validation & Documentation — **Status:** Draft
+  - Expand automated tests for new flows (auth, tokens, HTTP, streaming)
+  - Add live validation scripts and benchmarks
+  - Update documentation (PRD, architecture, deployment guide, runbooks)
+
+**Updated Dependency Chain:**
 ```
-1.1 (Database) → 1.3, 1.4, 1.5 (All depend on token lookup)
-1.2 (Security) → Independent, can run in parallel
-1.5 (Open Position) → 1.6 (Smart Order depends on it)
-1.3, 1.4, 1.5, 1.6, 1.7 → 1.8 (Testing validates all functions)
+1.0-1 (Auth) → All other stories (tokens required for API calls)
+1.1-1 (Database) → Extend for token persistence
+1.1-2 (Security) → Validate SDK config alignment
+1.2-1, 1.2-2, 1.2-3, 1.2-4 → Phase 2 API stories
+1.2-5 (Token Management) → 1.5-1, 1.5-2 (Streaming needs tokens)
+1.3-1a (Pro Smart Order) → Enhances 1.3-1
+1.3-2 (Emergency Closure) → Depends on 1.2-3, enhanced with Pro features
+1.4-1 (HTTP Helper) → Refactors all REST modules
+1.5-1, 1.5-2 (Streaming) → Depends on 1.0-1, 1.2-5
+1.6-1, 1.6-2 (Config, SDK) → Supports all implementation modules
+1.7-1 (Quality) → Validates all prior stories
 ```
 
 ---

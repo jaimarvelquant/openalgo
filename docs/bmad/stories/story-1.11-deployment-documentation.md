@@ -4,11 +4,26 @@
 **Story ID:** 1.11
 **Story Type:** Documentation & DevOps
 **Priority:** High
-**Estimated Effort:** 1 day
+**Estimated Effort:** 3-4 hours (reduced from 1 day due to template reuse)
 **Dependencies:** Stories 1.1-1.7, 1.9-1.10 (all implementation complete)
 
 ## Status
 Draft
+
+## Code Reuse Summary
+
+**Reuse Breakdown:**
+- ✅ Deployment guide template: 80% reusable from other broker docs
+- ✅ Environment variables: 90% already documented in config module
+- ✅ Troubleshooting guide: 75% reusable from other brokers
+- ✅ Monitoring recommendations: 70% reusable from standard patterns
+
+**Reference:**
+- **Analysis:** `docs/bmad/research/jainam-code-reuse-analysis.md` Section 8
+- **Config Module:** `broker/jainam_prop/api/config.py` (environment variables documented)
+- **Other Broker Docs:** 80% reusable deployment guide structure
+
+**Effort Reduction:** ~60% (from 8 hours to 3-4 hours)
 
 ## Story
 **As a** DevOps engineer or system administrator,
@@ -26,7 +41,59 @@ Draft
 - [ ] Test deployment guide in development environment
 
 ## Dev Notes
+
+### Code Reuse Guidance - Deployment Documentation
+
+**Template Reuse:** 80% from other broker deployment guides
+
+**Deployment Guide Structure (80% reusable):**
+```markdown
+# Jainam Prop Deployment Guide
+
+## Prerequisites
+[Copy from other broker guides - 90% reusable]
+
+## Environment Variables
+[Already documented in config module - 90% complete]
+- JAINAM_INTERACTIVE_API_KEY
+- JAINAM_INTERACTIVE_API_SECRET
+- JAINAM_MARKET_API_KEY
+- JAINAM_MARKET_API_SECRET
+- JAINAM_BASE_URL
+- JAINAM_DISABLE_SSL
+- JAINAM_HTTP_RETRIES
+
+## Deployment Steps
+[Copy from other broker guides - 80% reusable]
+1. Set environment variables
+2. Test authentication
+3. Verify database connectivity
+4. Deploy application
+5. Monitor logs
+
+## Pro-Specific Configuration
+[Add Pro-specific notes - 20% new]
+- Dealer operations require Pro credentials
+- Bracket/cover orders require Pro API access
+
+## Troubleshooting
+[Copy from other broker guides - 75% reusable]
+
+## Monitoring
+[Copy from standard patterns - 70% reusable]
+```
+
+**Reuse Percentages:**
+- Deployment guide structure: 80%
+- Environment variables: 90% (already documented)
+- Troubleshooting: 75%
+- Monitoring: 70%
+- Overall: 80%
+
 ### Relevant Source Tree
+- `broker/jainam_prop/api/config.py` – ✅ Environment variables documented (90% complete)
+- Other broker deployment guides – ✅ Template reference (80% reusable)
+- `docs/bmad/research/jainam-authentication-guide.md` – ✅ Authentication docs (reference)
 - Configuration: .env file and environment variables
 - Database: symbol_token table for master contract storage
 - Documentation: docs/bmad/ directory structure

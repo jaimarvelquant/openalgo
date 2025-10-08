@@ -4,16 +4,32 @@
 **Story ID:** 1.9
 **Story Type:** UI Enhancement
 **Priority:** High
-**Estimated Effort:** 1 day
-**Dependencies:** Story 1.2 (Security Hardening - needs API key for OAuth URL)
+**Estimated Effort:** 2-3 hours (reduced from 1 day due to pattern reuse)
+**Dependencies:** Story 1.10 (Authentication Callback - direct login, not OAuth)
 
 ## Status
 Draft
 
+## Code Reuse Summary
+
+**Reuse Breakdown:**
+- ✅ Broker dropdown: 95% reusable from other broker UI patterns
+- ✅ JavaScript handler: 90% reusable from FivePaisaXTS (direct login pattern)
+- ❌ OAuth routing: NOT APPLICABLE (Jainam uses direct login, not OAuth)
+
+**Reference:**
+- **Analysis:** `docs/bmad/research/jainam-code-reuse-analysis.md` Section 6
+- **FivePaisaXTS UI:** Direct login pattern (90% reusable)
+- **Story 1.10:** Authentication callback (direct login, not OAuth)
+
+**Effort Reduction:** ~70% (from 8 hours to 2-3 hours)
+
+**⚠️ CRITICAL:** Jainam uses **direct login**, NOT OAuth. No OAuth URL needed.
+
 ## Story
 **As a** trader wanting to use Jainam Prop with OpenAlgo,
 **I want** Jainam Prop to appear in the broker selection dropdown,
-**so that** I can select and authenticate with my Jainam Prop account.
+**so that** I can select and authenticate with my Jainam Prop account using direct login.
 
 ## Tasks / Subtasks
 - [ ] Add Jainam Prop option to broker dropdown in templates/broker.html
@@ -23,10 +39,53 @@ Draft
 - [ ] Add verification for dropdown display and OAuth redirect
 
 ## Dev Notes
+
+### Code Reuse Guidance - UI Integration
+
+**⚠️ CRITICAL: Jainam Uses Direct Login, NOT OAuth**
+
+**Pattern to Follow:** FivePaisaXTS (direct login broker)
+**Pattern to AVOID:** Zerodha/Upstox/Compositedge (OAuth brokers)
+
+**UI Changes Needed (95% reusable):**
+
+**1. Add to Broker Dropdown (10 minutes):**
+```html
+<!-- templates/broker.html -->
+<option value="jainam_prop">Jainam Prop</option>
+```
+
+**2. Add JavaScript Handler (15 minutes):**
+```javascript
+// Follow FivePaisaXTS pattern (direct login)
+case 'jainam_prop':
+    // Direct login - no OAuth redirect
+    window.location.href = '/broker_callback?broker=jainam_prop';
+    break;
+```
+
+**3. Backend Already Complete (Story 1.10):**
+```python
+# blueprints/brlogin.py (already implemented in Story 1.10)
+elif broker == 'jainam_prop':
+    logger.debug(f'Jainam Prop broker - direct login')
+    auth_token, feed_token, user_id, error_message = auth_function()
+    forward_url = 'broker.html'
+```
+
+**Reuse Percentages:**
+- Broker dropdown: 95% (just add one option)
+- JavaScript handler: 90% (copy FivePaisaXTS pattern)
+- Backend: 100% (already complete in Story 1.10)
+- Overall: 95%
+
+**Total Effort:** 2-3 hours (vs 8 hours for OAuth broker)
+
 ### Relevant Source Tree
-- Frontend: templates/broker.html - broker selection dropdown
-- JavaScript: Static JS files handling broker selection
-- Backend: blueprints/brlogin.py - OAuth callback handling
+- `templates/broker.html` – ⚠️ Add Jainam option (10 min)
+- `static/js/broker.js` – ⚠️ Add direct login handler (15 min)
+- `blueprints/brlogin.py` – ✅ Already complete (Story 1.10)
+- FivePaisaXTS UI – ✅ Reference for direct login pattern (90% reusable)
 
 ### Technical Context
 - Follow Compositedge pattern for XTS OAuth integration

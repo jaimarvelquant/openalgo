@@ -1,5 +1,6 @@
 import json
 import time
+from decimal import Decimal, InvalidOperation
 import httpx
 from types import SimpleNamespace
 from database.auth_db import get_auth_token
@@ -9,6 +10,8 @@ from utils.logging import get_logger
 from utils.httpx_client import get_httpx_client
 
 logger = get_logger(__name__)
+
+SMART_ORDER_LATENCY_THRESHOLD_SECONDS = 10.0
 
 class JainamAPI:
     """Jainam XTS Connect API wrapper"""
@@ -561,6 +564,164 @@ def get_trade_book(auth_token):
             'status': 'error',
             'message': f'Error retrieving trade book: {str(e)}'
         }
+
+
+def place_smartorder_api(data, auth_token):
+    """
+    Place a smart order to reach the desired position size.
+
+    Args:
+        data (dict): Incoming smart order payload (must contain position_size)
+        auth_token: Authentication token for Jainam broker
+
+    Returns:
+        tuple: (response_object, response_data, order_id)
+    """
+    start_time = time.perf_counter()
+    symbol_for_logging = data.get('symbol') if isinstance(data, dict) else None
+
+    def _finalize(result_tuple, outcome_label):
+        duration = time.perf_counter() - start_time
+        latency_status = (
+            'within_threshold'
+            if duration < SMART_ORDER_LATENCY_THRESHOLD_SECONDS
+            else 'exceeded_threshold'
+        )
+        log_fn = logger.info if latency_status == 'within_threshold' else logger.warning
+        log_message = (
+            "Smart order %s - symbol=%s duration=%.3fs (threshold=%ss, status=%s)"
+            % (
+                outcome_label,
+                symbol_for_logging or 'UNKNOWN',
+                duration,
+                SMART_ORDER_LATENCY_THRESHOLD_SECONDS,
+                latency_status,
+            )
+        )
+        log_fn(log_message)
+
+        res_obj, response_data, order_id = result_tuple
+        if isinstance(response_data, dict):
+            response_data.setdefault('latency_seconds', round(duration, 3))
+            response_data.setdefault('latency_threshold_seconds', SMART_ORDER_LATENCY_THRESHOLD_SECONDS)
+            response_data.setdefault('latency_status', latency_status)
+        return res_obj, response_data, order_id
+
+    def _error_response(message, outcome_label):
+        logger.error(message)
+        return _finalize((None, {'status': 'error', 'message': message}, None), outcome_label)
+
+    def _parse_whole_number(value, field_name):
+        try:
+            if isinstance(value, int):
+                return value
+            if isinstance(value, float):
+                if value.is_integer():
+                    return int(value)
+                raise ValueError(f"{field_name} must be a whole number")
+            if value is None:
+                raise ValueError(f"{field_name} is required")
+            decimal_value = Decimal(str(value))
+            if decimal_value != decimal_value.to_integral_value():
+                raise ValueError(f"{field_name} must be a whole number")
+            return int(decimal_value)
+        except (InvalidOperation, TypeError, ValueError) as exc:
+            raise ValueError(f"Invalid {field_name}: {value}") from exc
+
+    try:
+        if not isinstance(data, dict):
+            return _error_response('Order payload must be a dictionary', 'invalid_payload')
+
+        required_fields = ['symbol', 'exchange', 'product', 'position_size']
+        missing_fields = [field for field in required_fields if field not in data or data[field] in (None, '')]
+        if missing_fields:
+            error_msg = f"Missing required field(s): {', '.join(missing_fields)}"
+            logger.error(error_msg)
+            return _finalize((None, {'status': 'error', 'message': error_msg}, None), 'validation_failed')
+
+        symbol = data.get('symbol')
+        exchange = data.get('exchange')
+        product = data.get('product')
+        symbol_for_logging = symbol or symbol_for_logging
+
+        try:
+            target_position = _parse_whole_number(data.get('position_size'), 'position_size')
+        except ValueError as exc:
+            logger.error(f"Invalid position_size provided: {exc}")
+            return _finalize((None, {'status': 'error', 'message': str(exc)}, None), 'invalid_target')
+
+        try:
+            current_qty_raw = get_open_position(symbol, exchange, product, auth_token)
+        except Exception as exc:
+            logger.error(f"Failed to retrieve current position for smart order: {exc}", exc_info=True)
+            return _finalize((None, {'status': 'error', 'message': 'Failed to fetch current position'}, None), 'position_lookup_failed')
+
+        try:
+            current_position = _parse_whole_number(current_qty_raw, 'current position')
+        except ValueError as exc:
+            logger.error(f"Invalid current position value returned: {exc}")
+            return _finalize((None, {'status': 'error', 'message': 'Invalid current position data'}, None), 'invalid_position_data')
+
+        delta = target_position - current_position
+        logger.info(
+            "Smart order calculation - symbol=%s exchange=%s product=%s target=%d current=%d delta=%d",
+            symbol,
+            exchange,
+            product,
+            target_position,
+            current_position,
+            delta
+        )
+
+        if delta == 0:
+            message = "No action needed: current position already matches target"
+            logger.info("Smart order no-op - %s", message)
+            return _finalize((None, {'status': 'success', 'message': message, 'orderid': ''}, ''), 'no_action_needed')
+
+        action = 'BUY' if delta > 0 else 'SELL'
+        quantity = abs(delta)
+
+        logger.info(
+            "Smart order action - symbol=%s action=%s quantity=%d target=%d current=%d delta=%d",
+            symbol,
+            action,
+            quantity,
+            target_position,
+            current_position,
+            delta
+        )
+
+        order_payload = data.copy()
+        order_payload['action'] = action
+        order_payload['quantity'] = str(quantity)
+
+        # Update the original payload so downstream logging has final action/quantity
+        data['action'] = action
+        data['quantity'] = str(quantity)
+
+        try:
+            res, response_data, order_id = place_order_api(order_payload, auth_token)
+        except Exception as exc:
+            logger.error(f"Error while placing smart order: {exc}", exc_info=True)
+            return _finalize((None, {'status': 'error', 'message': f'Order placement failed: {str(exc)}'}, None), 'order_failed')
+        if not isinstance(response_data, dict):
+            logger.error(
+                "Invalid response type from place_order_api for smart order: %s",
+                type(response_data).__name__
+            )
+            return _finalize((None, {'status': 'error', 'message': 'Invalid response from order placement'}, None), 'invalid_order_response')
+
+        if response_data.get('status') == 'success' and order_id:
+            response_data.setdefault('orderid', order_id)
+
+        return _finalize((res, response_data, order_id), 'order_complete')
+
+    except Exception as exc:
+        logger.error(f"Unhandled error in place_smartorder_api: {exc}", exc_info=True)
+        return _finalize(
+            (None, {'status': 'error', 'message': f'Smart order failed: {str(exc)}'}, None),
+            'unhandled_exception'
+        )
 
 def get_open_position(tradingsymbol, exchange, producttype, auth_token):
     """

@@ -121,9 +121,12 @@ The Jainam Prop broker integration was initiated but remains incomplete with cri
 ☐ Performance/Scalability Improvements
 ☐ Technology Stack Upgrade
 
+**Scope Boundary:**
+This PRD covers **Epic 1 only** - REST API completion for Jainam Prop integration. Event-driven order updates (WebSocket/postback for real-time order status) are planned as **Epic 2** (future enhancement) and will be documented separately after Epic 1 completion.
+
 **Enhancement Description:**
 
-Complete the partially implemented Jainam Prop broker integration to make it production-ready by implementing the 6 missing critical API functions, adding UI/UX components for broker selection and authentication, fixing the database integration for symbol-to-token resolution, resolving security vulnerabilities (hardcoded credentials), and adding comprehensive error handling and validation. This enhancement will enable Jainam Prop users to fully utilize OpenAlgo's trading platform including smart orders, position tracking, and trade history.
+Complete the partially implemented Jainam Prop broker integration to make it production-ready by implementing the 6 missing critical API functions, adding UI/UX components for broker selection and authentication, fixing the database integration for symbol-to-token resolution, resolving security vulnerabilities (hardcoded credentials), and adding comprehensive error handling and validation. This enhancement will enable Jainam Prop users to fully utilize OpenAlgo's trading platform including smart orders, position tracking, and trade history via REST API.
 
 **Impact Assessment:**
 ☑️ **Moderate Impact** (some existing code changes + UI additions)
@@ -142,17 +145,20 @@ Complete the partially implemented Jainam Prop broker integration to make it pro
 
 **Goals:**
 
-1. **Complete Core API Functions** - Implement all 6 missing functions (`get_trade_book`, `get_positions`, `get_holdings`, `get_open_position`, `place_smartorder_api`, `close_all_positions`) following XTS API patterns from reference implementation
+1. **Complete Core API Functions** - Implement all 6 missing functions (`get_trade_book`, `get_positions`, `get_holdings`, `get_open_position`, `place_smartorder_api`, `close_all_positions`) following XTS API patterns from reference implementation using REST API
 
-2. **Enable Smart Order Functionality** - Make position-based intelligent order placement operational for Jainam Prop users
+2. **Enable Smart Order Functionality** - Make position-based intelligent order placement operational for Jainam Prop users via REST API
 
 3. **Fix Symbol Resolution** - Implement proper database integration for symbol-to-token lookup to replace placeholder value
 
 4. **Resolve Security Vulnerabilities** - Move hardcoded API credentials to environment variables following OpenAlgo's configuration patterns
 
-5. **Achieve Production Readiness** - Add comprehensive error handling, retry logic, rate limiting, and validation to meet OpenAlgo's quality standards
+5. **Achieve Production Readiness** - Add comprehensive error handling, retry logic, rate limiting, and validation to meet OpenAlgo's quality standards for REST API integration
 
 6. **Maintain Integration Consistency** - Ensure Jainam Prop integration matches the quality and completeness of other broker integrations (Zerodha, Angel, Upstox, etc.)
+
+**Future Enhancement (Epic 2):**
+Event-driven order updates (WebSocket/postback) are planned as a future enhancement to provide real-time order status updates (<100ms latency) for Jainam and Zerodha brokers. Epic 2 will build upon the REST API foundation established in Epic 1, using proven code from Vn.py's EventEngine. This enhancement is conditional upon Epic 1 completion and will include a pilot phase with clear success criteria before broader rollout.
 
 **Background Context:**
 
@@ -179,6 +185,7 @@ This enhancement completes an existing integration rather than adding new functi
 | Change | Date | Version | Description | Author |
 |--------|------|---------|-------------|--------|
 | Initial PRD Creation | 2025-10-06 | 1.0 | Created brownfield PRD for Jainam Prop integration completion | John (PM Agent) |
+| Scope Clarification | 2025-10-08 | 1.1 | Clarified Epic 1 scope (REST API only); documented Epic 2 (event-driven) as future enhancement with conditional approval based on pragmatic pilot approach | Sarah (PO Agent) |
 
 ---
 
@@ -252,14 +259,14 @@ Add Jainam Prop to the broker selection dropdown in `templates/broker.html`:
 - Follow XTS OAuth pattern similar to Compositedge and Definedge
 - Ensure option is enabled/disabled based on broker configuration
 
-**FR12: Implement Authentication Callback Handler**
-Implement authentication callback handler in `blueprints/brlogin.py`:
+**FR12: Implement Direct Login Authentication**
+Implement direct login authentication in `blueprints/brlogin.py`:
 - Add `elif broker == 'jainam_prop':` case to handle authentication
-- Extract request_token from OAuth callback
-- Call `authenticate_broker(request_token)` from `broker.jainam_prop.api.auth_api`
-- Store access_token in database via `handle_auth_success()`
+- Call `authenticate_direct()` from `broker.jainam_prop.api.auth_api`
+- Store `interactive_token` and `market_token` in database via `handle_auth_success()`
 - Handle authentication errors gracefully
-- Follow XTS authentication pattern from Compositedge/Definedge
+- **Note:** No OAuth callback or request token needed (direct API key/secret login)
+- **Reference:** See `docs/bmad/research/jainam-authentication-guide.md` for details
 
 **FR13: Create Deployment Documentation**
 Create comprehensive deployment guide at `docs/bmad/deployment-guide.md`:

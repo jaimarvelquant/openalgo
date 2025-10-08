@@ -79,7 +79,7 @@
 ```
 broker/jainam_prop/
 ├── api/
-│   ├── auth_api.py          # ✅ Complete - no changes
+│   ├── auth_api.py          # 🔧 Add authenticate_direct() function
 │   ├── order_api.py         # 🔧 Add 6 missing functions
 │   ├── data.py              # ✅ Complete - no changes
 │   └── funds.py             # ✅ Complete - no changes

@@ -34,6 +34,33 @@ Before installing OpenAlgo, ensure you have the following prerequisites installe
    pip install -r requirements-nginx.txt
    ```
 
+   **Recommended virtual environment workflow (all platforms):**
+
+   1. Create an isolated environment in the project root:
+      ```bash
+      python3 -m venv .venv
+      ```
+      On Windows PowerShell, use `python -m venv .venv`.
+
+   2. Activate the environment:
+      ```bash
+      source .venv/bin/activate            # macOS / Linux
+      .\.venv\Scripts\Activate.ps1         # Windows PowerShell
+      ```
+
+   3. Upgrade pip and install dependencies inside the venv:
+      ```bash
+      python -m pip install --upgrade pip
+      python -m pip install -r requirements.txt
+      ```
+      (If your shell reports an encoding error, convert the UTF-16 `requirements.txt`
+      to UTF-8 or run `python -m pip install SQLAlchemy flask-sqlalchemy` manually.)
+
+   4. Verify the ORM dependencies needed for Jainam validation scripts:
+      ```bash
+      python -c "import sqlalchemy, flask_sqlalchemy; print('SQLAlchemy ready')"
+      ```
+
 4. **Install Node.js Dependencies**: 
    ```bash
    cd openalgo

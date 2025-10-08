@@ -3,6 +3,27 @@
 ## Status
 Draft
 
+## Estimated Effort
+**6-8 hours** (Error handling standardization, testing)
+
+## Code Reuse - Error Handling Patterns
+
+**Primary Template:** FivePaisaXTS error handling (95% reusable)
+
+**Reference:**
+- **File:** `broker/fivepaisaxts/api/auth_api.py` (error handling pattern)
+- **Analysis:** `docs/bmad/research/jainam-code-reuse-analysis.md` Section 3.C
+- **Existing Code:** `broker/jainam_prop/api/` (85% has good structure, needs standardization)
+
+**Reuse Breakdown:**
+- ✅ Error handling pattern: 95% reusable from FivePaisaXTS
+- ✅ Logging pattern: 100% reusable from FivePaisaXTS
+- ✅ Retry logic: 90% reusable from standard patterns
+- ✅ Input validation: 80% reusable from existing code
+- ✅ Testing patterns: 70% reusable from other brokers
+
+**Effort Reduction:** ~60% (from 15-20 hours to 6-8 hours)
+
 ## Story
 
 **As a** developer ensuring production readiness,
@@ -61,18 +82,57 @@ Draft
 
 ## Dev Notes
 
+### Code Reuse Guidance - Error Handling
+
+**Primary Template:** FivePaisaXTS error handling pattern (95% reusable)
+
+**File:** `broker/fivepaisaxts/api/auth_api.py`
+**Reuse:** 95% - Apply same pattern to all Jainam API functions
+
+**FivePaisaXTS Error Handling Pattern:**
+```python
+try:
+    response = client.post(url, json=payload, headers=headers)
+    response.raise_for_status()  # Raises HTTPStatusError for 4xx/5xx
+
+    data = response.json()
+
+    if data.get('type') == 'success':
+        return result, None
+    else:
+        error_msg = data.get('description', 'Unknown error')
+        logger.error(f"API error: {error_msg}")
+        return None, f"API error: {error_msg}"
+
+except httpx.HTTPStatusError as e:
+    logger.error(f"HTTP error: {e.response.status_code}")
+    return None, f"HTTP error: {e.response.status_code}"
+except httpx.RequestError as e:
+    logger.error(f"Network error: {str(e)}")
+    return None, f"Network error: {str(e)}"
+except Exception as e:
+    logger.error(f"Unexpected error: {str(e)}")
+    return None, f"Unexpected error: {str(e)}"
+```
+
+**Apply To:** All functions in `order_api.py`, `data.py`, `funds.py`
+**Effort:** 1 hour per file (4 hours total)
+
 ### Relevant Source Tree
-- `broker/jainam_prop/` - All implemented functions requiring error handling
+- `broker/jainam_prop/api/order_api.py` – ⚠️ Needs error handling standardization
+- `broker/jainam_prop/api/data.py` – ⚠️ Needs error handling standardization
+- `broker/jainam_prop/api/funds.py` – ⚠️ Needs error handling standardization
+- `broker/jainam_prop/api/auth_api.py` – ✅ Already has good error handling (Story 1.0-1)
+- `broker/fivepaisaxts/api/auth_api.py` – ✅ Template for error handling
 - `utils.py` - Validation utilities including validate_order_data()
 - `test/broker/jainam_prop/` - Test files for comprehensive testing
-- `services/` - Service layer error handling patterns
-- `docs/` - Deployment guides and API documentation
 
 ### Error Handling Context
-- Implement specific exception handling: HTTPError, Timeout, ConnectionError
-- Use standardized error response format across all functions
-- Add comprehensive logging with sufficient context for debugging
-- Never expose internal implementation details in error messages
+- ✅ Use FivePaisaXTS pattern (95% reusable)
+- ✅ Implement specific exception handling: HTTPError, Timeout, ConnectionError
+- ✅ Use standardized error response format across all functions
+- ✅ Add comprehensive logging with sufficient context for debugging
+- ✅ Never expose internal implementation details in error messages
 
 ### Validation Context
 - `validate_order_data()` function handles order parameter validation
