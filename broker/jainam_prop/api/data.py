@@ -1,14 +1,76 @@
 import json
 from broker.jainam_prop.mapping.transform_data import get_token_from_symbol, map_exchange_to_jainam
 from broker.jainam_prop.api.config import get_jainam_base_url
+from broker.jainam_prop.api.base_client import BaseAPIClient
 from utils.logging import get_logger
 from utils.httpx_client import get_httpx_client
 
 logger = get_logger(__name__)
 
+
+# ============================================================================
+# API Client Class (Task 24.1 - Refactored to use BaseAPIClient)
+# ============================================================================
+
+class MarketDataClient(BaseAPIClient):
+    """
+    Client for Jainam Market Data API operations.
+
+    Refactored to use BaseAPIClient (Task 24.1).
+    """
+
+    def __init__(self, auth_token: str, base_url: str = None):
+        """
+        Initialize Market Data API client.
+
+        Args:
+            auth_token: Market Data API token
+            base_url: Jainam API base URL (optional)
+        """
+        super().__init__(base_url=base_url, auth_token=auth_token)
+
+    def get_quotes(self, payload: dict) -> dict:
+        """Get quotes for instruments."""
+        return self._post('market.instruments.quotes', json_data=payload, timeout=10.0)
+
+    def get_ohlc(self, params: dict) -> dict:
+        """Get OHLC/historical data."""
+        return self._get('market.instruments.ohlc', params=params, timeout=10.0)
+
+    def search_instruments(self, params: dict) -> dict:
+        """Search for instruments."""
+        return self._get('market.search.instrumentsbystring', params=params, timeout=10.0)
+
+
+# ============================================================================
+# Helper Functions
+# ============================================================================
+
+def _parse_market_auth_token(auth_token):
+    """
+    Parse auth_token to extract market_token.
+
+    Args:
+        auth_token: JSON string or dict containing credentials
+
+    Returns:
+        str: market_token
+    """
+    if isinstance(auth_token, str):
+        try:
+            credentials = json.loads(auth_token)
+        except:
+            credentials = {'market_token': auth_token}
+    else:
+        credentials = auth_token
+
+    return credentials.get('market_token', auth_token)
+
 def get_quotes(symbol, exchange, auth_token):
     """
-    Get quotes for a symbol from Jainam
+    Get quotes for a symbol from Jainam.
+
+    Refactored to use MarketDataClient (Task 24.1).
 
     Args:
         symbol: Trading symbol (e.g., 'RELIANCE')
@@ -20,23 +82,11 @@ def get_quotes(symbol, exchange, auth_token):
     """
     try:
         # Parse auth_token
-        if isinstance(auth_token, str):
-            try:
-                credentials = json.loads(auth_token)
-            except:
-                credentials = {'market_token': auth_token}
-        else:
-            credentials = auth_token
-
-        market_token = credentials.get('market_token', auth_token)
-        root_url = get_jainam_base_url()
+        market_token = _parse_market_auth_token(auth_token)
 
         # Get token for symbol
         token = get_token_from_symbol(symbol, exchange)
         exchange_segment = map_exchange_to_jainam(exchange)
-
-        # API endpoint for quotes
-        url = f"{root_url}/apimarketdata/instruments/quotes"
 
         # Request payload
         payload = {
@@ -48,16 +98,9 @@ def get_quotes(symbol, exchange, auth_token):
             'publishFormat': 'JSON'
         }
 
-        # Headers
-        headers = {
-            'Content-Type': 'application/json',
-            'Authorization': market_token
-        }
-
-        # Make request
-        client = get_httpx_client()
-        response = client.post(url, headers=headers, json=payload)
-        response_data = response.json()
+        # Use MarketDataClient
+        client = MarketDataClient(auth_token=market_token)
+        response_data = client.get_quotes(payload)
 
         if response_data.get('type') == 'success' and 'result' in response_data:
             quote_data = response_data['result'][0]  # First instrument
@@ -92,7 +135,9 @@ def get_quotes(symbol, exchange, auth_token):
 
 def get_historical_data(symbol, exchange, from_date, to_date, interval, auth_token):
     """
-    Get historical data from Jainam
+    Get historical data from Jainam.
+
+    Refactored to use MarketDataClient (Task 24.1).
 
     Args:
         symbol: Trading symbol
@@ -107,16 +152,7 @@ def get_historical_data(symbol, exchange, from_date, to_date, interval, auth_tok
     """
     try:
         # Parse auth_token
-        if isinstance(auth_token, str):
-            try:
-                credentials = json.loads(auth_token)
-            except:
-                credentials = {'market_token': auth_token}
-        else:
-            credentials = auth_token
-
-        market_token = credentials.get('market_token', auth_token)
-        root_url = get_jainam_base_url()
+        market_token = _parse_market_auth_token(auth_token)
 
         # Get token for symbol
         token = get_token_from_symbol(symbol, exchange)
@@ -132,9 +168,6 @@ def get_historical_data(symbol, exchange, from_date, to_date, interval, auth_tok
         }
         compression_value = interval_mapping.get(interval, 1440)
 
-        # API endpoint
-        url = f"{root_url}/apimarketdata/instruments/ohlc"
-
         # Request parameters
         params = {
             'exchangeSegment': exchange_segment,
@@ -144,15 +177,9 @@ def get_historical_data(symbol, exchange, from_date, to_date, interval, auth_tok
             'compressionValue': compression_value
         }
 
-        # Headers
-        headers = {
-            'Authorization': market_token
-        }
-
-        # Make request
-        client = get_httpx_client()
-        response = client.get(url, headers=headers, params=params)
-        response_data = response.json()
+        # Use MarketDataClient
+        client = MarketDataClient(auth_token=market_token)
+        response_data = client.get_ohlc(params)
 
         if response_data.get('type') == 'success':
             # Transform OHLC data to OpenAlgo format
@@ -189,7 +216,9 @@ def get_historical_data(symbol, exchange, from_date, to_date, interval, auth_tok
 
 def search_instruments(search_string, auth_token):
     """
-    Search for instruments by symbol name
+    Search for instruments by symbol name.
+
+    Refactored to use MarketDataClient (Task 24.1).
 
     Args:
         search_string: Search query
@@ -200,34 +229,16 @@ def search_instruments(search_string, auth_token):
     """
     try:
         # Parse auth_token
-        if isinstance(auth_token, str):
-            try:
-                credentials = json.loads(auth_token)
-            except:
-                credentials = {'market_token': auth_token}
-        else:
-            credentials = auth_token
-
-        market_token = credentials.get('market_token', auth_token)
-        root_url = get_jainam_base_url()
-
-        # API endpoint
-        url = f"{root_url}/apimarketdata/search/instruments"
+        market_token = _parse_market_auth_token(auth_token)
 
         # Request parameters
         params = {
             'searchString': search_string
         }
 
-        # Headers
-        headers = {
-            'Authorization': market_token
-        }
-
-        # Make request
-        client = get_httpx_client()
-        response = client.get(url, headers=headers, params=params)
-        response_data = response.json()
+        # Use MarketDataClient
+        client = MarketDataClient(auth_token=market_token)
+        response_data = client.search_instruments(params)
 
         if response_data.get('type') == 'success':
             instruments = []

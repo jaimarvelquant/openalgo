@@ -3,12 +3,188 @@ Order data transformation module for Jainam
 Handles order-specific data conversions between OpenAlgo and Jainam formats
 """
 import json
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from utils.logging import get_logger
-from broker.jainam_prop.api.data import get_quotes
+# NOTE: get_quotes imported lazily to avoid circular import
+# (Task 24.1 - circular import fix)
+# from broker.jainam_prop.api.data import get_quotes
+from broker.jainam_prop._ensure_database import ensure_database_package
 
 logger = get_logger(__name__)
+
+EXCHANGE_SEGMENT_MAP = {
+    "NSECM": "NSE",
+    "BSECM": "BSE",
+    "NSEFO": "NFO",
+    "BSEFO": "BFO",
+    "MCXFO": "MCX",
+    "NSECD": "CDS",
+}
+
+
+def _get_symbol_lookup():
+    ensure_database_package()
+    from database.token_db import get_symbol  # noqa: WPS433
+
+    return get_symbol
+
+
+def map_order_data(order_data: Optional[Dict[str, Any]] = None) -> List[Dict[str, Any]]:
+    """Normalise Jainam order payloads into a predictable structure."""
+    if not isinstance(order_data, dict):
+        logger.debug("map_order_data received non-dict payload: %s", type(order_data))
+        return []
+
+    response_type = (order_data.get('type') or order_data.get('status') or '').lower()
+    if response_type and response_type not in ('success', 'ok'):  # treat other statuses as empty
+        logger.info("map_order_data received non-success status: %s", response_type)
+        return []
+
+    raw_orders = order_data.get('result') or order_data.get('data') or order_data.get('orders') or []
+    if isinstance(raw_orders, dict):
+        raw_orders = [raw_orders]
+    elif not isinstance(raw_orders, list):
+        logger.debug("map_order_data found unexpected result payload type: %s", type(raw_orders))
+        raw_orders = []
+
+    get_symbol = _get_symbol_lookup()
+    mapped_orders: List[Dict[str, Any]] = []
+
+    for raw in raw_orders:
+        if not isinstance(raw, dict):
+            logger.debug("Skipping invalid order entry: %s", raw)
+            continue
+
+        exchange_segment = raw.get('ExchangeSegment') or raw.get('exchange') or ''
+        exchange = EXCHANGE_SEGMENT_MAP.get(exchange_segment, exchange_segment)
+
+        instrument_token = (
+            raw.get('ExchangeInstrumentID')
+            or raw.get('ExchangeInstrumentId')
+            or raw.get('InstrumentID')
+            or raw.get('InstrumentToken')
+        )
+        symbol = raw.get('TradingSymbol') or raw.get('symbol') or ''
+        if not symbol and instrument_token:
+            try:
+                symbol_lookup = get_symbol(instrument_token, exchange)
+            except Exception as exc:  # pragma: no cover - defensive logging
+                logger.debug("Symbol lookup failed for token %s: %s", instrument_token, exc)
+                symbol_lookup = None
+            if symbol_lookup:
+                symbol = symbol_lookup
+
+        action_raw = raw.get('OrderSide') or raw.get('orderSide') or raw.get('TransactionType') or ''
+        action = action_raw.upper()
+        if action not in ('BUY', 'SELL'):
+            if 'BUY' in action:
+                action = 'BUY'
+            elif 'SELL' in action:
+                action = 'SELL'
+
+        status_raw = raw.get('OrderStatus') or raw.get('status') or ''
+        order_status = status_raw.lower()
+
+        pricetype = (raw.get('OrderType') or raw.get('orderType') or '').upper()
+        product = (raw.get('ProductType') or raw.get('productType') or raw.get('ProductCode') or '').upper()
+
+        quantity_value = (
+            raw.get('OrderQuantity')
+            or raw.get('Quantity')
+            or raw.get('DisplayQuantity')
+            or raw.get('quantity')
+        )
+
+        price_value = raw.get('LimitPrice') or raw.get('Price') or raw.get('limitPrice')
+        trigger_value = raw.get('TriggerPrice') or raw.get('StopPrice') or raw.get('triggerPrice')
+
+        timestamp = (
+            raw.get('OrderGeneratedDateTime')
+            or raw.get('OrderTime')
+            or raw.get('orderTime')
+            or raw.get('order_timestamp')
+        )
+
+        mapped_orders.append({
+            'action': action,
+            'exchange': exchange,
+            'order_status': order_status,
+            'orderid': str(raw.get('AppOrderID') or raw.get('OrderID') or raw.get('appOrderId') or ''),
+            'price': _coerce_float(price_value) or 0.0,
+            'pricetype': pricetype,
+            'product': product,
+            'quantity': _coerce_int(quantity_value),
+            'symbol': symbol,
+            'timestamp': timestamp or '',
+            'trigger_price': _coerce_float(trigger_value) or 0.0,
+        })
+
+    return mapped_orders
+
+
+def calculate_order_statistics(order_data: Optional[List[Dict[str, Any]]]) -> Dict[str, int]:
+    """Return aggregate counts for the mapped order data."""
+    stats = {
+        'total_buy_orders': 0,
+        'total_sell_orders': 0,
+        'total_completed_orders': 0,
+        'total_open_orders': 0,
+        'total_rejected_orders': 0,
+    }
+
+    if not order_data:
+        return stats
+
+    for order in order_data:
+        if not isinstance(order, dict):
+            continue
+
+        action = (order.get('action') or '').upper()
+        status = (order.get('order_status') or '').lower()
+
+        if action == 'BUY':
+            stats['total_buy_orders'] += 1
+        elif action == 'SELL':
+            stats['total_sell_orders'] += 1
+
+        if status == 'complete':
+            stats['total_completed_orders'] += 1
+        elif status == 'rejected':
+            stats['total_rejected_orders'] += 1
+        elif status in ('open', 'pending', 'trigger pending'):
+            stats['total_open_orders'] += 1
+
+    return stats
+
+
+def transform_order_data(orders: Optional[List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
+    """Convert mapped orders into the final OpenAlgo order schema."""
+    if orders is None:
+        return []
+    if isinstance(orders, dict):
+        orders = [orders]
+
+    transformed: List[Dict[str, Any]] = []
+    for order in orders:
+        if not isinstance(order, dict):
+            continue
+
+        transformed.append({
+            'action': (order.get('action') or '').upper(),
+            'exchange': order.get('exchange', ''),
+            'order_status': (order.get('order_status') or '').lower(),
+            'orderid': str(order.get('orderid', '')),
+            'price': _coerce_float(order.get('price')) or 0.0,
+            'pricetype': (order.get('pricetype') or '').upper(),
+            'product': (order.get('product') or '').upper(),
+            'quantity': _coerce_int(order.get('quantity')),
+            'symbol': order.get('symbol', ''),
+            'timestamp': order.get('timestamp', ''),
+            'trigger_price': _coerce_float(order.get('trigger_price')) or 0.0,
+        })
+
+    return transformed
 
 
 def _parse_auth_token(auth_token: Optional[Any]) -> Dict[str, Any]:
@@ -274,10 +450,7 @@ def map_trade_data(trade_data):
     Returns:
         Mapped trade data with symbols resolved
     """
-    from database.token_db import get_symbol
-    from utils.logging import get_logger
-
-    logger = get_logger(__name__)
+    get_symbol = _get_symbol_lookup()
 
     # Check if we have the 'trades' key from transform_trade_book
     if isinstance(trade_data, dict) and 'trades' in trade_data:
@@ -382,7 +555,7 @@ def map_position_data(position_data):
     Returns:
     - A dictionary containing the key 'positionList' with enriched position entries.
     """
-    from database.token_db import get_symbol
+    get_symbol = _get_symbol_lookup()
 
     # Exchange mapping from Jainam format to OpenAlgo format
     exchange_mapping = {
@@ -521,6 +694,24 @@ def _coerce_float(value):
         return None
 
 
+def _coerce_int(value):
+    """Attempt to coerce a value to int, returning 0 when not possible."""
+    if value is None or value == '':
+        return 0
+    try:
+        if isinstance(value, bool):
+            return int(value)
+        if isinstance(value, (int,)):
+            return int(value)
+        if isinstance(value, float):
+            return int(round(value))
+        if isinstance(value, str) and value.strip():
+            return int(float(value))
+    except (TypeError, ValueError):
+        logger.debug("Failed to coerce value '%s' to int", value)
+    return 0
+
+
 def map_portfolio_data(portfolio_data, auth_token: Optional[Any] = None):
     """
     Processes and modifies portfolio data from Jainam API.
@@ -532,7 +723,7 @@ def map_portfolio_data(portfolio_data, auth_token: Optional[Any] = None):
     Returns:
     - A dictionary with 'holdings' and 'totalholding' keys structured for the OpenAlgo system.
     """
-    from database.token_db import get_symbol
+    get_symbol = _get_symbol_lookup()
 
     logger.info("Mapping portfolio data")
 
@@ -640,6 +831,9 @@ def map_portfolio_data(portfolio_data, auth_token: Optional[Any] = None):
         )
 
         if needs_quote:
+            # Lazy import to avoid circular dependency (Task 24.1)
+            from broker.jainam_prop.api.data import get_quotes
+
             cache_key = (trading_symbol, exchange)
             quote = quote_cache.get(cache_key)
             if quote is None:

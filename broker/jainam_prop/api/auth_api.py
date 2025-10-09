@@ -6,10 +6,90 @@ import httpx
 from utils.logging import get_logger
 from utils.httpx_client import get_httpx_client
 from broker.jainam_prop.api.config import get_jainam_base_url
+from broker.jainam_prop.api.base_client import BaseAPIClient
 
 logger = get_logger(__name__)
 
 SOURCE_HEADER_VALUE = "WEBAPI"
+
+
+# ============================================================================
+# API Client Classes (Task 24.1 - Refactored to use BaseAPIClient)
+# ============================================================================
+
+class InteractiveAuthClient(BaseAPIClient):
+    """Client for Interactive API authentication."""
+
+    def login(self, api_key: str, api_secret: str, source: str = SOURCE_HEADER_VALUE) -> dict:
+        """
+        Authenticate with Interactive API.
+
+        Args:
+            api_key: Interactive API key
+            api_secret: Interactive API secret
+            source: API source (default: WEBAPI)
+
+        Returns:
+            Authentication response with token and user details
+
+        Raises:
+            httpx.HTTPStatusError: For HTTP error responses
+        """
+        payload = {
+            "appKey": api_key,
+            "secretKey": api_secret,
+            "source": source
+        }
+        return self._post('user.login', json_data=payload, timeout=10.0)
+
+
+class MarketDataAuthClient(BaseAPIClient):
+    """Client for Market Data API authentication with endpoint fallback."""
+
+    def login(self, api_key: str, api_secret: str, source: str = SOURCE_HEADER_VALUE) -> dict:
+        """
+        Authenticate with Market Data API.
+
+        Tries multiple endpoints in order:
+        1. Binary Market Data API (/apibinarymarketdata/) - Production
+        2. Standard Market Data API (/apimarketdata/) - Fallback
+        3. Simplified Market Data API (/marketdata/) - Legacy fallback
+
+        Args:
+            api_key: Market Data API key
+            api_secret: Market Data API secret
+            source: API source (default: WEBAPI)
+
+        Returns:
+            Authentication response with token
+
+        Raises:
+            RuntimeError: If all endpoints fail
+        """
+        payload = {
+            "appKey": api_key,
+            "secretKey": api_secret,
+            "source": source
+        }
+
+        # Try binary endpoint first (production)
+        try:
+            return self._post('market.login', json_data=payload, timeout=10.0)
+        except httpx.HTTPStatusError as exc:
+            status_code = exc.response.status_code
+            logger.debug(f"Binary market data login failed (status={status_code}), trying fallback...")
+
+            # Only try fallback for 404 or 400 "ctcl only" errors
+            if status_code == 404 or (status_code == 400 and "only enabled for ctcl" in exc.response.text.lower()):
+                # Try standard market data API
+                try:
+                    return self._post('market.login', json_data=payload, timeout=10.0, use_standard_marketdata=True)
+                except httpx.HTTPStatusError:
+                    # If standard also fails, raise original error
+                    raise exc
+            else:
+                # For other errors, raise immediately
+                raise
 
 
 def _validate_credentials(
@@ -44,30 +124,23 @@ def _validate_credentials(
     return interactive_key, interactive_secret, market_key, market_secret
 
 
-def _request_token(
-    client: httpx.Client,
-    url: str,
-    payload: dict,
+def _extract_token_from_response(
+    data: dict,
     context: str,
 ) -> Tuple[str, Optional[str], Optional[bool]]:
     """
-    Execute a POST request to the Jainam API and return the token plus metadata.
+    Extract token and metadata from authentication response.
+
+    Args:
+        data: Response JSON data
+        context: Context string for error messages (e.g., "Interactive", "Market data")
 
     Returns:
         tuple: (token, user_id, is_investor_client)
+
+    Raises:
+        RuntimeError: If response indicates failure or token is missing
     """
-    headers = {"Content-Type": "application/json"}
-
-    try:
-        response = client.post(url, json=payload, headers=headers)
-        response.raise_for_status()
-    except httpx.HTTPStatusError as exc:
-        detail = _extract_error_detail(exc.response)
-        raise RuntimeError(f"{context} authentication failed: {detail}") from exc
-    except httpx.RequestError as exc:
-        raise RuntimeError(f"{context} authentication network error: {exc}") from exc
-
-    data = response.json()
     if data.get("type") != "success":
         detail = data.get("description") or data.get("message") or str(data)
         raise RuntimeError(f"{context} authentication failed: {detail}")
@@ -95,48 +168,14 @@ def _extract_error_detail(response: Optional[httpx.Response]) -> str:
         return response.text or f"HTTP {response.status_code}"
 
 
-def _login_market_data(
-    client: httpx.Client,
-    base_url: str,
-    payload: dict,
-) -> Tuple[str, Optional[str], Optional[bool]]:
-    """
-    Attempt to authenticate market data session, supporting endpoint variations.
-    """
-    endpoints = [
-        f"{base_url}/apimarketdata/auth/login",
-        f"{base_url}/marketdata/auth/login",
-        f"{base_url}/apibinarymarketdata/auth/login",
-    ]
-    last_error: Optional[str] = None
-
-    for url in endpoints:
-        try:
-            return _request_token(client, url, payload, "Market data")
-        except RuntimeError as exc:
-            last_error = str(exc)
-            cause = getattr(exc, "__cause__", None)
-            status_code = cause.response.status_code if isinstance(cause, httpx.HTTPStatusError) else None
-            if status_code:
-                logger.debug(
-                    "Market data login attempt failed at %s (status=%s): %s",
-                    url,
-                    status_code,
-                    last_error,
-                )
-            # Allow fallback when server indicates CTCL-only restriction (binary API required).
-            if status_code == 400 and last_error and "only enabled for ctcl" in last_error.lower():
-                continue
-            # Only continue if the failure was a 404 (endpoint missing); otherwise surface immediately.
-            if status_code != 404:
-                break
-
-    raise RuntimeError(last_error or "Market data authentication failed")
+# Removed _login_market_data - now handled by MarketDataAuthClient class
 
 
 def authenticate_direct() -> Tuple[Optional[str], Optional[str], Optional[str], Optional[str]]:
     """
     Authenticate with Jainam XTS using direct API key/secret login.
+
+    Refactored to use BaseAPIClient (Task 24.1).
 
     Returns:
         tuple: (interactive_token, market_token, user_id, error_message)
@@ -147,30 +186,20 @@ def authenticate_direct() -> Tuple[Optional[str], Optional[str], Optional[str], 
         logger.error(str(exc))
         return None, None, None, str(exc)
 
-    client = get_httpx_client()
     base_url = get_jainam_base_url()
 
-    interactive_payload = {
-        "appKey": interactive_key,
-        "secretKey": interactive_secret,
-        "source": SOURCE_HEADER_VALUE,
-    }
-
-    market_payload = {
-        "appKey": market_key,
-        "secretKey": market_secret,
-        "source": SOURCE_HEADER_VALUE,
-    }
-
     try:
-        interactive_token, user_id, is_investor = _request_token(
-            client,
-            f"{base_url}/interactive/user/session",
-            interactive_payload,
-            "Interactive",
+        # Authenticate Interactive API
+        interactive_client = InteractiveAuthClient(base_url=base_url)
+        interactive_response = interactive_client.login(interactive_key, interactive_secret)
+        interactive_token, user_id, is_investor = _extract_token_from_response(
+            interactive_response, "Interactive"
         )
 
-        market_token, _, _ = _login_market_data(client, base_url, market_payload)
+        # Authenticate Market Data API
+        market_client = MarketDataAuthClient(base_url=base_url)
+        market_response = market_client.login(market_key, market_secret)
+        market_token, _, _ = _extract_token_from_response(market_response, "Market data")
 
         logger.info(
             "Jainam direct authentication succeeded (user_id=%s, investor_client=%s)",
@@ -194,9 +223,71 @@ def authenticate_broker(*_args, **_kwargs):
     return authenticate_direct()
 
 
+def logout_broker(auth_token: str) -> dict:
+    """
+    Logout from Jainam XTS (both Interactive and Market Data sessions).
+
+    Refactored to use BaseAPIClient (Task 24.1).
+
+    Args:
+        auth_token: JSON string containing both tokens:
+                   {"interactive_token": "...", "market_token": "...", "user_id": "..."}
+
+    Returns:
+        dict: Logout results for both sessions
+    """
+    import json
+
+    try:
+        # Parse auth_token JSON
+        tokens = json.loads(auth_token)
+        interactive_token = tokens.get("interactive_token")
+        market_token = tokens.get("market_token")
+        user_id = tokens.get("user_id")
+
+        base_url = get_jainam_base_url()
+        results = {}
+
+        # Logout from Interactive API
+        if interactive_token:
+            try:
+                interactive_client = BaseAPIClient(base_url=base_url, auth_token=interactive_token)
+                # Interactive logout is a DELETE request to user.logout
+                interactive_response = interactive_client._delete('user.logout', params={'clientID': user_id} if user_id else {})
+                results["interactive_logout"] = interactive_response
+                logger.info("Interactive API logout successful")
+            except Exception as exc:
+                logger.error(f"Interactive API logout failed: {exc}")
+                results["interactive_logout"] = {"error": str(exc)}
+        else:
+            results["interactive_logout"] = "No interactive token provided"
+
+        # Logout from Market Data API
+        if market_token:
+            try:
+                market_client = BaseAPIClient(base_url=base_url, auth_token=market_token)
+                # Market data logout is a DELETE request to market.logout
+                market_response = market_client._delete('market.logout', params={})
+                results["market_logout"] = market_response
+                logger.info("Market Data API logout successful")
+            except Exception as exc:
+                logger.error(f"Market Data API logout failed: {exc}")
+                results["market_logout"] = {"error": str(exc)}
+        else:
+            results["market_logout"] = "No market token provided"
+
+        return results
+
+    except Exception as exc:
+        logger.error(f"Logout failed: {exc}")
+        return {"error": str(exc)}
+
+
 def authenticate_market_data():
     """
     Authenticate only the Jainam market data session.
+
+    Refactored to use BaseAPIClient (Task 24.1).
 
     Returns:
         tuple: (market_token, error_message)
@@ -207,17 +298,14 @@ def authenticate_market_data():
         logger.error(str(exc))
         return None, str(exc)
 
-    client = get_httpx_client()
     base_url = get_jainam_base_url()
 
-    payload = {
-        "appKey": market_key,
-        "secretKey": market_secret,
-        "source": SOURCE_HEADER_VALUE,
-    }
-
     try:
-        market_token, user_id, _ = _login_market_data(client, base_url, payload)
+        # Authenticate Market Data API
+        market_client = MarketDataAuthClient(base_url=base_url)
+        market_response = market_client.login(market_key, market_secret)
+        market_token, user_id, _ = _extract_token_from_response(market_response, "Market data")
+
         logger.info("Jainam market data authentication succeeded (user_id=%s)", user_id)
         return market_token, None
     except Exception as exc:

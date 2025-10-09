@@ -3,9 +3,14 @@ import time
 from decimal import Decimal, InvalidOperation
 import httpx
 from types import SimpleNamespace
+
+from broker.jainam_prop._ensure_database import ensure_database_package
+
+ensure_database_package()
 from database.auth_db import get_auth_token
 from broker.jainam_prop.mapping.transform_data import transform_data, transform_response
 from broker.jainam_prop.api.config import get_jainam_base_url
+from broker.jainam_prop.api.base_client import BaseAPIClient
 from utils.logging import get_logger
 from utils.httpx_client import get_httpx_client
 
@@ -13,8 +18,200 @@ logger = get_logger(__name__)
 
 SMART_ORDER_LATENCY_THRESHOLD_SECONDS = 10.0
 
+
+# ============================================================================
+# Helper Functions (Task 24.1)
+# ============================================================================
+
+def _parse_auth_token(auth_token):
+    """
+    Parse auth_token to extract interactive_token and user_id.
+
+    Args:
+        auth_token: JSON string or dict containing credentials
+
+    Returns:
+        tuple: (interactive_token, user_id)
+    """
+    if isinstance(auth_token, str):
+        try:
+            credentials = json.loads(auth_token)
+        except:
+            credentials = {'interactive_token': auth_token}
+    else:
+        credentials = auth_token
+
+    interactive_token = credentials.get('interactive_token', credentials.get('token', auth_token))
+    user_id = credentials.get('user_id', credentials.get('client_id', 'DEFAULT_USER'))
+
+    return interactive_token, user_id
+
+
+# ============================================================================
+# API Client Class (Task 24.1 - Refactored to use BaseAPIClient)
+# ============================================================================
+
+class OrderAPIClient(BaseAPIClient):
+    """
+    Client for Jainam Interactive API order and portfolio operations.
+
+    Refactored to use BaseAPIClient (Task 24.1).
+    """
+
+    def __init__(self, auth_token: str, base_url: str = None):
+        """
+        Initialize Order API client.
+
+        Args:
+            auth_token: Interactive API token
+            base_url: Jainam API base URL (optional)
+        """
+        super().__init__(base_url=base_url, auth_token=auth_token)
+
+    def place_order(self, order_data: dict) -> dict:
+        """Place order using Interactive API."""
+        return self._post('order.place', json_data=order_data, timeout=15.0)
+
+    def modify_order(self, order_data: dict) -> dict:
+        """Modify order using Interactive API."""
+        return self._put('order.modify', json_data=order_data, timeout=15.0)
+
+    def cancel_order(self, cancel_data: dict) -> dict:
+        """Cancel order using Interactive API."""
+        return self._delete('order.cancel', params=cancel_data, timeout=15.0)
+
+    def get_orderbook(self, client_id: str = None) -> dict:
+        """
+        Get orderbook.
+
+        Note: Uses regular orders endpoint (/interactive/orders), not dealer endpoint.
+        The original implementation (before Task 24.1) used this endpoint successfully
+        for PRO accounts. Dealer endpoints require special dealer privileges.
+
+        Args:
+            client_id: Optional client ID (for compatibility, but not used by this endpoint)
+
+        Returns:
+            Orderbook data
+        """
+        # Use regular orders endpoint (not dealer endpoint)
+        # This was the original behavior before Task 24.1 refactoring
+        return self._get('orders', timeout=15.0)
+
+    def get_tradebook(self) -> dict:
+        """
+        Get tradebook using regular endpoint.
+
+        Works for PRO accounts without dealer privileges.
+        This was the original behavior before Task 24.1 refactoring.
+
+        Endpoint: GET /interactive/orders/trades
+
+        Returns:
+            Tradebook data
+        """
+        return self._get('trades', timeout=15.0)
+
+    def get_positions(self, day_or_net: str = "NetWise") -> dict:
+        """
+        Get positions using regular endpoint.
+
+        Works for PRO accounts without dealer privileges.
+        This was the original behavior before Task 24.1 refactoring.
+
+        Endpoint: GET /interactive/portfolio/positions
+
+        Args:
+            day_or_net: "DayWise" or "NetWise" (default: "NetWise")
+
+        Returns:
+            Positions data
+        """
+        return self._get('portfolio.positions', params={'dayOrNet': day_or_net}, timeout=15.0)
+
+    def get_holdings(self) -> dict:
+        """
+        Get holdings using regular endpoint.
+
+        Works for both PRO and Dealer accounts.
+        This was the original behavior before Task 24.1 refactoring.
+
+        Endpoint: GET /interactive/portfolio/holdings
+
+        Returns:
+            Holdings data
+        """
+        return self._get('portfolio.holdings', timeout=15.0)
+
+    # ========================================================================
+    # Dealer Endpoints (For Dealer accounts with special privileges)
+    # These methods are available but require dealer account configuration
+    # ========================================================================
+
+    def get_dealer_orderbook(self, client_id: str) -> dict:
+        """
+        Get dealer orderbook (requires dealer privileges).
+
+        Endpoint: GET /interactive/orders/dealerorderbook
+
+        Args:
+            client_id: Client ID to query
+
+        Returns:
+            Dealer orderbook data
+
+        Raises:
+            HTTPStatusError: If account doesn't have dealer privileges (HTTP 400)
+        """
+        return self._get('order.dealer.status', params={'clientID': client_id}, timeout=15.0)
+
+    def get_dealer_tradebook(self, client_id: str) -> dict:
+        """
+        Get dealer tradebook (requires dealer privileges).
+
+        Endpoint: GET /interactive/orders/dealertradebook
+
+        Args:
+            client_id: Client ID to query
+
+        Returns:
+            Dealer tradebook data
+
+        Raises:
+            HTTPStatusError: If account doesn't have dealer privileges (HTTP 400)
+        """
+        return self._get('dealer.trades', params={'clientID': client_id}, timeout=15.0)
+
+    def get_dealer_positions(self, client_id: str, day_or_net: str = "NetWise") -> dict:
+        """
+        Get dealer positions (requires dealer privileges).
+
+        Endpoint: GET /interactive/portfolio/dealerpositions
+
+        Args:
+            client_id: Client ID to query
+            day_or_net: "DayWise" or "NetWise" (default: "NetWise")
+
+        Returns:
+            Dealer positions data
+
+        Raises:
+            HTTPStatusError: If account doesn't have dealer privileges (HTTP 400)
+        """
+        return self._get('portfolio.dealerpositions', params={'clientID': client_id, 'dayOrNet': day_or_net}, timeout=15.0)
+
+
+# ============================================================================
+# Legacy JainamAPI class (kept for backward compatibility)
+# ============================================================================
+
 class JainamAPI:
-    """Jainam XTS Connect API wrapper"""
+    """
+    Jainam XTS Connect API wrapper (Legacy).
+
+    Note: This class is kept for backward compatibility.
+    New code should use OrderAPIClient instead.
+    """
 
     def __init__(self):
         self.root_url = get_jainam_base_url()
@@ -51,58 +248,50 @@ class JainamAPI:
 
 def place_order_api(data, auth_token):
     """
-    Place order with Jainam
+    Place order with Jainam.
+
+    Refactored to use OrderAPIClient (Task 24.1).
 
     Args:
         data: OpenAlgo order data
-        auth_token: Authentication token
+        auth_token: Authentication token (JSON string with interactive_token and user_id)
 
     Returns:
         (response_object, response_data, order_id)
     """
     try:
-        # Parse auth_token to get API credentials
-        if isinstance(auth_token, str):
-            try:
-                credentials = json.loads(auth_token)
-            except:
-                credentials = {'token': auth_token}
-        else:
-            credentials = auth_token
-
-        # Initialize Jainam API
-        jainam_api = JainamAPI()
-        jainam_api.interactive_token = credentials.get('token', auth_token)
+        # Parse auth_token
+        interactive_token, user_id = _parse_auth_token(auth_token)
 
         # Transform data to Jainam format
         jainam_order = transform_data(data)
 
-        # Add client ID from user profile (this should be passed or retrieved)
-        jainam_order['clientID'] = credentials.get('client_id', 'DEFAULT_USER')
+        # Add client ID
+        jainam_order['clientID'] = user_id
 
-        # API endpoint
-        url = f"{jainam_api.root_url}/interactive/orders"
-
-        # Make API request
-        response = jainam_api.client.post(
-            url,
-            headers=jainam_api._get_headers(),
-            json=jainam_order
-        )
-
-        response_data = response.json()
+        # Use OrderAPIClient
+        client = OrderAPIClient(auth_token=interactive_token)
+        response_data = client.place_order(jainam_order)
 
         # Transform response to OpenAlgo format
         openalgo_response = transform_response(response_data)
 
         # Create response object
-        response_obj = SimpleNamespace(status=response.status_code)
+        response_obj = SimpleNamespace(status=200)
 
         order_id = openalgo_response.get('orderid', '')
 
         logger.info(f"Jainam order placed: {order_id}")
         return response_obj, openalgo_response, order_id
 
+    except httpx.HTTPStatusError as e:
+        logger.error(f"HTTP error placing Jainam order: {e}")
+        response_obj = SimpleNamespace(status=e.response.status_code)
+        response_data = {
+            'status': 'error',
+            'message': str(e)
+        }
+        return response_obj, response_data, None
     except Exception as e:
         logger.error(f"Error placing Jainam order: {e}")
         response_obj = SimpleNamespace(status=400)
@@ -114,7 +303,9 @@ def place_order_api(data, auth_token):
 
 def modify_order_api(order_id, data, auth_token):
     """
-    Modify existing order with Jainam
+    Modify existing order with Jainam.
+
+    Refactored to use OrderAPIClient (Task 24.1).
 
     Args:
         order_id: Order ID to modify
@@ -126,45 +317,36 @@ def modify_order_api(order_id, data, auth_token):
     """
     try:
         # Parse auth_token
-        if isinstance(auth_token, str):
-            try:
-                credentials = json.loads(auth_token)
-            except:
-                credentials = {'token': auth_token}
-        else:
-            credentials = auth_token
-
-        jainam_api = JainamAPI()
-        jainam_api.interactive_token = credentials.get('token', auth_token)
+        interactive_token, user_id = _parse_auth_token(auth_token)
 
         # Transform data to Jainam format
         jainam_order = transform_data(data)
         jainam_order['appOrderID'] = int(order_id)
-        jainam_order['clientID'] = credentials.get('client_id', 'DEFAULT_USER')
+        jainam_order['clientID'] = user_id
 
         # Remove fields not needed for modification
         jainam_order.pop('exchangeSegment', None)
         jainam_order.pop('exchangeInstrumentID', None)
         jainam_order.pop('orderSide', None)
 
-        # API endpoint
-        url = f"{jainam_api.root_url}/interactive/orders"
+        # Use OrderAPIClient
+        client = OrderAPIClient(auth_token=interactive_token)
+        response_data = client.modify_order(jainam_order)
 
-        # Make PUT request for modification
-        response = jainam_api.client.put(
-            url,
-            headers=jainam_api._get_headers(),
-            json=jainam_order
-        )
-
-        response_data = response.json()
         openalgo_response = transform_response(response_data)
-
-        response_obj = SimpleNamespace(status=response.status_code)
+        response_obj = SimpleNamespace(status=200)
 
         logger.info(f"Jainam order modified: {order_id}")
         return response_obj, openalgo_response, order_id
 
+    except httpx.HTTPStatusError as e:
+        logger.error(f"HTTP error modifying Jainam order: {e}")
+        response_obj = SimpleNamespace(status=e.response.status_code)
+        response_data = {
+            'status': 'error',
+            'message': str(e)
+        }
+        return response_obj, response_data, None
     except Exception as e:
         logger.error(f"Error modifying Jainam order: {e}")
         response_obj = SimpleNamespace(status=400)
@@ -176,7 +358,9 @@ def modify_order_api(order_id, data, auth_token):
 
 def cancel_order_api(order_id, auth_token):
     """
-    Cancel order with Jainam
+    Cancel order with Jainam.
+
+    Refactored to use OrderAPIClient (Task 24.1).
 
     Args:
         order_id: Order ID to cancel
@@ -187,19 +371,7 @@ def cancel_order_api(order_id, auth_token):
     """
     try:
         # Parse auth_token
-        if isinstance(auth_token, str):
-            try:
-                credentials = json.loads(auth_token)
-            except:
-                credentials = {'token': auth_token}
-        else:
-            credentials = auth_token
-
-        jainam_api = JainamAPI()
-        jainam_api.interactive_token = credentials.get('token', auth_token)
-
-        # API endpoint
-        url = f"{jainam_api.root_url}/interactive/orders"
+        interactive_token, user_id = _parse_auth_token(auth_token)
 
         # Request data
         cancel_data = {
@@ -207,22 +379,24 @@ def cancel_order_api(order_id, auth_token):
             'orderUniqueIdentifier': 'OPENALGO_PLATFORM'
         }
 
-        # Make DELETE request
-        response = jainam_api.client.request(
-            'DELETE',
-            url,
-            headers=jainam_api._get_headers(),
-            json=cancel_data
-        )
+        # Use OrderAPIClient
+        client = OrderAPIClient(auth_token=interactive_token)
+        response_data = client.cancel_order(cancel_data)
 
-        response_data = response.json()
         openalgo_response = transform_response(response_data)
-
-        response_obj = SimpleNamespace(status=response.status_code)
+        response_obj = SimpleNamespace(status=200)
 
         logger.info(f"Jainam order cancelled: {order_id}")
         return response_obj, openalgo_response
 
+    except httpx.HTTPStatusError as e:
+        logger.error(f"HTTP error cancelling Jainam order: {e}")
+        response_obj = SimpleNamespace(status=e.response.status_code)
+        response_data = {
+            'status': 'error',
+            'message': str(e)
+        }
+        return response_obj, response_data
     except Exception as e:
         logger.error(f"Error cancelling Jainam order: {e}")
         response_obj = SimpleNamespace(status=400)
@@ -240,35 +414,124 @@ def get_order_book(auth_token):
         auth_token: Authentication token
 
     Returns:
-        Order book data
+        Order book data in Jainam format
+
+    Example Response:
+        {
+            'status': 'success',
+            'data': [
+                {
+                    'orderid': '123456',
+                    'symbol': 'SBIN-EQ',
+                    'exchange': 'NSE',
+                    'action': 'BUY',
+                    'quantity': 100,
+                    'price': 550.50,
+                    'status': 'COMPLETE'
+                }
+            ]
+        }
     """
     try:
         # Parse auth_token
-        if isinstance(auth_token, str):
+        interactive_token, user_id = _parse_auth_token(auth_token)
+
+        logger.info(f"Fetching order book from Jainam for user {user_id}")
+
+        # Use OrderAPIClient (regular endpoint for PRO accounts)
+        client = OrderAPIClient(auth_token=interactive_token)
+        response_data = client.get_orderbook()
+
+        # Check for error response
+        if not isinstance(response_data, dict):
+            logger.error("Unexpected response format received from Jainam order book API")
+            return {
+                'status': 'error',
+                'message': 'Unexpected response format from Jainam order book API'
+            }
+
+        # Jainam/XTS payloads include a 'type' field to indicate success or error
+        response_type = response_data.get('type')
+        if response_type and response_type.lower() != 'success':
+            error_message = (
+                response_data.get('description')
+                or response_data.get('message')
+                or 'Jainam API reported an error while fetching orders'
+            )
+            error_code = response_data.get('code') or response_data.get('errorcode')
+
+            # Check if this is a "Data Not Available" error (empty orderbook)
+            if error_code and 'e-order' in error_code.lower() and 'data not available' in error_message.lower():
+                logger.info("Jainam reported no order data available (empty orderbook)")
+                return {
+                    'status': 'success',
+                    'data': []
+                }
+
+            error_payload = {
+                'status': 'error',
+                'message': error_message
+            }
+            if error_code:
+                error_payload['code'] = error_code
+            logger.error(f"Jainam order book returned error payload: {error_message}")
+            return error_payload
+
+        # Extract order data from either 'result' or 'data' key
+        order_data = response_data.get('result', response_data.get('data', []))
+
+        # Handle empty order book
+        if not response_data or not order_data:
+            logger.info("Order book is empty")
+            return {
+                'status': 'success',
+                'data': []
+            }
+
+        logger.info(f"Order book retrieved successfully with {len(order_data) if isinstance(order_data, list) else 'unknown'} orders")
+        return response_data
+
+    except httpx.HTTPStatusError as e:
+        # Handle "Data Not Available" as a success case with empty data
+        if e.response.status_code == 400:
             try:
-                credentials = json.loads(auth_token)
+                error_data = e.response.json()
+                error_code = error_data.get('code', '')
+                description = error_data.get('description', '').lower()
+
+                # Jainam returns error codes with "Data Not Available" when no orders exist
+                if 'data not available' in description:
+                    logger.info("Jainam reported no order data available (empty orderbook)")
+                    return {
+                        'status': 'success',
+                        'data': []
+                    }
             except:
-                credentials = {'token': auth_token}
-        else:
-            credentials = auth_token
+                pass  # If we can't parse the error, fall through to generic error handling
 
-        jainam_api = JainamAPI()
-        jainam_api.interactive_token = credentials.get('token', auth_token)
-
-        # API endpoint
-        url = f"{jainam_api.root_url}/interactive/orders"
-
-        # Make GET request
-        response = jainam_api.client.get(
-            url,
-            headers=jainam_api._get_headers()
-        )
-
-        return response.json()
-
+        logger.error(f"HTTP error getting Jainam order book: {e.response.status_code} - {e.response.text}")
+        return {
+            'status': 'error',
+            'message': f'HTTP error: {e.response.status_code}'
+        }
+    except httpx.TimeoutException as e:
+        logger.error(f"Timeout error getting Jainam order book: {e}")
+        return {
+            'status': 'error',
+            'message': 'Request timeout - please try again'
+        }
+    except httpx.RequestError as e:
+        logger.error(f"Connection error getting Jainam order book: {e}")
+        return {
+            'status': 'error',
+            'message': 'Connection error - please check network'
+        }
     except Exception as e:
-        logger.error(f"Error getting Jainam order book: {e}")
-        return {'status': 'error', 'message': str(e)}
+        logger.error(f"Unexpected error getting Jainam order book: {e}")
+        return {
+            'status': 'error',
+            'message': f'Error retrieving order book: {str(e)}'
+        }
 
 def get_positions(auth_token):
     """
@@ -298,37 +561,35 @@ def get_positions(auth_token):
     """
     try:
         # Parse auth_token
-        if isinstance(auth_token, str):
-            try:
-                credentials = json.loads(auth_token)
-            except:
-                credentials = {'token': auth_token}
-        else:
-            credentials = auth_token
+        interactive_token, user_id = _parse_auth_token(auth_token)
 
-        # Initialize Jainam API
-        jainam_api = JainamAPI()
-        jainam_api.interactive_token = credentials.get('token', auth_token)
+        logger.info(f"Fetching positions from Jainam for user {user_id}")
 
-        # API endpoint with NetWise parameter (as per XTS API and story requirements)
-        url = f"{jainam_api.root_url}/interactive/portfolio/positions?dayOrNet=NetWise"
-
-        logger.info(f"Fetching positions from Jainam: {url}")
-
-        # Make GET request with 10-second timeout
-        response = jainam_api.client.get(
-            url,
-            headers=jainam_api._get_headers(),
-            timeout=10.0
-        )
-
-        response.raise_for_status()
-        response_data = response.json()
+        # Use OrderAPIClient (regular endpoint for PRO accounts)
+        client = OrderAPIClient(auth_token=interactive_token)
+        response_data = client.get_positions(day_or_net="NetWise")
 
         logger.info(f"Positions retrieved successfully")
         return response_data
 
     except httpx.HTTPStatusError as e:
+        # Handle "Data Not Available" as a success case with empty data
+        if e.response.status_code == 400:
+            try:
+                error_data = e.response.json()
+                error_code = error_data.get('code', '')
+                description = error_data.get('description', '').lower()
+
+                # Jainam returns "e-portfolio-0005" with "Data Not Available" when no positions exist
+                if 'e-portfolio-0005' in error_code.lower() or 'data not available' in description:
+                    logger.info("Jainam reported no position data available (empty positions)")
+                    return {
+                        'status': 'success',
+                        'data': []
+                    }
+            except:
+                pass  # If we can't parse the error, fall through to generic error handling
+
         logger.error(f"HTTP error getting Jainam positions: {e.response.status_code} - {e.response.text}")
         return {
             'status': 'error',
@@ -380,38 +641,46 @@ def get_holdings(auth_token):
     """
     try:
         # Parse auth_token
-        if isinstance(auth_token, str):
-            try:
-                credentials = json.loads(auth_token)
-            except:
-                credentials = {'token': auth_token}
-        else:
-            credentials = auth_token
+        interactive_token, user_id = _parse_auth_token(auth_token)
 
-        # Initialize Jainam API
-        jainam_api = JainamAPI()
-        jainam_api.interactive_token = credentials.get('token', auth_token)
+        logger.info(f"Fetching holdings from Jainam for user {user_id}")
 
-        # API endpoint (as per XTS API)
-        url = f"{jainam_api.root_url}/interactive/portfolio/holdings"
-
-        logger.info(f"Fetching holdings from Jainam: {url}")
-
-        # Make GET request with 10-second timeout
-        response = jainam_api.client.get(
-            url,
-            headers=jainam_api._get_headers(),
-            timeout=10.0
-        )
-
-        response.raise_for_status()
-        response_data = response.json()
+        # Use OrderAPIClient (regular endpoint for PRO accounts)
+        client = OrderAPIClient(auth_token=interactive_token)
+        response_data = client.get_holdings()
 
         logger.info(f"Holdings retrieved successfully")
         return response_data
 
     except httpx.HTTPStatusError as e:
-        logger.error(f"HTTP error getting Jainam holdings: {e.response.status_code} - {e.response.text}")
+        # Handle "Data Not Available" as a success case with empty data
+        if e.response.status_code == 400:
+            try:
+                error_data = e.response.json()
+                error_code = error_data.get('code', '')
+                description = error_data.get('description', '').lower()
+
+                # Jainam returns error codes with "Data Not Available" when no holdings exist
+                if 'data not available' in description:
+                    logger.info("Jainam reported no holdings data available (empty holdings)")
+                    return {
+                        'status': 'success',
+                        'data': []
+                    }
+            except:
+                pass  # If we can't parse the error, fall through to generic error handling
+
+        # Handle HTTP 500 errors (server-side issues on Jainam's API)
+        if e.response.status_code == 500:
+            logger.error(f"Jainam holdings API server error (HTTP 500). This is a server-side issue on Jainam's API.")
+            logger.error(f"Response body (first 500 chars): {e.response.text[:500]}")
+            return {
+                'status': 'error',
+                'message': 'Jainam API server error. The holdings endpoint is currently unavailable. Please try again later or contact Jainam support.',
+                'code': 'JAINAM_SERVER_ERROR'
+            }
+
+        logger.error(f"HTTP error getting Jainam holdings: {e.response.status_code} - {e.response.text[:500]}")
         return {
             'status': 'error',
             'message': f'HTTP error: {e.response.status_code}'
@@ -465,32 +734,13 @@ def get_trade_book(auth_token):
     """
     try:
         # Parse auth_token
-        if isinstance(auth_token, str):
-            try:
-                credentials = json.loads(auth_token)
-            except:
-                credentials = {'token': auth_token}
-        else:
-            credentials = auth_token
+        interactive_token, user_id = _parse_auth_token(auth_token)
 
-        # Initialize Jainam API
-        jainam_api = JainamAPI()
-        jainam_api.interactive_token = credentials.get('token', auth_token)
+        logger.info(f"Fetching trade book from Jainam for user {user_id}")
 
-        # API endpoint for trade book (as per XTS API pattern)
-        url = f"{jainam_api.root_url}/interactive/trades"
-
-        logger.info(f"Fetching trade book from Jainam: {url}")
-
-        # Make GET request with 10-second timeout
-        response = jainam_api.client.get(
-            url,
-            headers=jainam_api._get_headers(),
-            timeout=10.0
-        )
-
-        response.raise_for_status()
-        response_data = response.json()
+        # Use OrderAPIClient (regular endpoint for PRO accounts)
+        client = OrderAPIClient(auth_token=interactive_token)
+        response_data = client.get_tradebook()
 
         if not isinstance(response_data, dict):
             logger.error("Unexpected response format received from Jainam trade book API")
@@ -528,14 +778,32 @@ def get_trade_book(auth_token):
                 'trades': []
             }
 
-        # Transform response using transform_trade_book from mapping/order_data.py
-        from broker.jainam_prop.mapping.order_data import transform_trade_book
-        transformed_data = transform_trade_book(trade_data)
+        # Transform response using transform_tradebook_data from mapping/order_data.py
+        # Note: Function name is transform_tradebook_data, not transform_trade_book
+        from broker.jainam_prop.mapping.order_data import transform_tradebook_data
+        transformed_data = transform_tradebook_data(trade_data)
 
         logger.info(f"Trade book retrieved successfully with {len(transformed_data.get('trades', []))} trades")
         return transformed_data
 
     except httpx.HTTPStatusError as e:
+        # Handle "Data Not Available" as a success case with empty data
+        if e.response.status_code == 400:
+            try:
+                error_data = e.response.json()
+                error_code = error_data.get('code', '')
+                description = error_data.get('description', '').lower()
+
+                # Jainam returns "e-tradeBook-0005" with "Data Not Available" when no trades exist
+                if 'e-tradebook-0005' in error_code.lower() or 'data not available' in description:
+                    logger.info("Jainam reported no trade data available (empty tradebook)")
+                    return {
+                        'status': 'success',
+                        'trades': []
+                    }
+            except:
+                pass  # If we can't parse the error, fall through to generic error handling
+
         logger.error(f"HTTP error getting Jainam trade book: {e.response.status_code} - {e.response.text}")
         return {
             'status': 'error',
