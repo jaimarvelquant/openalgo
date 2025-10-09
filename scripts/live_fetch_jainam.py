@@ -10,7 +10,6 @@ or the system keyring (use `scripts/jainam_keyring_helper.py` to populate).
 from __future__ import annotations
 
 import argparse
-import getpass
 import json
 import os
 import sys
@@ -23,7 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from broker.jainam_prop.api.auth_api import authenticate_broker, authenticate_market_data
+from broker.jainam_prop.api.auth_api import authenticate_direct
 from broker.jainam_prop.api.order_api import get_positions, get_holdings, get_trade_book
 from broker.jainam_prop.mapping.order_data import (
     map_position_data,
@@ -70,36 +69,35 @@ def build_auth_payload(interactive_token: str, market_token: str | None, client_
     return payload
 
 
-def resolve_interactive_token(request_token: str | None) -> str:
+def resolve_tokens() -> Tuple[str, str, str | None]:
+    """
+    Resolve Jainam authentication tokens, preferring existing environment values
+    before falling back to a direct API login.
+    """
     interactive = (
         os.getenv("JAINAM_INTERACTIVE_SESSION_TOKEN")
         or os.getenv("JAINAM_INTERACTIVE_TOKEN")
         or os.getenv("JAINAM_SESSION_TOKEN")
     )
-    if interactive:
-        return interactive
-
-    if not request_token:
-        request_token = getpass.getpass("Jainam request token (from OAuth callback): ").strip()
-    token, error = authenticate_broker(request_token)
-    if error or not token:
-        raise RuntimeError(f"Interactive authentication failed: {error or 'unknown error'}")
-    return token
-
-
-def resolve_market_token() -> str:
-    market_token = (
+    market = (
         os.getenv("JAINAM_MARKET_TOKEN")
         or os.getenv("JAINAM_MARKET_SESSION_TOKEN")
         or os.getenv("JAINAM_FEED_TOKEN")
     )
-    if market_token:
-        return market_token
+    user_id = os.getenv("JAINAM_USER_ID") or os.getenv("JAINAM_CLIENT_ID")
 
-    token, error = authenticate_market_data()
-    if error or not token:
-        raise RuntimeError(f"Market data authentication failed: {error or 'unknown error'}")
-    return token
+    if interactive and market:
+        return interactive, market, user_id
+
+    interactive_token, market_token, resolved_user_id, error = authenticate_direct()
+    if error or not interactive_token or not market_token:
+        raise RuntimeError(f"Direct Jainam authentication failed: {error or 'unknown error'}")
+
+    # Cache freshly resolved user id if present so downstream flows can reuse it
+    if resolved_user_id:
+        os.environ.setdefault("JAINAM_USER_ID", resolved_user_id)
+
+    return interactive_token, market_token, resolved_user_id or user_id
 
 
 def fetch_positions(auth_payload: Dict[str, Any]) -> Dict[str, Any]:
@@ -214,14 +212,13 @@ def parse_args(argv: Iterable[str] | None = None) -> argparse.Namespace:
 def main(argv: Iterable[str] | None = None) -> int:
     args = parse_args(argv)
 
-    client_id = args.client_id or os.getenv("JAINAM_CLIENT_ID")
-
     try:
-        interactive_token = resolve_interactive_token(args.request_token)
-        market_token = resolve_market_token()
+        interactive_token, market_token, resolved_user_id = resolve_tokens()
     except Exception as exc:
         logger.error("Credential resolution failed: %s", exc)
         return 2
+
+    client_id = args.client_id or resolved_user_id or os.getenv("JAINAM_CLIENT_ID")
 
     auth_payload = build_auth_payload(interactive_token, market_token, client_id)
     logger.info("Beginning live fetch for flows: %s", ", ".join(args.fetch))

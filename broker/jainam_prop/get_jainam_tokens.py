@@ -34,13 +34,15 @@ sys.path.insert(0, str(project_root))
 from dotenv import load_dotenv
 load_dotenv()
 
+from broker.jainam_prop.api.config import get_jainam_base_url
+
 
 class JainamTokenGenerator:
     """Generate Jainam XTS API tokens"""
     
     def __init__(self):
         """Initialize with credentials from environment"""
-        self.base_url = os.getenv('JAINAM_BASE_URL', 'http://smpb.jainam.in:4143').rstrip('/')
+        self.base_url = get_jainam_base_url()
         self.interactive_api_key = os.getenv('JAINAM_INTERACTIVE_API_KEY')
         self.interactive_api_secret = os.getenv('JAINAM_INTERACTIVE_API_SECRET')
         self.market_api_key = os.getenv('JAINAM_MARKET_API_KEY')
@@ -147,8 +149,6 @@ class JainamTokenGenerator:
         Raises:
             Exception: If login fails
         """
-        url = f"{self.base_url}/apimarketdata/auth/login"
-        
         payload = {
             "appKey": self.market_api_key,
             "secretKey": self.market_api_secret,
@@ -159,41 +159,62 @@ class JainamTokenGenerator:
             'Content-Type': 'application/json'
         }
         
+        candidate_paths = [
+            "/apimarketdata/auth/login",
+            "/marketdata/auth/login",
+            "/apibinarymarketdata/auth/login",
+        ]
+        
+        last_error = None
+        client = httpx.Client(timeout=30.0)
+        
         print(f"\n🔐 Logging in to Market Data API...")
-        print(f"   URL: {url}")
-        print(f"   App Key: {self.market_api_key[:10]}...")
         
-        try:
-            client = httpx.Client(timeout=30.0)
-            response = client.post(url, json=payload, headers=headers)
-            response.raise_for_status()
+        for path in candidate_paths:
+            url = f"{self.base_url}{path if path.startswith('/') else '/' + path}"
+            print(f"   Trying URL: {url}")
             
-            data = response.json()
+            try:
+                response = client.post(url, json=payload, headers=headers)
+                response.raise_for_status()
+                
+                data = response.json()
+                
+                if data.get('type') == 'success':
+                    result = data.get('result', {})
+                    token = result.get('token')
+                    user_id = result.get('userID')
+                    
+                    print(f"✅ Market Data login successful!")
+                    print(f"   User ID: {user_id}")
+                    print(f"   Token: {token[:50]}...")
+                    
+                    return {
+                        'token': token,
+                        'user_id': user_id
+                    }
+                else:
+                    error_msg = data.get('description', 'Unknown error')
+                    error_code = data.get('code', 'N/A')
+                    raise Exception(f"Market Data login failed [{error_code}]: {error_msg}")
             
-            if data.get('type') == 'success':
-                result = data.get('result', {})
-                token = result.get('token')
-                user_id = result.get('userID')
-                
-                print(f"✅ Market Data login successful!")
-                print(f"   User ID: {user_id}")
-                print(f"   Token: {token[:50]}...")
-                
-                return {
-                    'token': token,
-                    'user_id': user_id
-                }
-            else:
-                error_msg = data.get('description', 'Unknown error')
-                error_code = data.get('code', 'N/A')
-                raise Exception(f"Market Data login failed [{error_code}]: {error_msg}")
+            except httpx.HTTPStatusError as e:
+                status = e.response.status_code
+                body = e.response.text
+                last_error = f"HTTP {status} - {body}"
+                if status == 400 and "only enabled for CTCL" in body:
+                    # Try next variant (binary market data)
+                    continue
+                if status != 404:
+                    break  # Non-404 errors shouldn't fall through to alternate paths
+            except httpx.RequestError as e:
+                last_error = f"Network error: {str(e)}"
+                break
+            except Exception as e:
+                last_error = str(e)
+                break
         
-        except httpx.HTTPStatusError as e:
-            raise Exception(f"HTTP error during market data login: {e.response.status_code} - {e.response.text}")
-        except httpx.RequestError as e:
-            raise Exception(f"Network error during market data login: {str(e)}")
-        except Exception as e:
-            raise Exception(f"Market Data login failed: {str(e)}")
+        raise Exception(f"Market Data login failed: {last_error or 'Unknown error'}")
     
     def generate_tokens(self):
         """
@@ -349,4 +370,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-

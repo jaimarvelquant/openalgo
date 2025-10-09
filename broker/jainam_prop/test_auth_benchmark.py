@@ -30,7 +30,7 @@ auth_api.logger = MagicMock()
 # Execute the module
 spec.loader.exec_module(auth_api)
 
-authenticate_broker = auth_api.authenticate_broker
+authenticate_direct = auth_api.authenticate_direct
 authenticate_market_data = auth_api.authenticate_market_data
 
 
@@ -48,15 +48,23 @@ class AuthenticationBenchmark:
     @staticmethod
     def mock_httpx_client():
         """Create a mock HTTP client for benchmarking without network calls"""
-        mock_client = MagicMock()
-        mock_response = Mock()
-        mock_response.status_code = 200
-        mock_response.json.return_value = {
-            'data': {'access_token': 'benchmark_token'}
+        interactive_response = Mock()
+        interactive_response.status_code = 200
+        interactive_response.json.return_value = {
+            'type': 'success',
+            'result': {'token': 'benchmark_token', 'userID': 'benchmark_user'}
         }
-        mock_response.raise_for_status = Mock()
-        mock_client.post.return_value = mock_response
-        return mock_client
+        interactive_response.raise_for_status = Mock()
+
+        market_response = Mock()
+        market_response.status_code = 200
+        market_response.json.return_value = {
+            'type': 'success',
+            'result': {'token': 'benchmark_market_token'}
+        }
+        market_response.raise_for_status = Mock()
+
+        return MagicMock(post=MagicMock(side_effect=[interactive_response, market_response]))
 
     @staticmethod
     def mock_market_httpx_client():
@@ -65,6 +73,7 @@ class AuthenticationBenchmark:
         mock_response = Mock()
         mock_response.status_code = 200
         mock_response.json.return_value = {
+            'type': 'success',
             'result': {'token': 'benchmark_market_token'}
         }
         mock_response.raise_for_status = Mock()
@@ -73,17 +82,17 @@ class AuthenticationBenchmark:
 
     def benchmark_interactive_auth(self):
         """Benchmark interactive authentication performance"""
-        with patch.object(auth_api, 'get_httpx_client') as mock_get_client:
-            mock_get_client.return_value = self.mock_httpx_client()
-
+        with patch.object(auth_api, 'get_httpx_client', return_value=self.mock_httpx_client()):
             with patch.dict(os.environ, {
                 'JAINAM_INTERACTIVE_API_KEY': 'benchmark_key',
-                'JAINAM_INTERACTIVE_API_SECRET': 'benchmark_secret'
+                'JAINAM_INTERACTIVE_API_SECRET': 'benchmark_secret',
+                'JAINAM_MARKET_API_KEY': 'benchmark_market_key',
+                'JAINAM_MARKET_API_SECRET': 'benchmark_market_secret'
             }, clear=True):
 
                 for _ in range(self.iterations):
                     start = time.perf_counter()
-                    authenticate_broker('benchmark_request_token')
+                    authenticate_direct()
                     elapsed = time.perf_counter() - start
                     self.results['interactive'].append(elapsed * 1000)  # Convert to ms
 

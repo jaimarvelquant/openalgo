@@ -32,22 +32,17 @@ class JainamAPI:
     def authenticate(self):
         """Authenticate with Jainam API"""
         try:
-            from broker.jainam_prop.api.auth_api import authenticate_broker, authenticate_market_data
+            from broker.jainam_prop.api.auth_api import authenticate_direct
 
-            # Authenticate interactive session
-            interactive_token, error = authenticate_broker("dummy_request_token")  # This needs proper OAuth flow
+            interactive_token, market_token, user_id, error = authenticate_direct()
             if error:
-                logger.error(f"Interactive authentication failed: {error}")
-                return False
-
-            # Authenticate market data session
-            market_token, error = authenticate_market_data()
-            if error:
-                logger.error(f"Market data authentication failed: {error}")
+                logger.error(f"Jainam direct authentication failed: {error}")
                 return False
 
             self.interactive_token = interactive_token
             self.market_token = market_token
+            if user_id:
+                logger.info(f"Authenticated Jainam session for user {user_id}")
             return True
 
         except Exception as e:

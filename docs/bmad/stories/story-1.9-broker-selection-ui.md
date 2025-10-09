@@ -8,7 +8,7 @@
 **Dependencies:** Story 1.10 (Authentication Callback - direct login, not OAuth)
 
 ## Status
-Draft
+**Ready for Implementation** (Backend authentication complete in Story 1.0-1)
 
 ## Code Reuse Summary
 
@@ -32,11 +32,38 @@ Draft
 **so that** I can select and authenticate with my Jainam Prop account using direct login.
 
 ## Tasks / Subtasks
-- [ ] Add Jainam Prop option to broker dropdown in templates/broker.html
-- [ ] Add JavaScript case handler for Jainam Prop OAuth routing
-- [ ] Configure XTS OAuth URL with proper parameters
-- [ ] Implement enable/disable logic based on configuration
-- [ ] Add verification for dropdown display and OAuth redirect
+
+### Task 1: Add Broker Dropdown Option (15 minutes)
+- [ ] Subtask 1.1: Add `<option value="jainam_prop">Jainam Prop</option>` to `templates/broker.html` (5 min)
+- [ ] Subtask 1.2: Place alphabetically between "Groww" and "Ibulls" (2 min)
+- [ ] Subtask 1.3: Add enable/disable logic based on `broker_name` variable (5 min)
+- [ ] Subtask 1.4: Verify dropdown renders correctly in browser (3 min)
+
+### Task 2: Add JavaScript Direct Login Handler (15 minutes)
+- [ ] Subtask 2.1: Add `case 'jainam_prop':` to switch statement in `templates/broker.html` (5 min)
+- [ ] Subtask 2.2: Set `loginUrl = '/jainam_prop/callback';` (following FivePaisaXTS pattern) (5 min)
+- [ ] Subtask 2.3: Add `break;` statement (1 min)
+- [ ] Subtask 2.4: Test JavaScript routing in browser console (4 min)
+
+### Task 3: Add Backend Callback Handler (30 minutes)
+- [ ] Subtask 3.1: Add `elif broker == 'jainam_prop':` case to `blueprints/brlogin.py` (10 min)
+- [ ] Subtask 3.2: Call `auth_function()` to get tokens (follows FivePaisaXTS pattern) (5 min)
+- [ ] Subtask 3.3: Extract `auth_token`, `feed_token`, `user_id`, `error_message` from response (5 min)
+- [ ] Subtask 3.4: Set `forward_url = 'broker.html'` (2 min)
+- [ ] Subtask 3.5: Test callback handler with mock authentication (8 min)
+
+### Task 4: Add Database Token Storage (15 minutes)
+- [ ] Subtask 4.1: Verify `auth_function` is registered in `app.broker_auth_functions` (5 min)
+- [ ] Subtask 4.2: Confirm token storage uses existing `upsert_auth()` call (5 min)
+- [ ] Subtask 4.3: Test end-to-end flow with database persistence (5 min)
+
+### Task 5: Integration Testing (15 minutes)
+- [ ] Subtask 5.1: Test broker selection dropdown displays Jainam Prop (3 min)
+- [ ] Subtask 5.2: Test clicking "Connect Account" routes to callback (3 min)
+- [ ] Subtask 5.3: Test authentication flow with valid credentials (5 min)
+- [ ] Subtask 5.4: Test error handling with invalid credentials (4 min)
+
+**Total Effort:** 1.5 hours (reduced from 2-3 hours due to backend completion)
 
 ## Dev Notes
 
@@ -82,22 +109,29 @@ elif broker == 'jainam_prop':
 **Total Effort:** 2-3 hours (vs 8 hours for OAuth broker)
 
 ### Relevant Source Tree
-- `templates/broker.html` – ⚠️ Add Jainam option (10 min)
-- `static/js/broker.js` – ⚠️ Add direct login handler (15 min)
-- `blueprints/brlogin.py` – ✅ Already complete (Story 1.10)
-- FivePaisaXTS UI – ✅ Reference for direct login pattern (90% reusable)
+- `templates/broker.html` – ⚠️ Add Jainam option to dropdown (line ~163) and JavaScript handler (line ~32)
+- `blueprints/brlogin.py` – ⚠️ Add callback handler (after line ~136, following FivePaisaXTS pattern)
+- `broker/jainam_prop/api/auth_api.py` – ✅ Backend authentication complete (Story 1.0-1)
+- `database/auth_db.py` – ✅ Token persistence functions ready
+- **Reference Pattern:** FivePaisaXTS (lines 130-136 in brlogin.py, lines 32-34 in broker.html)
 
 ### Technical Context
-- Follow Compositedge pattern for XTS OAuth integration
-- OAuth URL: https://xts.jainam.in/interactive/thirdparty?appKey={{broker_api_key}}&returnURL={{redirect_url}}
-- Dropdown value: 'jainam_prop'
-- Display text: 'Jainam Prop'
+- **⚠️ CRITICAL CORRECTION:** Jainam uses **DIRECT LOGIN**, NOT OAuth
+- **Authentication Method:** Direct API key/secret authentication (like FivePaisaXTS)
+- **Pattern to Follow:** FivePaisaXTS (direct login)
+- **Pattern to AVOID:** Compositedge/Zerodha (OAuth-based)
+- **Dropdown value:** `'jainam_prop'`
+- **Display text:** `'Jainam Prop'`
+- **Callback URL:** `/jainam_prop/callback`
+- **Backend Function:** `authenticate_direct()` returns `(auth_token, feed_token, user_id, error_message)`
+- **No OAuth URL needed** - Direct callback to backend
 
 ### Testing Standards
 - Browser compatibility testing (Chrome, Firefox, Safari)
-- OAuth redirect verification
+- Direct login callback verification (NOT OAuth redirect)
 - Dropdown rendering validation
 - JavaScript error checking
+- End-to-end authentication flow testing
 
 ## Testing
 ### Test Scenarios
@@ -111,23 +145,91 @@ elif broker == 'jainam_prop':
 | Date | Version | Description | Author |
 |------|---------|-------------|--------|
 | 2025-10-06 | 1.0 | Initial story creation | AI Assistant |
+| 2025-10-09 | 2.0 | Major corrections: Changed from OAuth to direct login pattern | Augment Agent |
+| 2025-10-09 | 2.1 | Updated with backend completion status from Story 1.0-1 | Augment Agent |
+| 2025-10-09 | 2.2 | Added detailed implementation guidance and corrected acceptance criteria | Augment Agent |
 
 ## Dev Agent Record
 ### Agent Model Used
-GPT-4
+- **Story Analysis:** Claude Sonnet 4.5 (Augment Agent)
+- **Implementation:** Pending
 
 ### Debug Log References
-- N/A (pre-implementation)
+- Backend authentication tests: `broker/jainam_prop/test_auth.py`
+- Reference implementation: `broker/fivepaisaxts/api/auth_api.py`
+- Reference UI pattern: `templates/broker.html` (FivePaisaXTS lines 32-34, 163)
+- Reference callback: `blueprints/brlogin.py` (FivePaisaXTS lines 130-136)
 
 ### Completion Notes List
-- N/A (not yet implemented)
+
+#### Backend Prerequisites (Story 1.0-1) ✅ COMPLETE
+- ✅ `authenticate_direct()` implemented in `broker/jainam_prop/api/auth_api.py`
+- ✅ Returns `(auth_token, feed_token, user_id, error_message)` tuple
+- ✅ Database integration ready via `database/auth_db.py`
+- ✅ Unit tests passing
+- ✅ Helper script available for testing
+
+#### UI Implementation ⚠️ PENDING
+- [ ] Dropdown option not yet added to `templates/broker.html`
+- [ ] JavaScript handler not yet added
+- [ ] Backend callback not yet added to `blueprints/brlogin.py`
+- [ ] End-to-end web login flow not yet tested
+
+#### Critical Corrections Made
+1. **OAuth → Direct Login:** Original story incorrectly specified OAuth pattern
+   - Corrected to follow FivePaisaXTS direct login pattern
+   - Removed OAuth URL configuration (not applicable)
+   - Updated all acceptance criteria to reflect direct login
+
+2. **Dependency Clarification:** Story 1.9 depends on Story 1.0-1 backend
+   - Backend authentication complete
+   - UI integration is the remaining work
+
+3. **Pattern Reference:** Changed from Compositedge to FivePaisaXTS
+   - Compositedge uses OAuth (wrong pattern)
+   - FivePaisaXTS uses direct login (correct pattern)
 
 ### File List
-- Modified: templates/broker.html
-- Modified: static/js/broker-selection.js (if exists)
+
+#### Files to Modify:
+1. **`templates/broker.html`** (2 changes)
+   - Add dropdown option (line ~163)
+   - Add JavaScript case handler (line ~32)
+
+2. **`blueprints/brlogin.py`** (1 change)
+   - Add callback handler (after line ~136)
+
+#### Files Already Complete (Story 1.0-1):
+1. **`broker/jainam_prop/api/auth_api.py`** - Authentication backend
+2. **`database/auth_db.py`** - Token persistence
+3. **`broker/jainam_prop/get_jainam_tokens.py`** - Testing helper
 
 ## QA Results
-- N/A (not yet implemented)
+
+### Pre-Implementation Validation ✅ PASSED
+- Backend authentication verified working (Story 1.0-1)
+- Database schema supports dual-token storage
+- FivePaisaXTS pattern confirmed as correct reference
+- Implementation plan validated against codebase
+
+### Implementation Testing ⚠️ PENDING
+- Dropdown rendering: Not yet tested
+- JavaScript routing: Not yet tested
+- Backend callback: Not yet tested
+- End-to-end flow: Not yet tested
+- Browser compatibility: Not yet tested
+
+### Blockers Resolved
+- ✅ Backend authentication complete (was blocking UI work)
+- ✅ Correct pattern identified (FivePaisaXTS, not OAuth)
+- ✅ Implementation locations identified
+- ✅ Code examples provided
+
+### Ready for Implementation
+- All prerequisites met
+- Clear implementation guidance provided
+- Reference code identified
+- Estimated effort: 1.5 hours
 
 ---
 
@@ -148,35 +250,38 @@ Add Jainam Prop option to broker dropdown in `templates/broker.html` with value 
 
 ---
 
-### AC2: Add OAuth URL Routing
-Add switch case in JavaScript form submission handler to route Jainam Prop authentication to appropriate OAuth URL
+### AC2: Add Direct Login Routing (CORRECTED)
+Add switch case in JavaScript form submission handler to route Jainam Prop authentication to direct login callback
+
+**⚠️ CORRECTION:** Jainam uses direct login, NOT OAuth
 
 **Implementation Details:**
 - Add case statement in broker selection form handler
-- Route to Jainam XTS OAuth endpoint
-- Follow same pattern as Compositedge and Definedge
+- Route to `/jainam_prop/callback` (direct callback, not OAuth URL)
+- Follow FivePaisaXTS pattern (NOT Compositedge/Zerodha OAuth pattern)
 
 **Verification:**
 - [ ] JavaScript switch statement includes `case 'jainam_prop':`
-- [ ] Form submission routes to correct OAuth URL
+- [ ] Form submission routes to `/jainam_prop/callback`
 - [ ] No JavaScript errors in browser console
 
 ---
 
-### AC3: Configure XTS OAuth URL
-Follow XTS OAuth pattern similar to Compositedge: `loginUrl = 'https://xts.jainam.in/interactive/thirdparty?appKey={{broker_api_key}}&returnURL={{ redirect_url }}'`
+### AC3: Add Backend Callback Handler (NEW)
+Add callback handler in `blueprints/brlogin.py` to process Jainam authentication
 
 **Implementation Details:**
-- Use XTS OAuth URL format
-- Include `appKey` parameter with Interactive API key
-- Include `returnURL` parameter for callback
-- Confirm actual URL with Jainam documentation
+- Add `elif broker == 'jainam_prop':` case after FivePaisaXTS handler (line ~136)
+- Call `auth_function()` which maps to `authenticate_direct()` from Story 1.0-1
+- Extract `auth_token`, `feed_token`, `user_id`, `error_message` from response
+- Set `forward_url = 'broker.html'`
+- Follow exact pattern from FivePaisaXTS (lines 130-136)
 
 **Verification:**
-- [ ] OAuth URL matches XTS pattern
-- [ ] `appKey` parameter uses `{{broker_api_key}}` template variable
-- [ ] `returnURL` parameter uses `{{ redirect_url }}` template variable
-- [ ] URL is properly URL-encoded
+- [ ] Callback handler added to `blueprints/brlogin.py`
+- [ ] Handler calls correct authentication function
+- [ ] Tokens extracted and stored correctly
+- [ ] Error handling follows existing pattern
 
 ---
 
@@ -213,21 +318,24 @@ Verify dropdown displays "Jainam Prop" and is selectable when broker is configur
 
 ---
 
-### AC6: Test OAuth Redirect
-Test that clicking "Connect Account" button with Jainam Prop selected redirects to correct OAuth URL
+### AC6: Test Direct Login Flow (CORRECTED)
+Test that clicking "Connect Account" button with Jainam Prop selected triggers direct login callback
+
+**⚠️ CORRECTION:** Test direct login flow, NOT OAuth redirect
 
 **Implementation Details:**
 - Select Jainam Prop from dropdown
 - Click "Connect Account" button
-- Verify redirect to Jainam OAuth page
-- Verify URL parameters are correct
+- Verify redirect to `/jainam_prop/callback`
+- Verify backend authentication is triggered
+- Verify tokens are stored in database
 
 **Verification:**
-- [ ] Button click triggers redirect
-- [ ] Redirect goes to Jainam OAuth URL
-- [ ] URL includes correct `appKey` parameter
-- [ ] URL includes correct `returnURL` parameter
-- [ ] OAuth page loads successfully
+- [ ] Button click triggers redirect to callback
+- [ ] Redirect goes to `/jainam_prop/callback` (NOT external OAuth URL)
+- [ ] Backend `authenticate_direct()` function is called
+- [ ] Tokens are successfully stored in database
+- [ ] User is redirected to dashboard on success
 
 ---
 
@@ -268,20 +376,25 @@ Test Jainam Prop selection displays correctly in dropdown and routes to correct 
 
 ---
 
-### IV3: Verify OAuth URL Parameters
-Verify OAuth URL includes correct API key and return URL parameters
+### IV3: Verify Direct Login Authentication (CORRECTED)
+Verify direct login authentication flow works end-to-end
+
+**⚠️ CORRECTION:** Test direct login, NOT OAuth URL parameters
 
 **Test Steps:**
 1. Select Jainam Prop and click "Connect Account"
-2. Inspect redirect URL in browser
-3. Verify `appKey` parameter is present and correct
-4. Verify `returnURL` parameter is present and correct
+2. Verify redirect to `/jainam_prop/callback`
+3. Verify backend calls `authenticate_direct()`
+4. Verify tokens are stored in database
+5. Verify user is redirected to dashboard
 
 **Expected Results:**
-- URL includes `appKey` parameter
-- `appKey` value matches configured Interactive API key
-- URL includes `returnURL` parameter
-- `returnURL` points to correct callback endpoint
+- Callback handler is triggered
+- `authenticate_direct()` is called with environment credentials
+- Interactive and market data tokens are generated
+- Tokens are stored in `auth` table with `broker='jainam_prop'`
+- User session is established
+- User is redirected to dashboard
 
 ---
 
@@ -302,15 +415,39 @@ case 'compositedge':
     break;
 ```
 
-### OAuth URL Format
-Confirm actual Jainam XTS OAuth URL with Jainam documentation. The expected format is:
-```
-https://xts.jainam.in/interactive/thirdparty?appKey={API_KEY}&returnURL={CALLBACK_URL}
+### Direct Login Implementation (CORRECTED)
+
+**⚠️ CRITICAL:** Jainam does NOT use OAuth. Follow direct login pattern.
+
+**Step 1: Add to Dropdown (`templates/broker.html` line ~163)**
+```html
+<option value="jainam_prop" {{ 'disabled' if broker_name != 'jainam_prop' }}>Jainam Prop {{ '(Disabled)' if broker_name != 'jainam_prop' }}</option>
 ```
 
-### Template Variables
-- **`{{broker_api_key}}`** - Use for Interactive API key (not Market Data API key)
-- **`{{ redirect_url }}`** - Use for OAuth callback URL
+**Step 2: Add JavaScript Handler (`templates/broker.html` line ~32)**
+```javascript
+case 'jainam_prop':
+    loginUrl = '/jainam_prop/callback';
+    break;
+```
+
+**Step 3: Add Backend Callback (`blueprints/brlogin.py` after line ~136)**
+```python
+elif broker == 'jainam_prop':
+    code = 'jainam_prop'
+    logger.debug(f'Jainam Prop broker - code: {code}')
+
+    # Fetch auth token, feed token and user ID
+    auth_token, feed_token, user_id, error_message = auth_function(code)
+    forward_url = 'broker.html'
+```
+
+### Environment Variables Required
+- **`JAINAM_INTERACTIVE_API_KEY`** - Interactive API key
+- **`JAINAM_INTERACTIVE_API_SECRET`** - Interactive API secret
+- **`JAINAM_MARKET_API_KEY`** - Market data API key
+- **`JAINAM_MARKET_API_SECRET`** - Market data API secret
+- **`REDIRECT_URL`** - Should include `/jainam_prop/callback`
 
 ### Browser Compatibility
 Test in:
