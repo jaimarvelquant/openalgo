@@ -1,0 +1,115 @@
+timestamp,base_url,endpoint_path,full_url,payload_type,http_method,status_code,response_type,response_body,error_message,conclusion,has_token,has_connection_string
+2025-10-10T17:45:58.062645,https://smpb.jainam.in:4143,/user/session,https://smpb.jainam.in:4143/user/session,direct_login,POST,404,HTML/Text,"<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+",404 Not Found - Endpoint does not exist,❌ ENDPOINT NOT FOUND,False,False
+2025-10-10T17:45:58.310465,https://smpb.jainam.in:4143,/user/session,https://smpb.jainam.in:4143/user/session,login_with_uniquekey,POST,404,HTML/Text,"<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+",404 Not Found - Endpoint does not exist,❌ ENDPOINT NOT FOUND,False,False
+2025-10-10T17:45:58.483406,https://smpb.jainam.in:4143,/interactive/user/session,https://smpb.jainam.in:4143/interactive/user/session,direct_login,POST,404,HTML/Text,"<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+",404 Not Found - Endpoint does not exist,❌ ENDPOINT NOT FOUND,False,False
+2025-10-10T17:45:58.643794,https://smpb.jainam.in:4143,/interactive/user/session,https://smpb.jainam.in:4143/interactive/user/session,login_with_uniquekey,POST,404,HTML/Text,"<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+",404 Not Found - Endpoint does not exist,❌ ENDPOINT NOT FOUND,False,False
+2025-10-10T17:45:58.801199,https://smpb.jainam.in:4143,/HostLookUp,https://smpb.jainam.in:4143/HostLookUp,hostlookup,POST,404,HTML/Text,"<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+",404 Not Found - Endpoint does not exist,❌ ENDPOINT NOT FOUND,False,False
+2025-10-10T17:45:59.025823,https://smpb.jainam.in:4143,/hostlookup,https://smpb.jainam.in:4143/hostlookup,hostlookup,POST,404,HTML/Text,"<html>
+<head><title>404 Not Found</title></head>
+<body>
+<center><h1>404 Not Found</h1></center>
+<hr><center>nginx</center>
+</body>
+</html>
+",404 Not Found - Endpoint does not exist,❌ ENDPOINT NOT FOUND,False,False
+2025-10-10T17:45:59.232364,http://smpb.jainam.in:4143,/user/session,http://smpb.jainam.in:4143/user/session,direct_login,POST,400,HTML/Text,"<html>
+<head><title>400 The plain HTTP request was sent to HTTPS port</title></head>
+<body>
+<center><h1>400 Bad Request</h1></center>
+<center>The plain HTTP request was sent to HTTPS port</center>
+<hr><center>nginx</center>
+</body>
+</html>
+",400 Bad Request - HTTP sent to HTTPS port,⚠️ ENDPOINT EXISTS - Bad request (check payload),False,False
+2025-10-10T17:45:59.338701,http://smpb.jainam.in:4143,/user/session,http://smpb.jainam.in:4143/user/session,login_with_uniquekey,POST,400,HTML/Text,"<html>
+<head><title>400 The plain HTTP request was sent to HTTPS port</title></head>
+<body>
+<center><h1>400 Bad Request</h1></center>
+<center>The plain HTTP request was sent to HTTPS port</center>
+<hr><center>nginx</center>
+</body>
+</html>
+",400 Bad Request - HTTP sent to HTTPS port,⚠️ ENDPOINT EXISTS - Bad request (check payload),False,False
+2025-10-10T17:45:59.455141,http://smpb.jainam.in:4143,/interactive/user/session,http://smpb.jainam.in:4143/interactive/user/session,direct_login,POST,400,HTML/Text,"<html>
+<head><title>400 The plain HTTP request was sent to HTTPS port</title></head>
+<body>
+<center><h1>400 Bad Request</h1></center>
+<center>The plain HTTP request was sent to HTTPS port</center>
+<hr><center>nginx</center>
+</body>
+</html>
+",400 Bad Request - HTTP sent to HTTPS port,⚠️ ENDPOINT EXISTS - Bad request (check payload),False,False
+2025-10-10T17:45:59.583770,http://smpb.jainam.in:4143,/interactive/user/session,http://smpb.jainam.in:4143/interactive/user/session,login_with_uniquekey,POST,400,HTML/Text,"<html>
+<head><title>400 The plain HTTP request was sent to HTTPS port</title></head>
+<body>
+<center><h1>400 Bad Request</h1></center>
+<center>The plain HTTP request was sent to HTTPS port</center>
+<hr><center>nginx</center>
+</body>
+</html>
+",400 Bad Request - HTTP sent to HTTPS port,⚠️ ENDPOINT EXISTS - Bad request (check payload),False,False
+2025-10-10T17:45:59.761958,http://smpb.jainam.in:4143,/HostLookUp,http://smpb.jainam.in:4143/HostLookUp,hostlookup,POST,400,HTML/Text,"<html>
+<head><title>400 The plain HTTP request was sent to HTTPS port</title></head>
+<body>
+<center><h1>400 Bad Request</h1></center>
+<center>The plain HTTP request was sent to HTTPS port</center>
+<hr><center>nginx</center>
+</body>
+</html>
+",400 Bad Request - HTTP sent to HTTPS port,⚠️ ENDPOINT EXISTS - Bad request (check payload),False,False
+2025-10-10T17:45:59.859419,http://smpb.jainam.in:4143,/hostlookup,http://smpb.jainam.in:4143/hostlookup,hostlookup,POST,400,HTML/Text,"<html>
+<head><title>400 The plain HTTP request was sent to HTTPS port</title></head>
+<body>
+<center><h1>400 Bad Request</h1></center>
+<center>The plain HTTP request was sent to HTTPS port</center>
+<hr><center>nginx</center>
+</body>
+</html>
+",400 Bad Request - HTTP sent to HTTPS port,⚠️ ENDPOINT EXISTS - Bad request (check payload),False,False
+2025-10-10T17:45:59.970102,https://ctrade.jainam.in:4001,/user/session,https://ctrade.jainam.in:4001/user/session,direct_login,POST,,,,Connection error: [Errno 61] Connection refused,❌ CONNECTION FAILED,False,False
+2025-10-10T17:46:00.064540,https://ctrade.jainam.in:4001,/user/session,https://ctrade.jainam.in:4001/user/session,login_with_uniquekey,POST,,,,Connection error: [Errno 61] Connection refused,❌ CONNECTION FAILED,False,False
+2025-10-10T17:46:00.142413,https://ctrade.jainam.in:4001,/interactive/user/session,https://ctrade.jainam.in:4001/interactive/user/session,direct_login,POST,,,,Connection error: [Errno 61] Connection refused,❌ CONNECTION FAILED,False,False
+2025-10-10T17:46:00.204970,https://ctrade.jainam.in:4001,/interactive/user/session,https://ctrade.jainam.in:4001/interactive/user/session,login_with_uniquekey,POST,,,,Connection error: [Errno 61] Connection refused,❌ CONNECTION FAILED,False,False
+2025-10-10T17:46:00.255063,https://ctrade.jainam.in:4001,/HostLookUp,https://ctrade.jainam.in:4001/HostLookUp,hostlookup,POST,,,,Connection error: [Errno 61] Connection refused,❌ CONNECTION FAILED,False,False
+2025-10-10T17:46:00.322239,https://ctrade.jainam.in:4001,/hostlookup,https://ctrade.jainam.in:4001/hostlookup,hostlookup,POST,,,,Connection error: [Errno 61] Connection refused,❌ CONNECTION FAILED,False,False
+2025-10-10T17:46:00.376419,http://ctrade.jainam.in:4001,/user/session,http://ctrade.jainam.in:4001/user/session,direct_login,POST,,,,Connection error: [Errno 61] Connection refused,❌ CONNECTION FAILED,False,False
+2025-10-10T17:46:00.425358,http://ctrade.jainam.in:4001,/user/session,http://ctrade.jainam.in:4001/user/session,login_with_uniquekey,POST,,,,Connection error: [Errno 61] Connection refused,❌ CONNECTION FAILED,False,False
+2025-10-10T17:46:00.510527,http://ctrade.jainam.in:4001,/interactive/user/session,http://ctrade.jainam.in:4001/interactive/user/session,direct_login,POST,,,,Connection error: [Errno 61] Connection refused,❌ CONNECTION FAILED,False,False
+2025-10-10T17:46:00.593675,http://ctrade.jainam.in:4001,/interactive/user/session,http://ctrade.jainam.in:4001/interactive/user/session,login_with_uniquekey,POST,,,,Connection error: [Errno 61] Connection refused,❌ CONNECTION FAILED,False,False
+2025-10-10T17:46:00.634880,http://ctrade.jainam.in:4001,/HostLookUp,http://ctrade.jainam.in:4001/HostLookUp,hostlookup,POST,,,,Connection error: [Errno 61] Connection refused,❌ CONNECTION FAILED,False,False
+2025-10-10T17:46:00.684675,http://ctrade.jainam.in:4001,/hostlookup,http://ctrade.jainam.in:4001/hostlookup,hostlookup,POST,,,,Connection error: [Errno 61] Connection refused,❌ CONNECTION FAILED,False,False
