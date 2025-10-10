@@ -1,0 +1,132 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>complete-jainam-prop-broker-integration-for-production-readiness</epicId>
+    <storyId>1.9</storyId>
+    <title>Story 1.9: Add Jainam Prop to Broker Selection UI</title>
+    <status>Ready for Implementation</status>
+    <generatedAt>2025-10-09T18:40:15.579867+05:30</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>/Users/maruth/projects/openalgo/docs/bmad/stories/story-1.9-broker-selection-ui.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>trader wanting to use Jainam Prop with OpenAlgo</asA>
+    <iWant>Jainam Prop to appear in the broker selection dropdown</iWant>
+    <soThat>I can select and authenticate with my Jainam Prop account using direct login</soThat>
+    <tasks>    <task id="1" title="Add Broker Dropdown Option (15 minutes)">
+      <subtask id="Subtask 1.1">Add `&lt;option value=&quot;jainam_prop&quot;&gt;Jainam Prop&lt;/option&gt;` to `templates/broker.html` (5 min)</subtask>
+      <subtask id="Subtask 1.2">Place alphabetically between &quot;Groww&quot; and &quot;Ibulls&quot; (2 min)</subtask>
+      <subtask id="Subtask 1.3">Add enable/disable logic based on `broker_name` variable (5 min)</subtask>
+      <subtask id="Subtask 1.4">Verify dropdown renders correctly in browser (3 min)</subtask>
+    </task>
+    <task id="2" title="Add JavaScript Direct Login Handler (15 minutes)">
+      <subtask id="Subtask 2.1">Add `case &#x27;jainam_prop&#x27;:` to switch statement in `templates/broker.html` (5 min)</subtask>
+      <subtask id="Subtask 2.2">Set `loginUrl = &#x27;/jainam_prop/callback&#x27;;` (following FivePaisaXTS pattern) (5 min)</subtask>
+      <subtask id="Subtask 2.3">Add `break;` statement (1 min)</subtask>
+      <subtask id="Subtask 2.4">Test JavaScript routing in browser console (4 min)</subtask>
+    </task>
+    <task id="3" title="Add Backend Callback Handler (30 minutes)">
+      <subtask id="Subtask 3.1">Add `elif broker == &#x27;jainam_prop&#x27;:` case to `blueprints/brlogin.py` (10 min)</subtask>
+      <subtask id="Subtask 3.2">Call `auth_function()` to get tokens (follows FivePaisaXTS pattern) (5 min)</subtask>
+      <subtask id="Subtask 3.3">Extract `auth_token`, `feed_token`, `user_id`, `error_message` from response (5 min)</subtask>
+      <subtask id="Subtask 3.4">Set `forward_url = &#x27;broker.html&#x27;` (2 min)</subtask>
+      <subtask id="Subtask 3.5">Test callback handler with mock authentication (8 min)</subtask>
+    </task>
+    <task id="4" title="Add Database Token Storage (15 minutes)">
+      <subtask id="Subtask 4.1">Verify `auth_function` is registered in `app.broker_auth_functions` (5 min)</subtask>
+      <subtask id="Subtask 4.2">Confirm token storage uses existing `upsert_auth()` call (5 min)</subtask>
+      <subtask id="Subtask 4.3">Test end-to-end flow with database persistence (5 min)</subtask>
+    </task>
+    <task id="5" title="Integration Testing (15 minutes)">
+      <subtask id="Subtask 5.1">Test broker selection dropdown displays Jainam Prop (3 min)</subtask>
+      <subtask id="Subtask 5.2">Test clicking &quot;Connect Account&quot; routes to callback (3 min)</subtask>
+      <subtask id="Subtask 5.3">Test authentication flow with valid credentials (5 min)</subtask>
+      <subtask id="Subtask 5.4">Test error handling with invalid credentials (4 min)</subtask>
+    </task>
+  </tasks>
+  </story>
+
+  <acceptanceCriteria>    <criterion id="AC1" title="Add Broker Option to Dropdown">
+      <implementation>Add `&lt;option value=&quot;jainam_prop&quot;&gt;Jainam Prop&lt;/option&gt;` to broker dropdown Place alphabetically in dropdown list Ensure option is visible and selectable</implementation>
+      <verification>Jainam Prop appears in broker dropdown Option value is exactly `jainam_prop` (lowercase with underscore) Display text is &quot;Jainam Prop&quot; (proper capitalization)</verification>
+    </criterion>
+    <criterion id="AC2" title="Add Direct Login Routing (CORRECTED)">
+      <implementation>Add case statement in broker selection form handler Route to `/jainam_prop/callback` (direct callback, not OAuth URL) Follow FivePaisaXTS pattern (NOT Compositedge/Zerodha OAuth pattern)</implementation>
+      <verification>JavaScript switch statement includes `case &#x27;jainam_prop&#x27;:` Form submission routes to `/jainam_prop/callback` No JavaScript errors in browser console</verification>
+    </criterion>
+    <criterion id="AC3" title="Add Backend Callback Handler (NEW)">
+      <implementation>Add `elif broker == &#x27;jainam_prop&#x27;:` case after FivePaisaXTS handler (line ~136) Call `auth_function()` which maps to `authenticate_direct()` from Story 1.0-1 Extract `auth_token`, `feed_token`, `user_id`, `error_message` from response Set `forward_url = &#x27;broker.html&#x27;` Follow exact pattern from FivePaisaXTS (lines 130-136)</implementation>
+      <verification>Callback handler added to `blueprints/brlogin.py` Handler calls correct authentication function Tokens extracted and stored correctly Error handling follows existing pattern</verification>
+    </criterion>
+    <criterion id="AC4" title="Enable/Disable Based on Configuration">
+      <implementation>Check if Jainam Prop credentials are configured Disable option if credentials missing Show appropriate message if disabled Follow same pattern as other brokers</implementation>
+      <verification>Option is enabled when credentials configured Option is disabled when credentials missing Disabled state is visually indicated Tooltip or message explains why disabled (if applicable)</verification>
+    </criterion>
+    <criterion id="AC5" title="Verify Dropdown Display">
+      <implementation>Test dropdown rendering in multiple browsers Verify text is readable and properly formatted Ensure option is clickable/selectable</implementation>
+      <verification>Dropdown displays correctly in Chrome Dropdown displays correctly in Firefox Dropdown displays correctly in Safari Option is selectable with mouse and keyboard</verification>
+    </criterion>
+    <criterion id="AC6" title="Test Direct Login Flow (CORRECTED)">
+      <implementation>Select Jainam Prop from dropdown Click &quot;Connect Account&quot; button Verify redirect to `/jainam_prop/callback` Verify backend authentication is triggered Verify tokens are stored in database</implementation>
+      <verification>Button click triggers redirect to callback Redirect goes to `/jainam_prop/callback` (NOT external OAuth URL) Backend `authenticate_direct()` function is called Tokens are successfully stored in database User is redirected to dashboard on success</verification>
+    </criterion></acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+    <artifact path="docs/bmad/research/jainam-prop-implementation-plan.md" title="Jainam Prop Implementation Plan" section="1.1 Current State">Implementation roadmap confirms Jainam XTS uses direct programmatic login and directs auth_api.py to call /interactive/user/session and /apimarketdata/auth/login without any OAuth workflow.</artifact>
+    <artifact path="docs/bmad/research/jainam-authentication-guide.md" title="Jainam Prop Authentication Guide" section="Executive Summary">Guide documents the dual interactive and market data login endpoints and reiterates that no request token or OAuth flow is required for Jainam.</artifact>
+    <artifact path="docs/bmad/research/jainam-code-reuse-analysis.md" title="Jainam Code Reuse Analysis" section="Section 1 – Authentication Code Reuse">Analysis shows FivePaisaXTS auth_api.py already implements the direct login pattern Jainam needs, including dual-token handling and reusable HTTP structure.</artifact>
+    <artifact path="docs/bmad/deployment-guide.md" title="Jainam Prop Deployment Guide" section="2.2 Add Jainam Credentials">Deployment checklist instructs teams to populate the four Jainam API keys and set REDIRECT_URL to `/jainam_prop/callback`, ensuring the UI points at the direct login callback.</artifact>
+    <artifact path="docs/bmad/research/sprint-change-proposal-jainam-impl-plan.md" title="Sprint Change Proposal – Jainam Plan Integration" section="Executive Summary">Change proposal highlights the authentication architecture gap and mandates integrating the SDK-based direct login and token persistence patterns into Epic 1.</artifact>
+  </docs>
+    <code>    <artifact path="templates/broker.html" kind="template" symbol="switch(platform)" lines="12-70">Add a `case &quot;jainam_prop&quot;` branch to reuse the direct-login redirect pattern and send users to `/jainam_prop/callback` like the other direct brokers.</artifact>
+    <artifact path="templates/broker.html" kind="template" symbol="&lt;option value=&quot;…&quot;&gt; list" lines="150-190">Insert the Jainam Prop `&lt;option&gt;` alphabetically and mirror the existing `disabled` binding that gates brokers based on `broker_name` configuration.</artifact>
+    <artifact path="blueprints/brlogin.py" kind="flask-blueprint" symbol="broker_callback(broker)" lines="30-210">Extend the callback handler with an `elif broker==&quot;jainam_prop&quot;` branch that invokes `auth_function(code)` using the FivePaisaXTS-style token handshake and forwards to `broker.html`.</artifact>
+    <artifact path="broker/jainam_prop/api/auth_api.py" kind="python-func" symbol="authenticate_direct()" lines="60-140">Provides the direct interactive/market token login Jainam needs; the UI callback should reuse this helper instead of creating new authentication logic.</artifact>
+    <artifact path="database/auth_db.py" kind="python-func" symbol="upsert_auth()" lines="147-190">The callback flow should continue storing Jainam tokens via `upsert_auth`, matching existing persistence for other brokers.</artifact>
+  </code>
+    <dependencies>    <ecosystem name="python" manifest="pyproject.toml">
+      <package name="Flask" version="3.0.3"/>
+      <package name="Flask-Limiter" version="3.7.0"/>
+      <package name="Flask-SocketIO" version="5.3.6"/>
+      <package name="httpx[http2]" version="0.28.1"/>
+      <package name="SQLAlchemy" version="2.0.31"/>
+      <package name="python-dotenv" version="1.0.1"/>
+    </ecosystem>
+    <ecosystem name="node" manifest="package.json">
+      <package name="tailwindcss" version="^4.1.14"/>
+      <package name="@tailwindcss/postcss" version="^4.1.14"/>
+      <package name="daisyui" version="^5.1.27"/>
+      <package name="postcss" version="^8.4.49"/>
+      <package name="postcss-cli" version="^11.0.0"/>
+      <package name="autoprefixer" version="^10.4.20"/>
+    </ecosystem></dependencies>
+  </artifacts>
+<constraints>
+    <item>Jainam Prop must follow the direct login flow (no OAuth, no request token) outlined in the Dev Notes and research docs.</item>
+    <item>Broker dropdown entries stay alphabetized and reuse the existing `disabled` conditional on `broker_name` so environments can toggle availability.</item>
+    <item>Use the plugin loader mapping (`app.broker_auth_functions`) to call `authenticate_direct()`; do not introduce duplicate authentication clients.</item>
+    <item>Persist interactive and feed tokens via `database.auth_db.upsert_auth` to match the shared broker storage contract.</item>
+  </constraints>
+<interfaces>
+    <interface name="broker_callback" path="blueprints/brlogin.py:30" signature="broker_callback(broker, para=None)">Flask route handling '/&lt;broker&gt;/callback'; extend with a Jainam branch that uses the loaded auth function and sets the forward URL.</interface>
+    <interface name="authenticate_direct" path="broker/jainam_prop/api/auth_api.py:80" signature="authenticate_direct() -&gt; Tuple[str, str, str, Optional[str]]">Returns Jainam interactive token, market token, and user ID for reuse in the callback flow.</interface>
+    <interface name="upsert_auth" path="database/auth_db.py:147" signature="upsert_auth(name, auth_token, broker, feed_token=None, user_id=None, revoke=False)">Saves encrypted tokens to the auth store; the Jainam callback should invoke it with the appropriate broker code.</interface>
+  </interfaces>
+  <tests>
+    <standards>Back-end automation relies on pytest with Flask test clients and httpx mocks; broker plugins keep their suites under `broker/jainam_prop/test_*.py` to validate token lifecycles, while UI flows are usually exercised through browser-based smoke tests plus manual design review.</standards>
+    <locations>
+      <location>broker/jainam_prop/test_*.py</location>
+      <location>test/test_broker.py</location>
+      <location>test/test_navigation_update.py</location>
+      <location>test/test_rate_limits_mock.py</location>
+    </locations>
+    <ideas>
+      <idea ac="AC1">Extend a template rendering test to assert the Jainam `&lt;option value="jainam_prop"&gt;` is present and remains alphabetically ordered.</idea>
+      <idea ac="AC2">Add a browser automation test that selects Jainam and confirms the form targets `/jainam_prop/callback` with no OAuth redirects.</idea>
+      <idea ac="AC3">Mock `app.broker_auth_functions['jainam_prop_auth']` in a Flask client test and verify the callback stores tokens then redirects to `broker.html`.</idea>
+      <idea ac="AC4">Create a configuration toggle test asserting missing Jainam credentials render the option with the `disabled` attribute and helper tooltip.</idea>
+      <idea ac="AC6">Execute an end-to-end smoke using seeded environment variables to drive direct login and assert `upsert_auth` persisted interactive and feed tokens.</idea>
+    </ideas>
+</tests>
+</story-context>

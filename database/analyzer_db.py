@@ -4,7 +4,7 @@ import os
 import json
 from sqlalchemy import create_engine, Column, Integer, DateTime, Text, String
 from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from sqlalchemy.sql import func
 from sqlalchemy.pool import NullPool
 from concurrent.futures import ThreadPoolExecutor

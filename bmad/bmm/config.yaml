@@ -5,7 +5,7 @@
 
 project_name: projects
 tech_docs: '{project-root}/bmad/docs'
-dev_story_location: '{project-root}/bmad/docs/stories'
+dev_story_location: '{project-root}/docs/bmad/stories'
 kb_location: ~/bmad/bmm/kb.md
 desired_mcp_tools:
   - Chrome Official MCP

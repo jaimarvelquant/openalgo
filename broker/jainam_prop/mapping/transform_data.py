@@ -19,6 +19,9 @@ from typing import Optional
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 
+from broker.jainam_prop._ensure_database import ensure_database_package
+
+ensure_database_package()
 from database.symbol import engine
 from utils.logging import get_logger
 

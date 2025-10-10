@@ -53,10 +53,10 @@ def format_statistics(stats):
 def import_broker_module(broker_name: str) -> Optional[Dict[str, Any]]:
     """
     Dynamically import the broker-specific order modules.
-    
+
     Args:
         broker_name: Name of the broker
-        
+
     Returns:
         Dictionary of broker functions or None if import fails
     """
@@ -65,6 +65,17 @@ def import_broker_module(broker_name: str) -> Optional[Dict[str, Any]]:
         api_module = importlib.import_module(f'broker.{broker_name}.api.order_api')
         # Import mapping module
         mapping_module = importlib.import_module(f'broker.{broker_name}.mapping.order_data')
+
+        # Verify required functions exist
+        required_funcs = ['get_order_book', 'map_order_data', 'calculate_order_statistics', 'transform_order_data']
+        for func_name in required_funcs:
+            if func_name.startswith('get_'):
+                if not hasattr(api_module, func_name):
+                    raise AttributeError(f"API module missing required function: {func_name}")
+            else:
+                if not hasattr(mapping_module, func_name):
+                    raise AttributeError(f"Mapping module missing required function: {func_name}")
+
         return {
             'get_order_book': getattr(api_module, 'get_order_book'),
             'map_order_data': getattr(mapping_module, 'map_order_data'),
@@ -72,7 +83,9 @@ def import_broker_module(broker_name: str) -> Optional[Dict[str, Any]]:
             'transform_order_data': getattr(mapping_module, 'transform_order_data')
         }
     except (ImportError, AttributeError) as error:
-        logger.error(f"Error importing broker modules: {error}")
+        logger.error(f"Error importing broker modules for {broker_name}: {error}")
+        import traceback
+        logger.error(traceback.format_exc())
         return None
 
 def get_orderbook_with_auth(auth_token: str, broker: str, original_data: Dict[str, Any] = None) -> Tuple[bool, Dict[str, Any], int]:

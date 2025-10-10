@@ -1,0 +1,200 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1.2</epicId>
+    <storyId>4</storyId>
+    <title>Jainam Live Integration Validation</title>
+    <status>Approved</status>
+    <generatedAt>2025-10-09</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>/Users/maruth/projects/openalgo/docs/bmad/stories/story-1.2-4[Jainam-Live-Integration-Validation].md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>release readiness owner for the Jainam Prop integration</asA>
+    <iWant>to validate positions, holdings, and trade book flows against the live Jainam API with production-grade credentials</iWant>
+    <soThat>we can confirm latency targets, market token propagation, and UI data accuracy before launch</soThat>
+    <tasks>
+      - Task 1: Prepare live validation environment (AC: 1, 2, 3, 5)
+        - Subtask 1.1: Provision secure storage for Jainam interactive and market tokens (no plaintext in repo)
+        - Subtask 1.2: Configure .venv with SQLAlchemy and document activation steps
+        - Subtask 1.3: Re-run baseline automated tests to confirm clean state
+      - Task 2: Execute live API validation (AC: 1, 2, 3)
+        - Subtask 2.1: Run positions/holdings/trade book fetches capturing timestamps and payload samples
+        - Subtask 2.2: Confirm holdings P&amp;L reflects live LTP values; troubleshoot market token propagation if zero
+        - Subtask 2.3: Aggregate latency metrics and compare to IV thresholds
+      - Task 3: Publish evidence and documentation updates (AC: 4, 5, 6)
+        - Subtask 3.1: Store sanitized logs and timing data under docs/bmad/qa/evidence/
+        - Subtask 3.2: Update setup/deployment docs with venv + dependency instructions
+        - Subtask 3.3: Record outcomes, risks, and next steps in this story's Dev Notes and change log
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">Capture at least one live API run for positions, holdings, and trade book using operational credentials and record raw request/response timestamps</criterion>
+    <criterion id="AC2">Document observed end-to-end latency for each flow (API + transform + service) and confirm they meet IV targets (&lt;5 s positions/holdings, &lt;5 s trade book)</criterion>
+    <criterion id="AC3">Verify live holdings data returns non-zero P&amp;L by confirming market/feed token propagation through services/holdings_service → map_portfolio_data</criterion>
+    <criterion id="AC4">Update docs/bmad/qa/evidence/ with captured telemetry and summary findings, including any deviations or mitigations</criterion>
+    <criterion id="AC5">Extend project setup documentation to include SQLAlchemy/venv requirements so tests and scripts run without ad-hoc steps</criterion>
+    <criterion id="AC6">Log validation outcomes in the story Dev Notes and change log, flagging any residual risks or follow-up items</criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/bmad/jainam-prop-completion-prd.md" title="Jainam Prop Broker Integration Completion PRD" section="Epic 1: Complete Jainam Prop Broker Integration for Production Readiness">
+        Epic Goal: Complete the partially implemented Jainam Prop broker integration by implementing all missing API functions, fixing database integration for symbol-to-token resolution, resolving security vulnerabilities, and adding comprehensive error handling to achieve production readiness and feature parity with other OpenAlgo broker integrations.
+      </doc>
+      <doc path="docs/bmad/stories/story-1.2-1[Position-Holdings].md" title="Story 1.2-1: Position-Holdings" section="Implementation and QA Results">
+        Implemented get_positions() and get_holdings() functions with comprehensive mapping pipeline including map_position_data, transform_positions_data, map_portfolio_data, calculate_portfolio_statistics, and transform_holdings_data. All AC6 fields validated. QA Gate: PASS with concerns about IV3 live validation evidence.
+      </doc>
+      <doc path="docs/bmad/stories/story-1.2-2[Trade-Book].md" title="Story 1.2-2: Trade-Book" section="Implementation and QA Results">
+        Implemented get_trade_book() function with transform_trade_book(), map_trade_data(), and transform_tradebook_data() transformations. All required fields (orderid, trade_id, symbol, action, quantity, price, timestamp) validated. QA Gate: PASS with Round 5 sign-off.
+      </doc>
+      <doc path="docs/bmad/qa/live-validation-runbook.md" title="Jainam Live Validation Runbook" section="Complete Runbook">
+        Documents repeatable steps for Story 1.2-4 live validation: secure credential storage using keyring, virtual environment setup, baseline regression tests, live API run evidence capture checklist (positions/holdings/trades with latency targets), data sanitization rules, and handoff summary template.
+      </doc>
+      <doc path="docs/bmad/qa/evidence/story-1.2-4-live-validation.md" title="Story 1.2-4 Live Validation Evidence Template" section="Evidence Capture Template">
+        Pre-checks, credential source, live API runs table (positions/holdings/trade book with status currently blocked pending production credentials), observations/findings template, sanitization checklist, and follow-up actions.
+      </doc>
+      <doc path="docs/bmad/research/jainam-authentication-guide.md" title="Jainam Prop Authentication Guide" section="Direct Login Authentication">
+        Complete guide explaining Jainam XTS API direct login (no OAuth/request token needed). Documents two separate auth flows: Interactive API (POST /interactive/user/session) and Market Data API (POST /apimarketdata/auth/login). Both require appKey + secretKey + source. Includes token lifecycle, usage patterns, and helper script recommendations.
+      </doc>
+      <doc path="docs/bmad/qa/evidence/story-1.2-1-latency-sample.md" title="Story 1.2-1 Latency Sample Evidence" section="Performance Benchmark">
+        Simulated IV3 performance evidence showing positions (1.20s) + holdings (1.35s) = 2.564s total, well under 5s requirement. Uses measure_jainam_portfolio_latency.py benchmark harness with mocked payloads.
+      </doc>
+    </docs>
+    <code>
+      <artifact path="broker/jainam_prop/api/order_api.py" kind="module" symbol="get_positions" lines="273-354" reason="Core positions API function that calls /interactive/portfolio/positions?dayOrNet=NetWise endpoint - reference implementation for live validation latency measurement"/>
+      <artifact path="broker/jainam_prop/api/order_api.py" kind="module" symbol="get_holdings" lines="356-437" reason="Core holdings API function that calls /interactive/portfolio/holdings endpoint - reference for market token propagation validation"/>
+      <artifact path="broker/jainam_prop/api/order_api.py" kind="module" symbol="get_trade_book" lines="482-547" reason="Core trade book API function that calls /interactive/trades endpoint - reference for live API validation flow"/>
+      <artifact path="broker/jainam_prop/mapping/order_data.py" kind="module" symbol="map_portfolio_data" lines="443-558" reason="Critical holdings mapping function that implements market quote enrichment for P&amp;L calculation when MTM fields are absent - key validation target for AC3"/>
+      <artifact path="services/holdings_service.py" kind="module" symbol="get_holdings_with_auth" lines="~50-70" reason="Service layer entry point that propagates auth_token (including market_token) to broker mappings - ensures market token reaches quote enrichment path"/>
+      <artifact path="services/positionbook_service.py" kind="module" symbol="get_positionbook_with_auth" lines="~40-60" reason="Service layer entry point for positions - reference pattern for auth payload propagation"/>
+      <artifact path="services/auth_payload.py" kind="module" symbol="build_broker_auth_payload" lines="~1-30" reason="Helper that merges interactive and market/feed tokens into unified broker auth payload - validates token propagation for AC3"/>
+      <artifact path="scripts/measure_jainam_portfolio_latency.py" kind="script" symbol="main" lines="~1-100" reason="Simulated benchmark harness used for IV3 latency evidence - template for live validation timing capture"/>
+      <artifact path="scripts/jainam_keyring_helper.py" kind="script" symbol="store" lines="~1-50" reason="Secure credential storage helper mentioned in validation runbook - stores Jainam tokens in OS keychain without plaintext in repo"/>
+      <artifact path="scripts/live_fetch_jainam.py" kind="script" symbol="main" lines="~1-150" reason="Live validation harness CLI that pulls positions/holdings/trade book while capturing latency metrics and redacting identifiers - primary execution tool for AC1 and AC2"/>
+      <artifact path="broker/jainam_prop/test_position_holdings_unit.py" kind="test" symbol="TestHoldingsMapping::test_map_portfolio_data_enriches_price_with_market_quote" lines="~200-240" reason="Unit test confirming holdings leverage market quote fallback to emit non-zero P&amp;L - validates AC3 mechanism"/>
+      <artifact path="broker/jainam_prop/test_trade_book.py" kind="test" symbol="test_performance_large_tradebook" lines="175-209" reason="Performance test validating trade book retrieval with 150 trades completes well under 5s - reference for AC2 trade book latency validation"/>
+    </code>
+    <dependencies>
+      <python>
+        <package name="keyring" version="latest" reason="Required for secure Jainam token storage via scripts/jainam_keyring_helper.py per validation runbook Section 1"/>
+        <package name="SQLAlchemy" version="latest" reason="Required by holdings/positions services for ORM functionality - explicitly documented in AC5 and runbook Section 2"/>
+        <package name="pytest" version="latest" reason="Required to run baseline regression tests (test_position_holdings_unit.py, test_trade_book.py) per runbook Section 3"/>
+        <package name="httpx" version="latest" reason="Shared HTTP client used by all Jainam API functions for request handling"/>
+        <package name="flask" version="2.x" reason="Web framework providing service layer context for holdings/positions endpoints"/>
+      </python>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint type="credential-security">Credentials must remain outside version control. Use environment variables or OS keyring for production tokens. No bearer tokens/headers in committed artifacts per runbook Section 5.</constraint>
+    <constraint type="data-sanitization">Remove account numbers, order IDs, and client codes from all evidence artifacts before committing. Retain timestamps, latency measurements, and anonymized symbol data per runbook Section 5.</constraint>
+    <constraint type="latency-target">All API flows must complete within 5 seconds: positions &lt;5s, holdings &lt;5s, trade book &lt;5s (AC2, IV targets from stories 1.2-1, 1.2-2).</constraint>
+    <constraint type="rate-limiting">Validation should not exceed rate limits or disrupt production clients. Use small quantities and avoid repeated rapid calls per PRD Section 2.2 NFR7.</constraint>
+    <constraint type="test-pattern">Run baseline regression tests before live validation to confirm clean state: pytest broker/jainam_prop/test_position_holdings_unit.py -q and pytest broker/jainam_prop/test_trade_book.py -q per runbook Section 3.</constraint>
+    <constraint type="environment-setup">SQLAlchemy must be installed in .venv for ORM functionality. Explicit install documented in AC5 and runbook Section 2.</constraint>
+    <constraint type="market-token-propagation">Holdings P&amp;L requires live market token propagation through services/holdings_service → map_portfolio_data → quote enrichment path. Verify non-zero P&amp;L output per AC3.</constraint>
+    <constraint type="evidence-storage">Store sanitized logs and timing data under docs/bmad/qa/evidence/ per AC4. Use evidence template at story-1.2-4-live-validation.md.</constraint>
+  </constraints>
+  <interfaces>
+    <interface name="Jainam Interactive API - Positions" kind="REST API" signature="GET /interactive/portfolio/positions?dayOrNet=NetWise" path="broker/jainam_prop/api/order_api.py:314" notes="Returns positions in XTS format {'result': {'positionList': [...]}}. Requires interactive_token in Authorization header. Referenced by get_positions() implementation."/>
+    <interface name="Jainam Interactive API - Holdings" kind="REST API" signature="GET /interactive/portfolio/holdings" path="broker/jainam_prop/api/order_api.py:397" notes="Returns holdings in XTS format. May lack MTM fields requiring market quote enrichment for P&amp;L. Requires interactive_token in Authorization header. Referenced by get_holdings() implementation."/>
+    <interface name="Jainam Interactive API - Trade Book" kind="REST API" signature="GET /interactive/trades" path="broker/jainam_prop/api/order_api.py:520" notes="Returns trades in XTS format {'result': [...]} or {'data': [...]}. Requires interactive_token in Authorization header. Referenced by get_trade_book() implementation."/>
+    <interface name="Jainam Interactive API - Login" kind="REST API" signature="POST /interactive/user/session {appKey, secretKey, source}" path="docs/bmad/research/jainam-authentication-guide.md:88-109" notes="Direct login (no OAuth) returns {'result': {'token': ..., 'userID': ..., 'isInvestorClient': ...}}. Token valid ~24 hours. Used to obtain interactive_token for portfolio/order APIs."/>
+    <interface name="Jainam Market Data API - Login" kind="REST API" signature="POST /apimarketdata/auth/login {appKey, secretKey, source}" path="docs/bmad/research/jainam-authentication-guide.md:112-130" notes="Direct login returns {'result': {'token': ..., 'userID': ...}}. Token valid ~24 hours. Used to obtain market_token for quote APIs and holdings P&amp;L enrichment."/>
+    <interface name="map_portfolio_data" kind="function" signature="map_portfolio_data(holdings_data, auth_token=None)" path="broker/jainam_prop/mapping/order_data.py:443-558" notes="Critical holdings mapping function. If auth_token contains market_token and MTM fields are absent, fetches live quotes via Jainam quote API to compute P&amp;L. Returns enriched holdings with profitandloss/pnlpercentage. Key validation target for AC3."/>
+    <interface name="build_broker_auth_payload" kind="function" signature="build_broker_auth_payload(interactive_token, market_token)" path="services/auth_payload.py:~1-30" notes="Merges interactive and market/feed tokens into unified broker auth payload. Ensures downstream mappers receive both tokens. Used by holdings_service and positionbook_service."/>
+    <interface name="get_holdings_with_auth" kind="function" signature="get_holdings_with_auth(broker, user_id, include_feed_token=True)" path="services/holdings_service.py:~50-70" notes="Service layer entry point for holdings. Calls get_auth_token_broker with include_feed_token=True to propagate market_token to broker mappers. Enables holdings P&amp;L enrichment."/>
+    <interface name="scripts/live_fetch_jainam.py" kind="CLI script" signature="python -m scripts.live_fetch_jainam --fetch [positions|holdings|trades]" path="scripts/live_fetch_jainam.py:~1-150" notes="Live validation harness CLI. Captures request/response timestamps, redacts PII, outputs sanitized JSON. Primary tool for AC1/AC2 evidence capture. Requires production credentials loaded via keyring export."/>
+    <interface name="scripts/jainam_keyring_helper.py" kind="CLI script" signature="python -m scripts.jainam_keyring_helper [store|export]" path="scripts/jainam_keyring_helper.py:~1-50" notes="Secure credential storage helper. 'store' prompts for tokens and saves to OS keychain. 'export --format env' emits environment variable exports for session loading. No plaintext credentials in repo per AC1 and runbook Section 1."/>
+  </interfaces>
+  <tests>
+    <standards>
+      Live validation follows manual execution pattern documented in runbook. Baseline regression tests use pytest framework with unit test coverage for positions/holdings/trade book mapping pipelines and performance benchmarks. All tests run in .venv with SQLAlchemy installed. Evidence artifacts stored under docs/bmad/qa/evidence/ with sanitized data (no account IDs, order IDs, or bearer tokens committed). Latency measurements captured with ISO8601 timestamps for reproducibility. Testing approach mirrors Story 1.2-1 QA evidence pattern with simulated benchmarks replaced by live API runs when production credentials are available.
+    </standards>
+    <locations>
+      - broker/jainam_prop/test_position_holdings_unit.py (baseline regression for positions/holdings)
+      - broker/jainam_prop/test_trade_book.py (baseline regression for trade book)
+      - scripts/measure_jainam_portfolio_latency.py (simulated latency benchmark - template for live runs)
+      - scripts/live_fetch_jainam.py (live validation harness CLI for AC1/AC2 evidence)
+      - docs/bmad/qa/evidence/ (evidence artifact storage per AC4)
+    </locations>
+    <ideas>
+      <idea criterion="AC1" description="Execute live API run for positions endpoint">
+        Run: python -m scripts.live_fetch_jainam --fetch positions
+        Capture: Raw request start/end timestamps (ISO8601), response payload sample with account IDs redacted
+        Verify: API call succeeds, returns {'result': {'positionList': [...]}} structure, timestamps recorded
+        Evidence: Store as docs/bmad/qa/evidence/story-1.2-4-positions-run-{date}.json
+      </idea>
+      <idea criterion="AC1" description="Execute live API run for holdings endpoint">
+        Run: python -m scripts.live_fetch_jainam --fetch holdings
+        Capture: Raw request start/end timestamps (ISO8601), response payload sample with account IDs redacted
+        Verify: API call succeeds, returns holdings data structure, timestamps recorded
+        Evidence: Store as docs/bmad/qa/evidence/story-1.2-4-holdings-run-{date}.json
+      </idea>
+      <idea criterion="AC1" description="Execute live API run for trade book endpoint">
+        Run: python -m scripts.live_fetch_jainam --fetch trades
+        Capture: Raw request start/end timestamps (ISO8601), response payload sample with trade IDs redacted
+        Verify: API call succeeds, returns trades data structure, timestamps recorded
+        Evidence: Store as docs/bmad/qa/evidence/story-1.2-4-tradebook-run-{date}.json
+      </idea>
+      <idea criterion="AC2" description="Calculate and document end-to-end latency for positions flow">
+        Compute: API call duration + transformation time + service layer overhead
+        Target: &lt;5 seconds total
+        Measure: Parse timestamps from live_fetch_jainam output for request start → response received → transform complete
+        Document: Update evidence template with observed latency, compare to IV3 target
+      </idea>
+      <idea criterion="AC2" description="Calculate and document end-to-end latency for holdings flow">
+        Compute: API call duration + quote enrichment time (if MTM absent) + transformation time + service layer overhead
+        Target: &lt;5 seconds total
+        Measure: Parse timestamps including any market quote API calls triggered by map_portfolio_data
+        Document: Update evidence template, note if quote enrichment path was exercised
+      </idea>
+      <idea criterion="AC2" description="Calculate and document end-to-end latency for trade book flow">
+        Compute: API call duration + transformation time (transform_trade_book → map_trade_data → transform_tradebook_data) + service layer overhead
+        Target: &lt;5 seconds total
+        Measure: Parse timestamps from live_fetch_jainam output
+        Document: Update evidence template with observed latency, compare to Story 1.2-2 performance tests
+      </idea>
+      <idea criterion="AC3" description="Verify holdings P&amp;L reflects live LTP values">
+        Precondition: Ensure market_token is present in auth_token passed to holdings service
+        Execute: Run holdings fetch, inspect output profitandloss/pnlpercentage fields
+        Verify: P&amp;L values are non-zero (not hardcoded 0), LTP != buy_price in enriched holdings
+        Debug: If P&amp;L is zero, check logs for "map_portfolio_data" market quote API calls, verify market_token propagation through build_broker_auth_payload
+        Evidence: Store holdings output showing non-zero P&amp;L with market price != buy price
+      </idea>
+      <idea criterion="AC3" description="Validate market token propagation end-to-end">
+        Trace: get_auth_token_broker(include_feed_token=True) → build_broker_auth_payload → holdings_service → map_portfolio_data
+        Verify: auth_token dict contains both 'token' and 'market_token' keys when passed to map_portfolio_data
+        Test: Add logging to map_portfolio_data entry point to confirm market_token presence, check if quote enrichment path is taken
+        Evidence: Log excerpt showing market_token present and quote API call triggered when MTM fields absent
+      </idea>
+      <idea criterion="AC4" description="Update evidence template with captured telemetry">
+        Template: docs/bmad/qa/evidence/story-1.2-4-live-validation.md
+        Populate: Live API runs table with actual timestamps, durations, status results
+        Document: Observations/findings section with P&amp;L alignment, token propagation, any anomalies
+        Complete: Sanitization checklist confirming IDs redacted, credentials omitted
+      </idea>
+      <idea criterion="AC5" description="Document SQLAlchemy/venv requirements in setup docs">
+        Update: INSTALL.md or similar project setup documentation
+        Add: Section on SQLAlchemy explicit install for test/script execution
+        Reference: Runbook Section 2 virtualenv setup steps
+        Verify: Follow documented steps in clean environment, confirm tests run without manual intervention
+      </idea>
+      <idea criterion="AC6" description="Update story Dev Notes and change log with validation outcomes">
+        Dev Notes: Record live API run dates, observed latencies, P&amp;L validation results, any deviations from expectations
+        Change Log: Add entry for live validation completion with author, date, summary findings
+        Risks: Flag any residual risks (e.g., if P&amp;L still zero, if latency close to 5s limit, if credentials rotation needed)
+        Follow-up: List next steps if issues discovered (e.g., market token provisioning fix, latency optimization)
+      </idea>
+      <idea criterion="AC6" description="Flagging residual risks and follow-up items">
+        Risk 1: If holdings P&amp;L remains zero, market token propagation may not be working in production auth flow
+        Risk 2: If latency approaches 5s limit, consider caching or optimization for production load
+        Risk 3: Credentials rotation - document when tokens need refresh, test token expiry handling
+        Follow-up 1: Coordinate with product/architecture on holdings P&amp;L data sourcing if LTP unavailable
+        Follow-up 2: Schedule periodic validation runs to catch API contract changes or performance regressions
+      </idea>
+    </ideas>
+  </tests>
+</story-context>

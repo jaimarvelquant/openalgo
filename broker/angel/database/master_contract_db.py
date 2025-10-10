@@ -9,7 +9,7 @@ from datetime import datetime
 
 from sqlalchemy import create_engine, Column, Integer, String, Float , Sequence, Index
 from sqlalchemy.orm import scoped_session, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import declarative_base
 from extensions import socketio  # Import SocketIO
 from utils.logging import get_logger
 

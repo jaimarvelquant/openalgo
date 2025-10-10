@@ -1,0 +1,324 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>2</epicId>
+    <storyId>1</storyId>
+    <title>OpenAlgo to MarvelQuant Rebranding - Phase 1 (Logo, Documentation &amp; User-Facing Strings)</title>
+    <status>ContextReadyDraft</status>
+    <generatedAt>2025-10-09</generatedAt>
+    <lastUpdated>2025-10-09</lastUpdated>
+    <version>1.2</version>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>docs/bmad/stories/story-2.1.md</sourceStoryPath>
+    <notes>v1.2: Updated logo source to SVG vector format for superior quality</notes>
+  </metadata>
+
+  <story>
+    <asA>product owner</asA>
+    <iWant>to rebrand the OpenAlgo application to MarvelQuant by replacing all logos, updating domain references, and changing text references in HTML templates and documentation</iWant>
+    <soThat>the application reflects the new MarvelQuant brand identity consistently across all user-facing elements while maintaining full functionality</soThat>
+    <tasks>
+      <task id="1" ac="5">Environment Setup &amp; Prerequisites (6 subtasks)</task>
+      <task id="2" ac="5">Create Automation Scripts (6 subtasks)</task>
+      <task id="3" ac="1">Logo Conversion &amp; Replacement (11 subtasks)</task>
+      <task id="4" ac="2,3">Text Replacement - Dry Run &amp; Validation (5 subtasks)</task>
+      <task id="5" ac="2,3">Text Replacement - Execution (9 subtasks)</task>
+      <task id="6" ac="4">Verification &amp; Quality Assurance (6 subtasks)</task>
+      <task id="7" ac="4">Application Testing (14 subtasks)</task>
+      <task id="8" ac="1,4">Cross-Browser &amp; Device Testing (7 subtasks)</task>
+      <task id="9" ac="5">Git Workflow Configuration (5 subtasks)</task>
+      <task id="10" ac="3,6">Update User-Facing Python Strings (9 subtasks)</task>
+      <task id="11" ac="5">Documentation &amp; Finalization (6 subtasks)</task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="1">
+      <title>Logo Replacement Complete</title>
+      <description>All 8 logo files in static/favicon/ are replaced with MarvelQuant branding. Files include: logo.png (512x512), apple-touch-icon.png (180x180), android-chrome-192x192.png (192x192), favicon-16x16.png, favicon-32x32.png, mstile-150x150.png, favicon.ico (multi-res), safari-pinned-tab.svg. All logos are properly sized, optimized, and display correctly across all browsers and devices.</description>
+    </criterion>
+    <criterion id="2">
+      <title>Domain Migration Complete</title>
+      <description>All references to openalgo.in updated to marvelquant.com, docs.openalgo.in to docs.marvelquant.com, www.openalgo.in to www.marvelquant.com. Social media handles updated: @openalgoHQ → @marvelquantHQ, @openalgo → @marvelquant.</description>
+    </criterion>
+    <criterion id="3">
+      <title>Text Branding Updated</title>
+      <description>All 35 HTML template files and 104 Markdown documentation files updated with MarvelQuant branding. Naming conventions preserved (OpenAlgo → MarvelQuant, openalgo → marvelquant, OPENALGO → MARVELQUANT). Possessive forms handled correctly (OpenAlgo's → MarvelQuant's). Package names updated (openalgoUI → marvelquantUI, openalgoHQ → marvelquantHQ).</description>
+    </criterion>
+    <criterion id="4">
+      <title>Quality Verification</title>
+      <description>Verification script confirms zero remaining "openalgo" references in HTML and Markdown files. All pages load without errors. All links function correctly. Branding is consistent across all pages.</description>
+    </criterion>
+    <criterion id="5">
+      <title>Git Workflow Configured</title>
+      <description>.gitattributes file created with merge strategies for logo files. Backup of original branding created before changes. All changes committed with clear commit messages. Rebranding scripts are executable and functional.</description>
+    </criterion>
+    <criterion id="6">
+      <title>User-Facing Python Strings Updated</title>
+      <description>Telegram bot test messages updated to "MarvelQuant" (2 occurrences in blueprints/telegram.py). 2FA issuer name updated to "MarvelQuant" (1 occurrence in database/user_db.py). Migration script output messages updated (5 occurrences across 3 files in upgrade/). Telegram bot test message displays "MarvelQuant" branding. 2FA authenticator apps display "MarvelQuant" as issuer name. Internal Python code (function names, variables, comments, logs) intentionally NOT changed (zero user-facing impact).</description>
+    </criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>docs/bmad/research/phase1-rebranding-analysis.md</path>
+        <title>Comprehensive Phase 1 Rebranding Analysis &amp; Implementation Plan</title>
+        <section>Complete Document</section>
+        <snippet>Primary source document containing: Logo conversion strategy (Section 1), Text replacement analysis (Section 2), Git workflow for upstream sync (Section 3), Automation scripts (Section 4), Risk assessment (Section 5), Implementation checklist (Section 6). Includes all bash scripts for logo conversion, text replacement, verification, and reapplication.</snippet>
+      </doc>
+      <doc>
+        <path>docs/bmad/research/README.md</path>
+        <title>OpenAlgo Research &amp; Implementation Plans</title>
+        <section>Phase 1 Rebranding Quick Start</section>
+        <snippet>Quick reference guide for Phase 1 implementation with step-by-step commands and workflow overview.</snippet>
+      </doc>
+      <doc>
+        <path>docs/bmad/Logo-Main.svg</path>
+        <title>MarvelQuant Logo - Vector Source</title>
+        <section>Logo Asset</section>
+        <snippet>SVG vector format logo source file. Scalable to any size without quality loss. Used as input for generating all 8 logo files (PNG, ICO, SVG) in various sizes. Vector format eliminates aspect ratio concerns and provides superior quality for all conversions.</snippet>
+      </doc>
+      <doc>
+        <path>static/favicon/site.webmanifest</path>
+        <title>Web App Manifest</title>
+        <section>Configuration</section>
+        <snippet>Defines app icons and theme colors for PWA functionality. Needs updating with MarvelQuant branding metadata.</snippet>
+      </doc>
+      <doc>
+        <path>static/favicon/browserconfig.xml</path>
+        <title>Browser Configuration</title>
+        <section>Windows Tile Configuration</section>
+        <snippet>Configures Windows tile icon (mstile-150x150.png) and tile color. References logo files that will be replaced.</snippet>
+      </doc>
+      <doc>
+        <path>design/01_architecture.md</path>
+        <title>OpenAlgo Architecture</title>
+        <section>Project Structure - Templates and Static Assets</section>
+        <snippet>Documents templates/ directory with 50+ Jinja2 HTML templates and static/ directory structure including favicon assets.</snippet>
+      </doc>
+    </docs>
+    
+    <code>
+      <artifact>
+        <path>blueprints/core.py</path>
+        <kind>Blueprint</kind>
+        <symbol>core_bp</symbol>
+        <lines>1-28</lines>
+        <reason>Renders main HTML templates (index.html, download.html, faq.html) that contain OpenAlgo branding text. These templates will be updated in this story.</reason>
+      </artifact>
+      <artifact>
+        <path>templates/index.html</path>
+        <kind>Template</kind>
+        <symbol>index.html</symbol>
+        <lines>1-20</lines>
+        <reason>Main landing page template with OpenAlgo branding in title block (line 3) and content. High-visibility page requiring careful branding update.</reason>
+      </artifact>
+      <artifact>
+        <path>templates/navbar.html</path>
+        <kind>Template</kind>
+        <symbol>navbar.html</symbol>
+        <lines>9-12</lines>
+        <reason>Contains logo reference (line 10) and brand text (line 11). Critical component appearing on all authenticated pages.</reason>
+      </artifact>
+      <artifact>
+        <path>templates/public_navbar.html</path>
+        <kind>Template</kind>
+        <symbol>public_navbar.html</symbol>
+        <lines>9-12</lines>
+        <reason>Public-facing navbar with logo reference (line 10) and brand text (line 11). Appears on unauthenticated pages.</reason>
+      </artifact>
+      <artifact>
+        <path>templates/layout.html</path>
+        <kind>Template</kind>
+        <symbol>layout.html</symbol>
+        <lines>18-24</lines>
+        <reason>Base layout template defining favicon links for all pages. References all 8 logo files that will be replaced.</reason>
+      </artifact>
+      <artifact>
+        <path>templates/base.html</path>
+        <kind>Template</kind>
+        <symbol>base.html</symbol>
+        <lines>32-44</lines>
+        <reason>Alternative base template with favicon references and meta tags. Used by some pages as base template.</reason>
+      </artifact>
+      <artifact>
+        <path>templates/aliceblue.html</path>
+        <kind>Template</kind>
+        <symbol>aliceblue.html</symbol>
+        <lines>1-14</lines>
+        <reason>Broker authentication page with OpenAlgo branding in title (line 3) and logo reference (line 13). Representative of 20+ broker auth pages.</reason>
+      </artifact>
+      <artifact>
+        <path>app.py</path>
+        <kind>Application</kind>
+        <symbol>create_app</symbol>
+        <lines>66-95</lines>
+        <reason>Flask application initialization. Registers blueprints and configures template rendering. No changes needed but important context for understanding template system.</reason>
+      </artifact>
+      <artifact>
+        <path>static/favicon/safari-pinned-tab.svg</path>
+        <kind>Asset</kind>
+        <symbol>safari-pinned-tab.svg</symbol>
+        <lines>1-14</lines>
+        <reason>Existing Safari pinned tab icon that will be replaced with MarvelQuant version. Shows current SVG structure.</reason>
+      </artifact>
+      <artifact>
+        <path>blueprints/telegram.py</path>
+        <kind>Blueprint</kind>
+        <symbol>test_telegram</symbol>
+        <lines>1-50</lines>
+        <reason>Contains 2 user-facing Telegram test message strings with "OpenAlgo" branding that need to be updated to "MarvelQuant".</reason>
+      </artifact>
+      <artifact>
+        <path>database/user_db.py</path>
+        <kind>Database</kind>
+        <symbol>issuer_name</symbol>
+        <lines>1-50</lines>
+        <reason>Contains 2FA issuer name "OpenAlgo" that appears in authenticator apps (Google Authenticator, Authy). Needs update to "MarvelQuant".</reason>
+      </artifact>
+      <artifact>
+        <path>upgrade/migrate_smtp_simple.py</path>
+        <kind>Migration</kind>
+        <symbol>migrate_smtp</symbol>
+        <lines>1-50</lines>
+        <reason>Contains 2 user-facing migration output strings with "OpenAlgo" branding in console output.</reason>
+      </artifact>
+      <artifact>
+        <path>upgrade/migrate_security_columns.py</path>
+        <kind>Migration</kind>
+        <symbol>migrate_security</symbol>
+        <lines>1-50</lines>
+        <reason>Contains 2 user-facing migration output strings with "OpenAlgo" branding in console output.</reason>
+      </artifact>
+      <artifact>
+        <path>upgrade/migrate_telegram_bot.py</path>
+        <kind>Migration</kind>
+        <symbol>migrate_telegram</symbol>
+        <lines>1-50</lines>
+        <reason>Contains 1 user-facing migration output string with "OpenAlgo" branding in console output.</reason>
+      </artifact>
+    </code>
+    
+    <dependencies>
+      <python>
+        <package name="flask" version="3.0.3">Web framework serving templates and static files</package>
+        <package name="flask-socketio" version="5.3.6">WebSocket support (no impact on branding)</package>
+        <package name="flask-wtf" version="1.2.1">CSRF protection (no impact on branding)</package>
+        <package name="flask-cors" version="6.0.0">CORS handling (no impact on branding)</package>
+      </python>
+      <system>
+        <tool name="imagemagick">Required for logo conversion (convert command)</tool>
+        <tool name="optipng">Optional for PNG optimization</tool>
+        <tool name="potrace">Required for SVG generation from bitmap</tool>
+        <tool name="bash">Shell scripting for automation</tool>
+        <tool name="sed">Text replacement in files</tool>
+        <tool name="grep">Verification of replacements</tool>
+      </system>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>Risk Level: LOW - Phase 1 focuses on visual, documentation, and user-facing string changes with no code execution logic modifications</constraint>
+    <constraint>Preserve all existing naming conventions and patterns (kebab-case, snake_case, PascalCase)</constraint>
+    <constraint>Maintain exact file structure - no file renames in Phase 1</constraint>
+    <constraint>Python changes LIMITED to user-facing string literals only (8 occurrences across 5 files)</constraint>
+    <constraint>NO changes to: function names, variable names, class names, comments, log messages, or internal code structure</constraint>
+    <constraint>NO changes to JSON configuration or JavaScript files in Phase 1</constraint>
+    <constraint>All changes must be reversible via git (backup tag and automated backup directory)</constraint>
+    <constraint>Replacement order is critical: 1) URLs first, 2) Social media handles, 3) Possessive forms, 4) Package names, 5) Standard text (case-sensitive)</constraint>
+    <constraint>Logo source is SVG vector format - scalable to any size without quality loss or aspect ratio concerns</constraint>
+    <constraint>All scripts must be macOS compatible (sed syntax differences from Linux)</constraint>
+    <constraint>Dry-run mode required before actual text replacement</constraint>
+    <constraint>Verification script must pass with zero user-facing "openalgo" references before completion</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>Flask Template Rendering</name>
+      <kind>Framework API</kind>
+      <signature>render_template(template_name, **context)</signature>
+      <path>flask</path>
+      <description>Used by all blueprints to render HTML templates. Templates use Jinja2 syntax with url_for() for static file references.</description>
+    </interface>
+    <interface>
+      <name>Static File URL Generation</name>
+      <kind>Framework API</kind>
+      <signature>url_for('static', filename='path/to/file')</signature>
+      <path>flask</path>
+      <description>Generates URLs for static assets including logos. Used in templates for favicon and logo references.</description>
+    </interface>
+    <interface>
+      <name>ImageMagick Convert</name>
+      <kind>CLI Tool</kind>
+      <signature>convert [input] [options] [output]</signature>
+      <path>system</path>
+      <description>Command-line tool for image conversion, resizing, and format changes. Core tool for logo generation.</description>
+    </interface>
+    <interface>
+      <name>Bash Sed</name>
+      <kind>CLI Tool</kind>
+      <signature>sed -i.bak 's/pattern/replacement/g' file</signature>
+      <path>system</path>
+      <description>Stream editor for text replacement. Note: macOS requires -i.bak syntax (creates backup), Linux uses -i without extension.</description>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      <paragraph>Testing for this story focuses on visual verification and functional validation rather than automated unit tests. Manual testing is required across multiple browsers and devices. Verification is automated through bash scripts that check for remaining "openalgo" references. The project uses Flask for serving templates and static files, but no existing test framework is in place for template rendering. Testing approach: 1) Automated verification scripts for text replacement completeness, 2) Manual visual testing of logos across browsers/devices, 3) Manual functional testing of all pages and links, 4) Cross-browser compatibility testing (Chrome, Firefox, Safari), 5) Cross-device testing (Desktop, iOS, Android).</paragraph>
+    </standards>
+    
+    <locations>
+      <location>test/</location>
+      <location>scripts/verify-branding.sh (custom verification script)</location>
+    </locations>
+    
+    <ideas>
+      <idea ac="1">
+        <id>2.1-MANUAL-001</id>
+        <description>Visual Logo Quality Test: Verify all 8 logo files display correctly at their intended sizes (16px to 512px). Test in Chrome, Firefox, Safari. Check for pixelation, distortion, or transparency artifacts.</description>
+      </idea>
+      <idea ac="1">
+        <id>2.1-MANUAL-002</id>
+        <description>Cross-Device Logo Test: Test apple-touch-icon.png on iOS device (add to home screen), android-chrome-192x192.png on Android device, mstile-150x150.png on Windows, safari-pinned-tab.svg in Safari pinned tabs.</description>
+      </idea>
+      <idea ac="2,3">
+        <id>2.1-AUTO-001</id>
+        <description>Text Replacement Verification: Run verify-branding.sh script to confirm zero "openalgo" references in HTML files (35 files expected). Script should report exact count and file locations if any remain.</description>
+      </idea>
+      <idea ac="2,3">
+        <id>2.1-AUTO-002</id>
+        <description>Text Replacement Verification: Run verify-branding.sh script to confirm zero "openalgo" references in Markdown files (104 files expected). Script should report exact count and file locations if any remain.</description>
+      </idea>
+      <idea ac="4">
+        <id>2.1-MANUAL-003</id>
+        <description>Page Load Test: Manually visit all major pages (index, dashboard, login, setup, download, faq, 20+ broker auth pages) and verify: 1) Page loads without errors, 2) MarvelQuant branding appears correctly, 3) No "OpenAlgo" text visible, 4) Logos display correctly.</description>
+      </idea>
+      <idea ac="4">
+        <id>2.1-MANUAL-004</id>
+        <description>Link Functionality Test: Test all navigation links, footer links, and documentation links to ensure they function correctly after domain updates. Verify no broken links.</description>
+      </idea>
+      <idea ac="5">
+        <id>2.1-AUTO-003</id>
+        <description>Git Configuration Test: Verify .gitattributes file exists and contains merge strategies for logo files. Test git merge behavior with a dummy upstream change to ensure logo files use "ours" strategy.</description>
+      </idea>
+      <idea ac="5">
+        <id>2.1-AUTO-004</id>
+        <description>Script Functionality Test: Test all 4 automation scripts (convert-logos.sh, replace-branding.sh, verify-branding.sh, reapply-branding.sh) execute without errors. Verify dry-run mode works correctly for replace-branding.sh.</description>
+      </idea>
+      <idea ac="6">
+        <id>2.1-MANUAL-005</id>
+        <description>Telegram Bot Test: Configure Telegram bot integration, send test message using the test endpoint, and verify the message displays "Test Message from MarvelQuant" instead of "Test Message from OpenAlgo". Test both admin and non-admin user scenarios.</description>
+      </idea>
+      <idea ac="6">
+        <id>2.1-MANUAL-006</id>
+        <description>2FA Issuer Name Test: Set up 2FA for a test user account, scan the QR code with Google Authenticator or Authy, and verify the authenticator app displays "MarvelQuant" as the issuer name instead of "OpenAlgo".</description>
+      </idea>
+      <idea ac="6">
+        <id>2.1-AUTO-005</id>
+        <description>Python String Verification: Run grep command to verify all 8 user-facing Python string occurrences have been updated: grep -r "OpenAlgo" blueprints/telegram.py database/user_db.py upgrade/migrate_*.py should return zero results.</description>
+      </idea>
+    </ideas>
+  </tests>
+</story-context>
+
