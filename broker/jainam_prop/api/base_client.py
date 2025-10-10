@@ -164,6 +164,8 @@ class BaseAPIClient:
         
         # Log request (DEBUG level)
         logger.debug(f"{method} {url}")
+        # CRITICAL DEBUG: Log the actual URL and route key being called
+        logger.info(f"CRITICAL DEBUG - Route: '{route_key}' -> URL: {url}, Params: {params}")
         if json_data:
             logger.debug(f"Request JSON: {json_data}")
         elif content:

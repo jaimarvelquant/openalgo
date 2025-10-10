@@ -211,7 +211,7 @@ function initChart() {
         }
     });
     
-    // Add OpenAlgo watermark
+    // Add MarvelQuant watermark
     const watermark = document.createElement('div');
     watermark.style.position = 'absolute';
     watermark.style.zIndex = '2';
@@ -221,7 +221,7 @@ function initChart() {
     watermark.style.fontWeight = 'bold';
     watermark.style.userSelect = 'none';
     watermark.style.pointerEvents = 'none';
-    watermark.textContent = 'OpenAlgo';
+    watermark.textContent = 'MarvelQuant';
     chartContainer.appendChild(watermark);
     
     // Position the watermark in the center of the chart
@@ -567,7 +567,7 @@ async function captureFullSection() {
 async function performFullCapture(element) {
     try {
         // Make sure watermark is visible
-        const watermark = element.querySelector('div[style*="OpenAlgo"]');
+        const watermark = element.querySelector('div[style*="MarvelQuant"]');
         let originalWatermarkStyle = null;
         if (watermark) {
             originalWatermarkStyle = watermark.style.cssText;
@@ -619,7 +619,7 @@ async function performFullCapture(element) {
                 }
                 
                 // Ensure watermark is visible in clone
-                const clonedWatermark = clonedDoc.querySelector('div[style*="OpenAlgo"]');
+                const clonedWatermark = clonedDoc.querySelector('div[style*="MarvelQuant"]');
                 if (clonedWatermark) {
                     clonedWatermark.style.color = 'rgba(100, 100, 100, 0.3)';
                     clonedWatermark.style.fontSize = '60px';
@@ -653,7 +653,7 @@ async function performFullCapture(element) {
         console.error('Capture error:', error);
         
         // Restore watermark on error
-        const watermark = element.querySelector('div[style*="OpenAlgo"]');
+        const watermark = element.querySelector('div[style*="MarvelQuant"]');
         if (watermark && typeof originalWatermarkStyle !== 'undefined') {
             watermark.style.cssText = originalWatermarkStyle;
         }

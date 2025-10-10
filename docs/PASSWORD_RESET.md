@@ -1,8 +1,8 @@
-# OpenAlgo Password Reset System
+# MarvelQuant Password Reset System
 
 ## Overview
 
-OpenAlgo provides a comprehensive dual-mode password reset system that allows users to recover their accounts through either:
+MarvelQuant provides a comprehensive dual-mode password reset system that allows users to recover their accounts through either:
 1. **TOTP (Time-based One-Time Password)** authentication
 2. **Email verification** (requires SMTP configuration)
 
@@ -283,7 +283,7 @@ Solution: Request new password reset
 
 ### When All Else Fails
 
-If you cannot access your OpenAlgo account through any method (TOTP broken, email not working, lost credentials), you can perform a complete database reset. **This will delete ALL data.**
+If you cannot access your MarvelQuant account through any method (TOTP broken, email not working, lost credentials), you can perform a complete database reset. **This will delete ALL data.**
 
 ### What You Will Lose
 
@@ -302,31 +302,31 @@ If you cannot access your OpenAlgo account through any method (TOTP broken, emai
 
 ### Database Reset Procedure
 
-#### Step 1: Stop OpenAlgo Application
+#### Step 1: Stop MarvelQuant Application
 
 ```bash
 # If using systemd service
-sudo systemctl stop openalgo
+sudo systemctl stop marvelquant
 
 # If running manually (find and kill process)
 pkill -f "python app.py"
 
 # If using PM2
-pm2 stop openalgo
+pm2 stop marvelquant
 
 # If using Docker
-docker stop openalgo-container
+docker stop marvelquant-container
 ```
 
 #### Step 2: Backup Current Database (Optional)
 
 ```bash
-# Navigate to OpenAlgo directory
-cd /path/to/your/openalgo
+# Navigate to MarvelQuant directory
+cd /path/to/your/marvelquant
 
 # Create backup with timestamp
 mkdir backup_$(date +%Y%m%d_%H%M%S)
-cp db/openalgo.db backup_*/
+cp db/marvelquant.db backup_*/
 cp db/logs.db backup_*/ 2>/dev/null || true
 cp db/latency.db backup_*/ 2>/dev/null || true
 
@@ -338,7 +338,7 @@ cp .env backup_*/
 
 ```bash
 # Delete main database (contains user accounts, settings, logs)
-rm db/openalgo.db
+rm db/marvelquant.db
 
 # Optionally delete other databases
 rm db/logs.db 2>/dev/null || true      # API and system logs
@@ -348,23 +348,23 @@ rm db/latency.db 2>/dev/null || true   # Performance monitoring data
 #### Step 4: Restart Application
 
 ```bash
-# Start OpenAlgo (it will recreate databases automatically)
+# Start MarvelQuant (it will recreate databases automatically)
 # If using systemd service
-sudo systemctl start openalgo
+sudo systemctl start marvelquant
 
 # If running manually
 python app.py &
 
 # If using PM2
-pm2 start openalgo
+pm2 start marvelquant
 
 # If using Docker
-docker start openalgo-container
+docker start marvelquant-container
 ```
 
 #### Step 5: Initial Setup
 
-1. **Visit your OpenAlgo URL** (e.g., http://localhost:5000)
+1. **Visit your MarvelQuant URL** (e.g., http://localhost:5000)
 2. **You'll be redirected to `/setup`** (fresh installation flow)
 3. **Create new admin account** with username and password
 4. **Set up TOTP authentication** (scan QR code with authenticator app)

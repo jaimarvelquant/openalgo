@@ -1,4 +1,4 @@
-"""Jainam broker integration for OpenAlgo"""
+"""Jainam broker integration for MarvelQuant"""
 
 import sys
 from pathlib import Path

@@ -2,7 +2,7 @@
   "name": "openalgo",
   "version": "1.0.0",
   "type": "module",
-  "description": "OpenAlgo is an open-source Flask-based Python application designed to bridge the gap between traders and major trading platforms such as Amibroker, Tradingview, Excel, and Google Spreadsheets. With a focus on simplifying algotrading, OpenAlgo facilitates easy integration, automation, and execution of trading strategies, providing a user-friendly interface to enhance trading performance.",
+  "description": "MarvelQuant is an open-source Flask-based Python application designed to bridge the gap between traders and major trading platforms such as Amibroker, Tradingview, Excel, and Google Spreadsheets. With a focus on simplifying algotrading, MarvelQuant facilitates easy integration, automation, and execution of trading strategies, providing a user-friendly interface to enhance trading performance.",
   "main": "index.js",
   "scripts": {
     "build:css": "postcss src/css/styles.css -o static/css/main.css",

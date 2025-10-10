@@ -1,6 +1,6 @@
 """
 Example script showing how to use the WebSocket service layer
-for different use cases in the OpenAlgo application.
+for different use cases in the MarvelQuant application.
 """
 
 import time

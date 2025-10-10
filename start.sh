@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "[OpenAlgo] Starting up..."
+echo "[MarvelQuant] Starting up..."
 
 # Try to create directories, but don't fail if they already exist or can't be created
 # This handles both mounted volumes and permission issues
@@ -25,14 +25,14 @@ export PYTHONDONTWRITEBYTECODE=1
 cd /app
 
 # Start WebSocket proxy server in background
-echo "[OpenAlgo] Starting WebSocket proxy server on port 8765..."
+echo "[MarvelQuant] Starting WebSocket proxy server on port 8765..."
 /app/.venv/bin/python -m websocket_proxy.server &
 WEBSOCKET_PID=$!
-echo "[OpenAlgo] WebSocket proxy server started with PID $WEBSOCKET_PID"
+echo "[MarvelQuant] WebSocket proxy server started with PID $WEBSOCKET_PID"
 
 # Function to cleanup on exit
 cleanup() {
-    echo "[OpenAlgo] Shutting down..."
+    echo "[MarvelQuant] Shutting down..."
     if [ ! -z "$WEBSOCKET_PID" ]; then
         kill $WEBSOCKET_PID 2>/dev/null
     fi
@@ -43,7 +43,7 @@ cleanup() {
 trap cleanup SIGTERM SIGINT
 
 # Run main application with gunicorn using eventlet for WebSocket support
-echo "[OpenAlgo] Starting application on port 5000 with eventlet..."
+echo "[MarvelQuant] Starting application on port 5000 with eventlet..."
 exec /app/.venv/bin/gunicorn \
     --worker-class eventlet \
     --workers 1 \

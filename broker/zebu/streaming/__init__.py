@@ -1,5 +1,5 @@
 """
-Zebu WebSocket streaming module for OpenAlgo
+Zebu WebSocket streaming module for MarvelQuant
 """
 from .zebu_adapter import ZebuWebSocketAdapter
 from .zebu_websocket import ZebuWebSocket

@@ -281,7 +281,7 @@ class AliceBlueWebSocket:
                     'prev_open_interest': int(float(data.get('poi', 0))) if data.get('poi') else 0,
                     'total_buy_quantity': int(data.get('tbq', 0)),
                     'total_sell_quantity': int(data.get('tsq', 0)),
-                    'symbol': symbol,  # Use OpenAlgo symbol from subscription
+                    'symbol': symbol,  # Use MarvelQuant symbol from subscription
                     'broker_symbol': data.get('ts', ''),  # Keep broker symbol for reference
                     'timestamp': datetime.now().isoformat()
                 }
@@ -412,7 +412,7 @@ class AliceBlueWebSocket:
                     'ltp': float(data.get('lp', 0)),
                     'open_interest': int(float(data.get('oi', 0))) if data.get('oi') else 0,
                     'prev_open_interest': int(float(data.get('poi', 0))) if data.get('poi') else 0,
-                    'symbol': symbol,  # Use OpenAlgo symbol from subscription
+                    'symbol': symbol,  # Use MarvelQuant symbol from subscription
                     'broker_symbol': data.get('ts', ''),  # Keep broker symbol for reference
                     'timestamp': datetime.now().isoformat()
                 }

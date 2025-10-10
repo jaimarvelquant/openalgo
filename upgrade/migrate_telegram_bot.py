@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Telegram Bot Migration Script for OpenAlgo
+Telegram Bot Migration Script for MarvelQuant
 
 This migration creates all necessary tables for the Telegram bot integration.
 It handles both new installations and updates from previous versions.
@@ -39,10 +39,10 @@ class TelegramBotMigration:
             script_dir = os.path.dirname(os.path.abspath(__file__))
             if os.path.basename(script_dir) == 'upgrade':
                 # Running from upgrade directory
-                db_path = os.path.join(os.path.dirname(script_dir), 'db', 'openalgo.db')
+                db_path = os.path.join(os.path.dirname(script_dir), 'db', 'marvelquant.db')
             else:
                 # Running from root directory
-                db_path = 'db/openalgo.db'
+                db_path = 'db/marvelquant.db'
         self.db_path = db_path
         self.db_url = f"sqlite:///{db_path}"
         self.engine = None
@@ -241,7 +241,7 @@ class TelegramBotMigration:
                         CREATE TABLE IF NOT EXISTS telegram_users (
                             id INTEGER PRIMARY KEY AUTOINCREMENT,
                             telegram_id INTEGER UNIQUE NOT NULL,
-                            openalgo_username VARCHAR(255) NOT NULL,
+                            marvelquant_username VARCHAR(255) NOT NULL,
                             encrypted_api_key TEXT,
                             host_url VARCHAR(500),
                             first_name VARCHAR(255),
@@ -419,7 +419,7 @@ class TelegramBotMigration:
 
 def main():
     parser = argparse.ArgumentParser(
-        description=f"Telegram Bot Migration for OpenAlgo - {MIGRATION_DESCRIPTION}"
+        description=f"Telegram Bot Migration for MarvelQuant - {MIGRATION_DESCRIPTION}"
     )
     parser.add_argument(
         '--downgrade',

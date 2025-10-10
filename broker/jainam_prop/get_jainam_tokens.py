@@ -15,7 +15,7 @@ Features:
     - Optionally saves tokens to .env file
     - Comprehensive error handling and validation
 
-Author: OpenAlgo Team
+Author: MarvelQuant Team
 Date: October 8, 2025
 """
 

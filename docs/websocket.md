@@ -1,6 +1,6 @@
-# OpenAlgo WebSocket Proxy Design
+# MarvelQuant WebSocket Proxy Design
 
-This document provides a high-level overview of the WebSocket proxy system for OpenAlgo. For detailed implementation code and examples, see:
+This document provides a high-level overview of the WebSocket proxy system for MarvelQuant. For detailed implementation code and examples, see:
 - [websocket_auth_and_mapping.md](websocket_auth_and_mapping.md) - Authentication and symbol mapping implementation
 - [websocket_implementation.md](websocket_implementation.md) - WebSocket adapter and proxy implementation
 - [broker_factory.md](broker_factory.md) - Broker-agnostic factory design for supporting 20+ brokers
@@ -8,7 +8,7 @@ This document provides a high-level overview of the WebSocket proxy system for O
 
 ## 1. System Overview
 
-The OpenAlgo WebSocket Proxy is a scalable, broker-agnostic system that connects to various broker WebSocket APIs and provides a unified interface for clients to access real-time market data. Angel Broking is used as the pilot implementation, with the architecture designed to support 20+ brokers through a factory pattern. The system uses a publish-subscribe pattern with ZeroMQ as the message broker to efficiently distribute data to multiple consumers. The implementation is cross-platform compatible, with specific optimizations for Windows environments.
+The MarvelQuant WebSocket Proxy is a scalable, broker-agnostic system that connects to various broker WebSocket APIs and provides a unified interface for clients to access real-time market data. Angel Broking is used as the pilot implementation, with the architecture designed to support 20+ brokers through a factory pattern. The system uses a publish-subscribe pattern with ZeroMQ as the message broker to efficiently distribute data to multiple consumers. The implementation is cross-platform compatible, with specific optimizations for Windows environments.
 
 ```
 ┌─────────────┐     ┌───────────────┐     ┌─────────────┐     ┌─────────────────┐
@@ -35,7 +35,7 @@ The OpenAlgo WebSocket Proxy is a scalable, broker-agnostic system that connects
 
 ### 2.1 Authentication Service
 
-This component retrieves authentication tokens and client ID from the OpenAlgo database.
+This component retrieves authentication tokens and client ID from the MarvelQuant database.
 
 **Key Features:**
 - Retrieves AUTH_TOKEN, FEED_TOKEN from auth_db.py
@@ -119,7 +119,7 @@ The system includes a capability registry that tracks which features and depth l
 
 ### 4.1 Authentication Flow
 
-1. Client connects to WebSocket Proxy with OpenAlgo API key
+1. Client connects to WebSocket Proxy with MarvelQuant API key
 2. API key is validated against the database
 3. System retrieves the user's active broker and associated tokens
 4. Broker factory creates the appropriate adapter for the active broker
@@ -439,7 +439,7 @@ For detailed implementation code and examples, see:
 
 ## 9. Security Considerations
 
-- **API Key Authentication**: All clients must provide a valid OpenAlgo API key
+- **API Key Authentication**: All clients must provide a valid MarvelQuant API key
 - **Authorization**: Role-based access control for different market data levels
 - **Data Protection**: TLS encryption for all connections
 - **Rate Limiting**: Prevention of excessive subscription requests

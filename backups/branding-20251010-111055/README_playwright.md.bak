@@ -1,0 +1,220 @@
+# Playwright MCP Server Setup
+
+This guide helps you configure Playwright MCP (Model Context Protocol) server for browser automation with Codex and Claude.
+
+## What is Playwright MCP?
+
+Playwright MCP provides browser automation capabilities through the Model Context Protocol, allowing AI assistants to:
+- Navigate web pages
+- Interact with web elements (click, fill forms, etc.)
+- Take screenshots
+- Execute JavaScript
+- Extract content from web pages
+
+## Prerequisites
+
+- Python 3.8+ with virtual environment
+- Playwright installed
+- Codex CLI or Claude Desktop
+
+## Quick Setup
+
+### 1. Run the Setup Script
+
+```bash
+cd /Users/maruth/projects/marvelquant
+./mcp/setup_mcp.sh
+```
+
+The script will:
+- Check dependencies
+- Prompt for your OpenAlgo API key
+- Create MCP configuration files for Codex and Claude
+- Test the MCP servers
+- Create backup of existing configurations
+
+### 2. Restart Applications
+
+After running the setup script:
+1. **Restart Codex/Cursor**
+2. **Restart Claude Desktop**
+
+### 3. Verify Connection
+
+In Codex or Claude, you should see MCP servers connected:
+- `marvelquant` - Trading functionality
+- `playwright` - Browser automation
+
+## Manual Configuration
+
+If you prefer to configure manually:
+
+### Codex Configuration
+
+Edit `~/Library/Application Support/Cursor/User/settings.json`:
+
+```json
+{
+  "mcpServers": {
+    "marvelquant": {
+      "command": "/Users/maruth/projects/marvelquant/.venv/bin/python3",
+      "args": [
+        "/Users/maruth/projects/marvelquant/mcp/mcpserver.py",
+        "YOUR_API_KEY_HERE",
+        "http://127.0.0.1:5000"
+      ]
+    },
+    "playwright": {
+      "command": "/Users/maruth/projects/marvelquant/.venv/bin/python3",
+      "args": [
+        "/Users/maruth/projects/marvelquant/mcp/playwright_mcp_server.py"
+      ]
+    }
+  }
+}
+```
+
+### Claude Configuration
+
+Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
+
+```json
+{
+  "mcpServers": {
+    "marvelquant": {
+      "command": "/Users/maruth/projects/marvelquant/.venv/bin/python3",
+      "args": [
+        "/Users/maruth/projects/marvelquant/mcp/mcpserver.py",
+        "YOUR_API_KEY_HERE",
+        "http://127.0.0.1:5000"
+      ]
+    },
+    "playwright": {
+      "command": "/Users/maruth/projects/marvelquant/.venv/bin/python3",
+      "args": [
+        "/Users/maruth/projects/marvelquant/mcp/playwright_mcp_server.py"
+      ]
+    }
+  }
+}
+```
+
+## Available Playwright Tools
+
+### Browser Management
+- `start_browser` - Start a browser instance (headless or visible)
+- `close_browser` - Close browser and clean up
+- `get_browser_status` - Check browser status
+
+### Navigation
+- `navigate_to_url` - Navigate to a URL
+- `get_page_title` - Get current page title
+- `get_page_url` - Get current page URL
+
+### Element Interaction
+- `click_element` - Click an element
+- `fill_input` - Fill input fields
+- `wait_for_element` - Wait for element to appear
+
+### Content Extraction
+- `get_element_text` - Get text from element
+- `get_element_attribute` - Get element attribute
+- `get_page_content` - Get full page HTML
+
+### Advanced Operations
+- `take_screenshot` - Take page screenshot
+- `evaluate_javascript` - Execute JavaScript
+- `scroll_page` - Scroll the page
+
+## Usage Examples
+
+### Basic Web Scraping
+```
+"Start a browser, navigate to https://example.com, and get the page title"
+```
+
+### Form Automation
+```
+"Navigate to https://forms.example.com, fill the name field with 'John Doe', and submit the form"
+```
+
+### Screenshot Capture
+```
+"Go to https://github.com, scroll down 500 pixels, and take a screenshot"
+```
+
+### Data Extraction
+```
+"Visit https://news.example.com, find all article titles, and extract them"
+```
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Browser won't start**
+   - Ensure Playwright browsers are installed: `playwright install`
+   - Check virtual environment is activated
+
+2. **MCP server not connecting**
+   - Verify configuration file paths are correct
+   - Restart Codex/Claude after configuration changes
+   - Check Python virtual environment path
+
+3. **Permission errors**
+   - Ensure script has execute permissions: `chmod +x mcp/setup_mcp.sh`
+   - Check file ownership and permissions
+
+### Testing
+
+Run the test script to verify everything works:
+
+```bash
+source .venv/bin/activate
+python3 mcp/test_mcp.py
+```
+
+### Logs
+
+Check application logs for MCP connection issues:
+- **Codex**: Check Cursor's developer console
+- **Claude**: Check Claude Desktop logs
+
+## Security Considerations
+
+- Playwright MCP runs locally and has access to your browser
+- Be cautious when automating sensitive websites
+- Consider using headless mode for production automation
+- Monitor browser resource usage
+
+## Advanced Configuration
+
+### Custom Browser Settings
+
+You can modify `playwright_mcp_server.py` to add custom browser options:
+
+```python
+browser = await playwright.chromium.launch(
+    headless=True,
+    args=['--no-sandbox', '--disable-dev-shm-usage']
+)
+```
+
+### Multiple Browser Instances
+
+The current implementation uses a single browser instance. For multiple instances, modify the server to maintain a browser pool.
+
+## Support
+
+For issues with:
+- **Playwright MCP**: Check this documentation
+- **OpenAlgo MCP**: See `mcp/README.md`
+- **MCP Protocol**: Check Model Context Protocol specifications
+- **Browser Automation**: See Playwright documentation
+
+## Next Steps
+
+1. Test basic browser automation
+2. Explore web scraping capabilities
+3. Integrate with OpenAlgo trading workflows
+4. Build custom automation scripts

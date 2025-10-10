@@ -6,7 +6,7 @@
 
 ## Executive Summary
 
-**Topic:** Integration challenges and opportunities across a complete algorithmic trading ecosystem comprising six interconnected systems: Backtester (Excel-based portfolio framework), OpenAlgo (multi-broker platform), Market Regime Analysis (8-component ML system with 774 features), Hyperparameter Tuning (Bayesian optimization framework), Live Trading System (real-time execution hub), and Enhanced Optimizer (GPU-accelerated strategy optimization).
+**Topic:** Integration challenges and opportunities across a complete algorithmic trading ecosystem comprising six interconnected systems: Backtester (Excel-based portfolio framework), MarvelQuant (multi-broker platform), Market Regime Analysis (8-component ML system with 774 features), Hyperparameter Tuning (Bayesian optimization framework), Live Trading System (real-time execution hub), and Enhanced Optimizer (GPU-accelerated strategy optimization).
 
 **Session Goals:** Comprehensive exploration of integration opportunities and challenges across the entire algorithmic trading pipeline from research → backtesting → optimization → regime detection → live execution. Map component interactions, identify integration gaps, discover optimization opportunities, and brainstorm solutions for seamless data flow, configuration management, and operational efficiency.
 

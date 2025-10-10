@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Python Strategy Editor provides an integrated code editing experience for managing your trading strategies directly within the OpenAlgo web interface. The editor features syntax highlighting, line numbers, and intelligent access control based on strategy state.
+The Python Strategy Editor provides an integrated code editing experience for managing your trading strategies directly within the MarvelQuant web interface. The editor features syntax highlighting, line numbers, and intelligent access control based on strategy state.
 
 ## Features
 
@@ -206,4 +206,4 @@ The editor is continuously improved. Recent updates include:
 - Improved theme support
 - Process isolation verification
 
-For feature requests or bug reports, please contact the OpenAlgo development team.
+For feature requests or bug reports, please contact the MarvelQuant development team.

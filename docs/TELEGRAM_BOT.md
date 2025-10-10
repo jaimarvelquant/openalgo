@@ -1,12 +1,12 @@
-# OpenAlgo Telegram Bot Documentation
+# MarvelQuant Telegram Bot Documentation
 
 ## Overview
 
-The OpenAlgo Telegram Bot provides a comprehensive interface to access your trading data and receive real-time order notifications through Telegram. It offers both read-only access to your trading account and automatic alerts for all order-related activities, allowing you to view positions, orders, holdings, P&L, generate charts, and stay updated on your trading activities directly from your Telegram app.
+The MarvelQuant Telegram Bot provides a comprehensive interface to access your trading data and receive real-time order notifications through Telegram. It offers both read-only access to your trading account and automatic alerts for all order-related activities, allowing you to view positions, orders, holdings, P&L, generate charts, and stay updated on your trading activities directly from your Telegram app.
 
 ## Features
 
-- **Account Linking**: Securely link your OpenAlgo account using API keys
+- **Account Linking**: Securely link your MarvelQuant account using API keys
 - **Real-time Data Access**: View orderbook, tradebook, positions, holdings, and funds
 - **Automatic Order Alerts**: Receive instant notifications for all order activities
 - **P&L Tracking**: Monitor realized and unrealized profit/loss
@@ -17,13 +17,13 @@ The OpenAlgo Telegram Bot provides a comprehensive interface to access your trad
 
 ## Setup
 
-For detailed setup instructions, please refer to the official OpenAlgo documentation:
-[**📚 Telegram Bot Setup Guide**](https://docs.openalgo.in/trading-platform/telegram)
+For detailed setup instructions, please refer to the official MarvelQuant documentation:
+[**📚 Telegram Bot Setup Guide**](https://docs.marvelquant.com/trading-platform/telegram)
 
 ### Quick Setup Steps
 
 1. **Create Bot**: Get a bot token from [@BotFather](https://t.me/botfather) on Telegram
-2. **Configure**: Enter the bot token in OpenAlgo's Telegram configuration
+2. **Configure**: Enter the bot token in MarvelQuant's Telegram configuration
 3. **Start Bot**: Click "Start Bot" in the dashboard
 4. **Link Account**: Send `/link your_api_key host_url` to your bot on Telegram
 
@@ -32,7 +32,7 @@ For detailed setup instructions, please refer to the official OpenAlgo documenta
 ### Account Management
 
 - `/start` - Initialize the bot and see welcome message
-- `/link <api_key> <host_url>` - Link your OpenAlgo account
+- `/link <api_key> <host_url>` - Link your MarvelQuant account
 - `/unlink` - Unlink your account
 - `/status` - Check connection status
 
@@ -70,7 +70,7 @@ For detailed setup instructions, please refer to the official OpenAlgo documenta
 ## Order Alerts (Automatic Notifications)
 
 ### Overview
-The bot automatically sends real-time notifications for all order-related API activities. No additional commands are needed - alerts are sent automatically when orders are placed through the OpenAlgo API.
+The bot automatically sends real-time notifications for all order-related API activities. No additional commands are needed - alerts are sent automatically when orders are placed through the MarvelQuant API.
 
 ### Supported Order Types
 - **Place Order** - Regular order placement notifications
@@ -137,7 +137,7 @@ Order ID: ANALYZE123456
 1. Telegram bot must be running (`/telegram/bot/start` in web interface)
 2. Your account must be linked via `/link` command
 3. Notifications must be enabled (default: enabled)
-4. Orders must be placed through the OpenAlgo API
+4. Orders must be placed through the MarvelQuant API
 
 ## Chart Features
 
@@ -167,7 +167,7 @@ Order ID: ANALYZE123456
 
 ### Authentication
 - Bot requires valid API key for account linking
-- API key is validated against OpenAlgo server
+- API key is validated against MarvelQuant server
 - Session-based authentication for all data requests
 
 ### Privacy
@@ -214,7 +214,7 @@ The bot uses SQLAlchemy ORM with the following tables:
 
 1. **TelegramBotService** (`services/telegram_bot_service.py`)
    - Core bot logic and command handlers
-   - OpenAlgo SDK integration
+   - MarvelQuant SDK integration
    - Chart generation using Plotly
 
 2. **TelegramAlertService** (`services/telegram_alert_service.py`)
@@ -258,13 +258,13 @@ The bot uses SQLAlchemy ORM with the following tables:
 ## Troubleshooting
 
 ### Bot Not Responding
-1. Check if bot is running in OpenAlgo dashboard
+1. Check if bot is running in MarvelQuant dashboard
 2. Verify bot token is correct
 3. Check network connectivity
 4. Review logs for errors
 
 ### Order Alerts Not Received
-1. **Check Username Match**: Ensure your Telegram linked username matches your OpenAlgo auth username
+1. **Check Username Match**: Ensure your Telegram linked username matches your MarvelQuant auth username
 2. **Verify Bot Status**: Confirm bot is running in `/telegram/bot/status`
 3. **Check Notifications**: Ensure notifications are enabled in user preferences
 4. **Review Logs**: Look for "Telegram alert triggered" messages in logs
@@ -281,7 +281,7 @@ The bot uses SQLAlchemy ORM with the following tables:
 1. Verify API key is correct
 2. Ensure host URL is accessible
 3. Check if API key has necessary permissions
-4. Verify OpenAlgo server is running
+4. Verify MarvelQuant server is running
 5. **Username Format**: Ensure consistent username format (without @ prefix)
 
 ## Environment Variables
@@ -291,7 +291,7 @@ The bot respects the following environment variables:
 - `DATABASE_URL` - Database connection string
 - `ENCRYPTION_KEY` - Fernet encryption key for API keys
 - `APP_KEY` - Flask application secret key
-- `HOST_SERVER` - OpenAlgo server URL
+- `HOST_SERVER` - MarvelQuant server URL
 
 ## API Endpoints
 
@@ -335,6 +335,6 @@ The bot respects the following environment variables:
 ## Support
 
 For issues or questions:
-1. Check the logs in OpenAlgo dashboard
+1. Check the logs in MarvelQuant dashboard
 2. Review this documentation
-3. Contact OpenAlgo support
+3. Contact MarvelQuant support

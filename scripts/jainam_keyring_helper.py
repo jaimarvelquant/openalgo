@@ -34,7 +34,7 @@ except ImportError as exc:  # pragma: no cover - guarded import
     ) from exc
 
 
-SERVICE = "openalgo:jainam"
+SERVICE = "marvelquant:jainam"
 FIELDS = {
     "JAINAM_INTERACTIVE_API_KEY": "Interactive API key",
     "JAINAM_INTERACTIVE_API_SECRET": "Interactive API secret",

@@ -79,7 +79,7 @@ def get_margin_data(auth_token):
         auth_token: Authentication token
 
     Returns:
-        Margin data in OpenAlgo format
+        Margin data in MarvelQuant format
     """
     try:
         # Parse auth_token
@@ -140,7 +140,7 @@ def get_margin_data(auth_token):
         if response_data.get('type') == 'success' and 'result' in response_data:
             balance_data = response_data['result']
 
-            # Transform to OpenAlgo format
+            # Transform to MarvelQuant format
             margin_data = {
                 'availablecash': float(balance_data.get('AvailableMargin', 0)),
                 'collateral': float(balance_data.get('Collateral', 0)),
@@ -198,7 +198,7 @@ def get_profile(auth_token):
         if response_data.get('type') == 'success' and 'result' in response_data:
             profile_data = response_data['result']
 
-            # Transform to OpenAlgo format
+            # Transform to MarvelQuant format
             profile = {
                 'client_id': profile_data.get('clientID', ''),
                 'name': profile_data.get('clientName', ''),

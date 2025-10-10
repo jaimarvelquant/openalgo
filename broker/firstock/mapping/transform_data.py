@@ -1,4 +1,4 @@
-#Mapping OpenAlgo API Request https://openalgo.in/docs
+#Mapping MarvelQuant API Request https://marvelquant.com/docs
 #Mapping Firstock API Parameters https://connect.thefirstock.com/api/V4/placeOrder
 
 from database.token_db import get_br_symbol
@@ -6,9 +6,9 @@ import html
 
 def transform_data(data,token):
     """
-    Transforms the OpenAlgo API request structure to Firstock's expected structure.
+    Transforms the MarvelQuant API request structure to Firstock's expected structure.
     
-    OpenAlgo format:
+    MarvelQuant format:
     {
         "apikey": "...",
         "strategy": "...",
@@ -101,7 +101,7 @@ def transform_modify_order_data(data, token):
 
 def map_order_type(pricetype):
     """
-    Maps the OpenAlgo pricetype to Firstock's order type.
+    Maps the MarvelQuant pricetype to Firstock's order type.
     """
     order_type_mapping = {
         "MARKET": "MKT",
@@ -113,7 +113,7 @@ def map_order_type(pricetype):
 
 def map_product_type(product):
     """
-    Maps the OpenAlgo product type to Firstock's product type.
+    Maps the MarvelQuant product type to Firstock's product type.
     """
     product_type_mapping = {
         "CNC": "C",
@@ -126,7 +126,7 @@ def map_product_type(product):
 
 def reverse_map_product_type(product):
     """
-    Maps Firstock's product type to OpenAlgo product type.
+    Maps Firstock's product type to MarvelQuant product type.
     """
     reverse_product_type_mapping = {
         "C": "CNC",

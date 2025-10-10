@@ -1,7 +1,7 @@
 # CSRF Migration Plan
 
 ## 1. Introduction
-Cross-Site Request Forgery (CSRF) is an attack that forces authenticated users to execute unwanted actions on a web application. To secure OpenAlgo’s REST/API endpoints, we will introduce a token-based CSRF protection layer across all state-changing operations.
+Cross-Site Request Forgery (CSRF) is an attack that forces authenticated users to execute unwanted actions on a web application. To secure MarvelQuant’s REST/API endpoints, we will introduce a token-based CSRF protection layer across all state-changing operations.
 
 ## 2. Goals
 - Ensure all non-GET HTTP methods (POST, PUT, DELETE, PATCH) require a valid CSRF token.
@@ -69,4 +69,4 @@ Cross-Site Request Forgery (CSRF) is an attack that forces authenticated users t
 | Deployment | Staging → Production rollout      | 1 day    |
 
 ## 6. Conclusion
-Adding CSRF protection with Flask-SeaSurf will secure OpenAlgo’s APIs against forgery attacks with minimal overhead. Follow the plan above for a smooth migration.
+Adding CSRF protection with Flask-SeaSurf will secure MarvelQuant’s APIs against forgery attacks with minimal overhead. Follow the plan above for a smooth migration.

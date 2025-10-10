@@ -4,7 +4,7 @@
 
 ### System Requirements
 - Python 3.8 or higher
-- OpenAlgo installed and running
+- MarvelQuant installed and running
 - 2GB RAM minimum (4GB recommended)
 - 1GB free disk space
 
@@ -50,7 +50,7 @@ conda install apscheduler psutil pytz
 The following directories will be created automatically:
 
 ```
-openalgo/
+marvelquant/
 ├── blueprints/
 │   └── python_strategy.py      # Core module (should exist)
 ├── templates/
@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS strategies (
 
 ### Environment Variables
 
-Create `.env` file in OpenAlgo root:
+Create `.env` file in MarvelQuant root:
 
 ```env
 # Python Strategies Configuration
@@ -115,7 +115,7 @@ STRATEGY_TIMEZONE=Asia/Kolkata
 
 ### Application Configuration
 
-In your OpenAlgo configuration:
+In your MarvelQuant configuration:
 
 ```python
 # config.py
@@ -229,7 +229,7 @@ RUN chmod -R 755 /app/strategies \
 version: '3.8'
 
 services:
-  openalgo:
+  marvelquant:
     build: .
     ports:
       - "5000:5000"
@@ -370,7 +370,7 @@ If accessing remotely:
 sudo ufw allow 5000/tcp
 
 # Windows Firewall
-netsh advfirewall firewall add rule name="OpenAlgo" dir=in action=allow protocol=TCP localport=5000
+netsh advfirewall firewall add rule name="MarvelQuant" dir=in action=allow protocol=TCP localport=5000
 ```
 
 ### Process Limits

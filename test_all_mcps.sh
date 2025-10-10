@@ -111,7 +111,7 @@ echo "• Context7 - Documentation context"
 echo "• Sequential Thinking - Problem solving"
 echo "• Filesystem - File operations"
 echo "• Memory - Knowledge graph"
-echo "• OpenAlgo - Trading platform"
+echo "• MarvelQuant - Trading platform"
 
 echo -e "\n${BLUE}Configuration Files:${NC}"
 echo "• Auggie CLI: ~/.auggie/config.json"

@@ -372,7 +372,7 @@ def transform_positions_data(positions_data):
                 "exchange": position.get('exchangeSegment', ''),
                 "product": position.get('productType', ''),
                 "quantity": position.get('netQty', 0),
-                "average_price": str(position.get('avgCostPrice', 0.0))  # OpenAlgo expects string format
+                "average_price": str(position.get('avgCostPrice', 0.0))  # MarvelQuant expects string format
             }
             transformed_data.append(transformed_position)
         return transformed_data

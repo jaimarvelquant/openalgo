@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Python Strategy Hosting System is a comprehensive solution for deploying, managing, and monitoring automated trading strategies within the OpenAlgo platform. Accessible via the `/python` route, this system provides traders with a web-based interface to upload, schedule, and control Python-based trading strategies with complete process isolation and monitoring capabilities.
+The Python Strategy Hosting System is a comprehensive solution for deploying, managing, and monitoring automated trading strategies within the MarvelQuant platform. Accessible via the `/python` route, this system provides traders with a web-based interface to upload, schedule, and control Python-based trading strategies with complete process isolation and monitoring capabilities.
 
 ## Architecture
 
@@ -272,14 +272,14 @@ keys/               # 700 - Only owner access
 | `/python/env/<id>` | GET/POST | Manage environment variables |
 | `/python/status` | GET | System status |
 
-## Integration with OpenAlgo
+## Integration with MarvelQuant
 
 ### 1. API Access
 
-Strategies can use the OpenAlgo Python client:
+Strategies can use the MarvelQuant Python client:
 
 ```python
-from openalgo import api
+from marvelquant import api
 
 # Initialize client with API key from environment
 client = api(
@@ -287,7 +287,7 @@ client = api(
     host='http://localhost:5000'
 )
 
-# Use all OpenAlgo API features
+# Use all MarvelQuant API features
 positions = client.positions()
 order_id = client.place_order(...)
 ```
@@ -328,7 +328,7 @@ ws.on_tick = on_tick_handler
 - SSD for better log performance
 
 **Horizontal Scaling:**
-- Multiple OpenAlgo instances possible
+- Multiple MarvelQuant instances possible
 - Load balancing for web interface
 - Shared database for coordination
 

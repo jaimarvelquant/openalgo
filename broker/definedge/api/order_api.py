@@ -69,7 +69,7 @@ def get_holdings(auth):
 
 def get_open_position(tradingsymbol, exchange, product, auth):
     """Get open position for a specific symbol."""
-    # Convert Trading Symbol from OpenAlgo Format to Broker Format Before Search in OpenPosition
+    # Convert Trading Symbol from MarvelQuant Format to Broker Format Before Search in OpenPosition
     tradingsymbol = get_br_symbol(tradingsymbol, exchange)
     
     logger.info(f"=== GET OPEN POSITION ===")
@@ -403,14 +403,14 @@ def close_all_positions(current_api_key, auth):
             
             logger.info(f"Closing position: {tradingsymbol} ({exchange}) - Qty: {netqty_int}, Action: {action}")
             
-            # Get openalgo symbol to send to placeorder function
+            # Get marvelquant symbol to send to placeorder function
             symbol = get_oa_symbol(tradingsymbol, exchange)
             
             if not symbol:
-                logger.error(f"Failed to get OpenAlgo symbol for {tradingsymbol} on {exchange}")
+                logger.error(f"Failed to get MarvelQuant symbol for {tradingsymbol} on {exchange}")
                 symbol = tradingsymbol  # Use original as fallback
             
-            logger.info(f"OpenAlgo symbol: {symbol}")
+            logger.info(f"MarvelQuant symbol: {symbol}")
             
             # Prepare the order payload
             place_order_payload = {

@@ -2,7 +2,7 @@
 
 ## Overview
 
-OpenAlgo features a comprehensive WebSocket infrastructure that enables real-time market data streaming from multiple brokers to client applications. The architecture is designed to be broker-agnostic, scalable, and fault-tolerant.
+MarvelQuant features a comprehensive WebSocket infrastructure that enables real-time market data streaming from multiple brokers to client applications. The architecture is designed to be broker-agnostic, scalable, and fault-tolerant.
 
 ## Architecture Components
 

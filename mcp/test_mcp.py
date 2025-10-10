@@ -31,23 +31,23 @@ async def test_playwright():
         print(f"✗ Playwright test failed: {e}")
         return False
 
-def test_openalgo():
-    """Test OpenAlgo MCP server imports"""
+def test_marvelquant():
+    """Test MarvelQuant MCP server imports"""
     try:
         from openalgo import api
-        print("✓ OpenAlgo import test passed")
+        print("✓ MarvelQuant import test passed")
         return True
     except Exception as e:
-        print(f"✗ OpenAlgo import test failed: {e}")
+        print(f"✗ MarvelQuant import test failed: {e}")
         return False
 
 async def main():
     print("🧪 Testing MCP servers...")
     
-    openalgo_ok = test_openalgo()
+    marvelquant_ok = test_marvelquant()
     playwright_ok = await test_playwright()
     
-    if openalgo_ok and playwright_ok:
+    if marvelquant_ok and playwright_ok:
         print("\n🎉 All tests passed! MCP servers are ready.")
     else:
         print("\n⚠️  Some tests failed. Check the output above.")

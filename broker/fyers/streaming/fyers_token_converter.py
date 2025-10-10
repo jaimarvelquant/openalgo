@@ -1,6 +1,6 @@
 """
 Fyers Symbol to HSM Token Converter
-Converts OpenAlgo symbols to Fyers HSM format for WebSocket streaming
+Converts MarvelQuant symbols to Fyers HSM format for WebSocket streaming
 Uses database lookup for brsymbol mapping
 """
 
@@ -69,7 +69,7 @@ class FyersTokenConverter:
     
     def get_brsymbols_from_database(self, symbol_exchange_pairs: List[Tuple[str, str]]) -> Dict[Tuple[str, str], str]:
         """
-        Lookup brsymbols from database using OpenAlgo symbol and exchange
+        Lookup brsymbols from database using MarvelQuant symbol and exchange
         Uses the existing get_br_symbol function from database.token_db
         
         Args:
@@ -102,9 +102,9 @@ class FyersTokenConverter:
             
         return brsymbol_map
     
-    def convert_openalgo_symbols_to_hsm(self, symbol_info_list: List[Dict], data_type: str = "SymbolUpdate") -> Tuple[List[str], Dict[str, str], List[str]]:
+    def convert_marvelquant_symbols_to_hsm(self, symbol_info_list: List[Dict], data_type: str = "SymbolUpdate") -> Tuple[List[str], Dict[str, str], List[str]]:
         """
-        Convert OpenAlgo symbols to HSM tokens using database lookup for brsymbols
+        Convert MarvelQuant symbols to HSM tokens using database lookup for brsymbols
         
         Args:
             symbol_info_list: List of dicts with 'symbol' and 'exchange' keys
@@ -116,7 +116,7 @@ class FyersTokenConverter:
         try:
             # Extract symbol and exchange pairs  
             symbol_exchange_pairs = [(info['symbol'], info['exchange']) for info in symbol_info_list]
-            #self.logger.info(f"Converting OpenAlgo symbols: {symbol_exchange_pairs}")
+            #self.logger.info(f"Converting MarvelQuant symbols: {symbol_exchange_pairs}")
             
             # Get brsymbols from database using get_br_symbol
             brsymbol_map = self.get_brsymbols_from_database(symbol_exchange_pairs)
@@ -145,7 +145,7 @@ class FyersTokenConverter:
                 return [], {}, invalid_symbols
             
         except Exception as e:
-            self.logger.error(f"OpenAlgo symbol conversion error: {e}")
+            self.logger.error(f"MarvelQuant symbol conversion error: {e}")
             return [], {}, [f"{info['symbol']}@{info['exchange']}" for info in symbol_info_list]
         
     def convert_symbols_to_hsm(self, brsymbols: List[str], data_type: str = "SymbolUpdate") -> Tuple[List[str], Dict[str, str], List[str]]:
@@ -422,9 +422,9 @@ class FyersTokenConverter:
             return self.EXCHANGE_SEGMENTS.get(ex_sg)
         return None
     
-    def convert_openalgo_to_fyers_symbol(self, exchange: str, symbol: str) -> str:
+    def convert_marvelquant_to_fyers_symbol(self, exchange: str, symbol: str) -> str:
         """
-        Convert OpenAlgo format (exchange, symbol) to Fyers symbol format
+        Convert MarvelQuant format (exchange, symbol) to Fyers symbol format
         
         Args:
             exchange: Exchange name (NSE, BSE, MCX, etc.)

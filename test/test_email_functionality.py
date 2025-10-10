@@ -129,7 +129,7 @@ def main():
     
     args = parser.parse_args()
     
-    print("🚀 OpenAlgo Email Test Script")
+    print("🚀 MarvelQuant Email Test Script")
     print("=" * 40)
     
     # Load environment variables from .env if it exists

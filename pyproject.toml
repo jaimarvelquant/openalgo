@@ -1,6 +1,6 @@
 [project]
 requires-python = ">=3.12"
-name = "openalgoUI"
+name = "marvelquantUI"
 version = "1.0.0.35"
 description = "Broker-agnostic open-source trading automation"
 dependencies = [

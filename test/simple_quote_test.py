@@ -11,7 +11,7 @@ from queue import Queue
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 class SimpleFeed:
-    """A simplified wrapper around the OpenAlgo WebSocket client for Quote data"""
+    """A simplified wrapper around the MarvelQuant WebSocket client for Quote data"""
     
     def __init__(self, host: str = "localhost", port: int = 8765, api_key: Optional[str] = None):
         """
@@ -293,7 +293,7 @@ if __name__ == "__main__":
     from dotenv import load_dotenv
     load_dotenv()
     
-    print("OpenAlgo Simple Quote Feed Test")
+    print("MarvelQuant Simple Quote Feed Test")
     
     api_key = os.getenv("API_KEY")
     if not api_key:

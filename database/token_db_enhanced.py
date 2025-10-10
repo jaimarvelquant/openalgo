@@ -227,7 +227,7 @@ class BrokerSymbolCache:
         return None
     
     def get_oa_symbol(self, brsymbol: str, exchange: str) -> Optional[str]:
-        """Get OpenAlgo symbol for broker symbol and exchange - O(1) lookup"""
+        """Get MarvelQuant symbol for broker symbol and exchange - O(1) lookup"""
         self.stats.hits += 1
         key = (brsymbol, exchange)
         if key in self.by_brsymbol_exchange:
@@ -400,7 +400,7 @@ def get_br_symbol(symbol: str, exchange: str) -> Optional[str]:
 
 def get_oa_symbol(brsymbol: str, exchange: str) -> Optional[str]:
     """
-    Get OpenAlgo symbol for a given broker symbol and exchange
+    Get MarvelQuant symbol for a given broker symbol and exchange
     """
     cache = get_cache()
     
@@ -467,7 +467,7 @@ def get_br_symbol_dbquery(symbol: str, exchange: str) -> Optional[str]:
         return None
 
 def get_oa_symbol_dbquery(brsymbol: str, exchange: str) -> Optional[str]:
-    """Query database for OpenAlgo symbol"""
+    """Query database for MarvelQuant symbol"""
     try:
         from database.symbol import SymToken
         sym_token = SymToken.query.filter_by(brsymbol=brsymbol, exchange=exchange).first()

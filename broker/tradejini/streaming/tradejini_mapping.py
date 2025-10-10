@@ -3,7 +3,7 @@ Tradejini-specific exchange and capability mappings for WebSocket streaming
 """
 
 class TradejiniExchangeMapper:
-    """Maps exchange codes between OpenAlgo and Tradejini formats"""
+    """Maps exchange codes between MarvelQuant and Tradejini formats"""
 
     # Exchange mappings based on Tradejini's SEG_INFO
     EXCHANGE_MAP = {

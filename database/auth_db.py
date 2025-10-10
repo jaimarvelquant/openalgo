@@ -31,7 +31,7 @@ def get_encryption_key():
     kdf = PBKDF2HMAC(
         algorithm=hashes.SHA256(),
         length=32,
-        salt=b'openalgo_static_salt',
+        salt=b'marvelquant_static_salt',
         iterations=100000,
     )
     key = base64.urlsafe_b64encode(kdf.derive(PEPPER.encode()))
@@ -141,7 +141,9 @@ def decrypt_token(encrypted_token):
     try:
         return fernet.decrypt(encrypted_token.encode()).decode()
     except Exception as e:
-        logger.error(f"Error decrypting token: {e}")
+        # Log the full exception with type and message
+        logger.error(f"Error decrypting token: {type(e).__name__}: {str(e)}")
+        logger.debug(f"Encrypted token (first 50 chars): {encrypted_token[:50] if len(encrypted_token) > 50 else encrypted_token}")
         return None
 
 def upsert_auth(name, auth_token, broker, feed_token=None, user_id=None, revoke=False):

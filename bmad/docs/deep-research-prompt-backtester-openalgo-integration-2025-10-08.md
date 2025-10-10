@@ -1,4 +1,4 @@
-# Deep Research Prompt: Backtester to OpenAlgo Live Trading Integration
+# Deep Research Prompt: Backtester to MarvelQuant Live Trading Integration
 
 **Generated**: 2025-10-08  
 **Target Platform**: ChatGPT Deep Research / Gemini Deep Research / Grok DeepSearch  
@@ -9,11 +9,11 @@
 
 ## 🎯 Research Objective
 
-Conduct comprehensive research on **integrating a Python-based backtesting system with OpenAlgo for live algorithmic trading**, covering technical architecture patterns, UI/UX design best practices, and industry standards for production-grade trading platforms.
+Conduct comprehensive research on **integrating a Python-based backtesting system with MarvelQuant for live algorithmic trading**, covering technical architecture patterns, UI/UX design best practices, and industry standards for production-grade trading platforms.
 
 ### Context
 
-I'm building a system that enables validated trading strategies from a backtester to be deployed and executed in live markets via OpenAlgo (a multi-broker trading platform supporting 23+ brokers). The system needs:
+I'm building a system that enables validated trading strategies from a backtester to be deployed and executed in live markets via MarvelQuant (a multi-broker trading platform supporting 23+ brokers). The system needs:
 
 - Seamless workflow from Excel configuration → Backtest validation → Live deployment
 - Real-time portfolio monitoring and control interface
@@ -23,7 +23,7 @@ I'm building a system that enables validated trading strategies from a backteste
 
 ### Goal
 
-Provide actionable technical specifications and design recommendations that enable implementation of a complete backtester-to-live-trading integration with professional-grade UI/UX, following industry best practices while working within the OpenAlgo ecosystem.
+Provide actionable technical specifications and design recommendations that enable implementation of a complete backtester-to-live-trading integration with professional-grade UI/UX, following industry best practices while working within the MarvelQuant ecosystem.
 
 ---
 
@@ -43,7 +43,7 @@ Provide actionable technical specifications and design recommendations that enab
 
 **INCLUDE:**
 - Backtester to live trading integration architecture patterns
-- OpenAlgo ecosystem integration strategies (Flask-based, multi-broker)
+- MarvelQuant ecosystem integration strategies (Flask-based, multi-broker)
 - Real-time trading UI/UX design patterns and component libraries
 - Portfolio management interface design (hierarchical data visualization)
 - Risk management visualization and control interfaces
@@ -147,7 +147,7 @@ Provide actionable technical specifications and design recommendations that enab
 ### 5. Technology Stack Recommendations
 
 **Given Constraints:**
-- **OpenAlgo Stack**: Flask 2.x, Tailwind CSS 4.1.14, DaisyUI 5.1.27, Vanilla JavaScript, SQLite
+- **MarvelQuant Stack**: Flask 2.x, Tailwind CSS 4.1.14, DaisyUI 5.1.27, Vanilla JavaScript, SQLite
 - **Backtester Stack**: Python 3.8+, Pandas, Parquet files, Excel configurations
 - **Requirements**: Support 23+ brokers, <1s failover, 1-5s P&L updates
 
@@ -166,7 +166,7 @@ Provide actionable technical specifications and design recommendations that enab
 - **TradeStation**: How is their strategy deployment pipeline designed?
 - **Alpaca**: What API design patterns do they use?
 - **TradingView**: What makes their charting and alert UI effective?
-- **OpenAlgo**: What existing patterns should be leveraged?
+- **MarvelQuant**: What existing patterns should be leveraged?
 
 **Specific Questions:**
 - How do these platforms visualize portfolio hierarchies?
@@ -217,7 +217,7 @@ Provide actionable technical specifications and design recommendations that enab
 - Frontend framework comparison (React vs Vue vs Vanilla JS)
 - CSS framework evaluation (Tailwind vs Bootstrap vs Material-UI)
 - Component library options (DaisyUI vs others)
-- Trade-offs and recommendations for OpenAlgo context
+- Trade-offs and recommendations for MarvelQuant context
 
 **2.2 Hierarchical Data Visualization**
 - Portfolio → Strategy → Leg display patterns
@@ -295,7 +295,7 @@ Provide actionable technical specifications and design recommendations that enab
 **5.1 Recommended Architecture**
 - High-level system diagram
 - Technology stack recommendations
-- Integration points with OpenAlgo
+- Integration points with MarvelQuant
 - Scalability considerations
 
 **5.2 Phased Implementation Plan**
@@ -335,7 +335,7 @@ Provide actionable technical specifications and design recommendations that enab
 - Suggest follow-up research topics
 
 ### Practical Applicability
-- Ensure recommendations are implementable within OpenAlgo ecosystem constraints
+- Ensure recommendations are implementable within MarvelQuant ecosystem constraints
 - Consider team skill levels (Python, Flask, Vanilla JS)
 - Balance ideal solutions with pragmatic implementation paths
 - Provide "good, better, best" options where applicable
@@ -350,7 +350,7 @@ Provide actionable technical specifications and design recommendations that enab
 - TradeStation (platform documentation)
 - Alpaca (API documentation, blog)
 - TradingView (UI/UX patterns)
-- OpenAlgo (GitHub repository, documentation)
+- MarvelQuant (GitHub repository, documentation)
 
 ### UI/UX Design Systems
 - Tailwind CSS documentation and component examples
@@ -378,7 +378,7 @@ Provide actionable technical specifications and design recommendations that enab
 
 ## 🎯 Key Questions to Answer
 
-1. **What is the optimal architecture for integrating a backtester with OpenAlgo for live trading?**
+1. **What is the optimal architecture for integrating a backtester with MarvelQuant for live trading?**
    - Should it be tightly coupled or loosely coupled?
    - How should configuration be managed (Excel → JSON workflow)?
    - What validation steps are essential before live deployment?
@@ -568,9 +568,9 @@ If using Claude Projects or uploading context to other platforms, include these 
    - `/Users/maruth/projects/docs/portfolio-control-ui-ux-research-and-phasing.md`
    - `/Users/maruth/projects/docs/portfolio-control-ui-phase2-and-mcp-n8n.md`
 
-3. **OpenAlgo Context:**
-   - OpenAlgo GitHub repository: https://github.com/marketcalls/openalgo
-   - OpenAlgo documentation (if available)
+3. **MarvelQuant Context:**
+   - MarvelQuant GitHub repository: https://github.com/marketcalls/marvelquant
+   - MarvelQuant documentation (if available)
 
 ---
 
@@ -579,7 +579,7 @@ If using Claude Projects or uploading context to other platforms, include these 
 After completing this research, you should have:
 
 1. **Clear Architecture Decision:**
-   - Recommended integration pattern for Backtester → OpenAlgo
+   - Recommended integration pattern for Backtester → MarvelQuant
    - Multi-broker market data architecture with failover strategy
    - Configuration management workflow (Excel → JSON)
 
@@ -621,7 +621,7 @@ After completing this research, you should have:
 
 ### Step 2: Review and Validate
 - Cross-check key technical claims against official documentation
-- Verify that recommendations align with OpenAlgo ecosystem constraints
+- Verify that recommendations align with MarvelQuant ecosystem constraints
 - Identify any conflicting information and resolve
 - Note areas requiring follow-up research
 
@@ -647,5 +647,5 @@ After completing this research, you should have:
 
 **Research Prompt Ready for Execution!**
 
-This comprehensive prompt is optimized for AI research platforms and should provide deep, actionable insights for your Backtester → OpenAlgo integration project.
+This comprehensive prompt is optimized for AI research platforms and should provide deep, actionable insights for your Backtester → MarvelQuant integration project.
 

@@ -747,7 +747,7 @@ process_all_t1_settlements()
 
 Or via command line:
 ```bash
-cd openalgo
+cd marvelquant
 python -c "from sandbox.holdings_manager import process_all_t1_settlements; from database.sandbox_db import init_db; init_db(); process_all_t1_settlements()"
 ```
 

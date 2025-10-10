@@ -36,7 +36,7 @@ API key must be provided either:
 - In the request header as `X-API-KEY`
 - As a query parameter `apikey`
 
-**Note**: The API key must be obtained from your OpenAlgo instance dashboard under the API Key section.
+**Note**: The API key must be obtained from your MarvelQuant instance dashboard under the API Key section.
 
 ### AmiBroker Integration
 For AmiBroker users, use this exact URL template format to fetch historical quotes:
@@ -165,14 +165,14 @@ Error messages are returned as plain text with appropriate HTTP status codes.
 
 Example:
 ```
-Invalid openalgo apikey
+Invalid marvelquant apikey
 ```
 
 ### JSON Format
 ```json
 {
     "status": "error",
-    "message": "Invalid openalgo apikey"
+    "message": "Invalid marvelquant apikey"
 }
 ```
 

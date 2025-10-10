@@ -2,7 +2,7 @@
 
 ## Overview
 
-OpenAlgo supports multiple deployment architectures to accommodate different scale, security, and infrastructure requirements. This document details the various deployment options, their configurations, and best practices for production deployments.
+MarvelQuant supports multiple deployment architectures to accommodate different scale, security, and infrastructure requirements. This document details the various deployment options, their configurations, and best practices for production deployments.
 
 ## Deployment Options
 
@@ -37,10 +37,10 @@ Internet → Nginx (443/80) → Gunicorn (Unix Socket) → Flask App
 
 **Directory Structure:**
 ```
-/var/python/openalgo-flask/{domain}-{broker}/
-├── openalgo/           # Application code
+/var/python/marvelquant-flask/{domain}-{broker}/
+├── marvelquant/           # Application code
 ├── venv/               # Python virtual environment
-├── openalgo.sock       # Unix socket file
+├── marvelquant.sock       # Unix socket file
 └── logs/               # Installation logs
 ```
 
@@ -79,7 +79,7 @@ Docker Host → Docker Container → Flask App
 ```yaml
 version: '3.8'
 services:
-  openalgo:
+  marvelquant:
     build: .
     ports:
       - "5000:5000"
@@ -88,7 +88,7 @@ services:
       - ./logs:/app/logs
       - ./strategies:/app/strategies
     environment:
-      - DATABASE_URL=sqlite:///db/openalgo.db
+      - DATABASE_URL=sqlite:///db/marvelquant.db
     restart: unless-stopped
 ```
 
@@ -211,16 +211,16 @@ limiter = Limiter(
 # Run as non-root user
 User=www-data
 Group=www-data
-WorkingDirectory=/var/python/openalgo
+WorkingDirectory=/var/python/marvelquant
 ```
 
 **Directory Permissions:**
 ```bash
 # Secure directory permissions
-chmod 755 /var/python/openalgo
-chmod 700 /var/python/openalgo/keys
-chmod 755 /var/python/openalgo/strategies
-chown -R www-data:www-data /var/python/openalgo
+chmod 755 /var/python/marvelquant
+chmod 700 /var/python/marvelquant/keys
+chmod 755 /var/python/marvelquant/strategies
+chown -R www-data:www-data /var/python/marvelquant
 ```
 
 ## High Availability Setup
@@ -239,7 +239,7 @@ chown -R www-data:www-data /var/python/openalgo
 
 **Nginx Load Balancer Configuration:**
 ```nginx
-upstream openalgo_backend {
+upstream marvelquant_backend {
     least_conn;
     server 10.0.1.10:5000;
     server 10.0.1.11:5000;
@@ -248,7 +248,7 @@ upstream openalgo_backend {
 
 server {
     location / {
-        proxy_pass http://openalgo_backend;
+        proxy_pass http://marvelquant_backend;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
     }
@@ -260,7 +260,7 @@ server {
 **PostgreSQL for Production:**
 ```python
 # .env configuration
-DATABASE_URL=postgresql://user:password@localhost/openalgo
+DATABASE_URL=postgresql://user:password@localhost/marvelquant
 SQLALCHEMY_POOL_SIZE=10
 SQLALCHEMY_POOL_RECYCLE=3600
 SQLALCHEMY_POOL_PRE_PING=True
@@ -323,7 +323,7 @@ LOGGING_CONFIG = {
     'handlers': {
         'file': {
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': 'logs/openalgo.log',
+            'filename': 'logs/marvelquant.log',
             'maxBytes': 10485760,  # 10MB
             'backupCount': 10
         },
@@ -359,21 +359,21 @@ app = newrelic.agent.WSGIApplicationWrapper(app)
 ```bash
 #!/bin/bash
 # Daily database backup
-BACKUP_DIR="/backups/openalgo"
+BACKUP_DIR="/backups/marvelquant"
 DATE=$(date +%Y%m%d_%H%M%S)
 
 # SQLite backup
-sqlite3 /var/python/openalgo/db/openalgo.db ".backup ${BACKUP_DIR}/openalgo_${DATE}.db"
+sqlite3 /var/python/marvelquant/db/marvelquant.db ".backup ${BACKUP_DIR}/marvelquant_${DATE}.db"
 
 # PostgreSQL backup
-pg_dump openalgo > ${BACKUP_DIR}/openalgo_${DATE}.sql
+pg_dump marvelquant > ${BACKUP_DIR}/marvelquant_${DATE}.sql
 
 # Compress and encrypt
-tar czf - ${BACKUP_DIR}/openalgo_${DATE}.* | \
-  openssl enc -aes-256-cbc -salt -out ${BACKUP_DIR}/openalgo_${DATE}.tar.gz.enc
+tar czf - ${BACKUP_DIR}/marvelquant_${DATE}.* | \
+  openssl enc -aes-256-cbc -salt -out ${BACKUP_DIR}/marvelquant_${DATE}.tar.gz.enc
 
 # Upload to S3
-aws s3 cp ${BACKUP_DIR}/openalgo_${DATE}.tar.gz.enc s3://backup-bucket/openalgo/
+aws s3 cp ${BACKUP_DIR}/marvelquant_${DATE}.tar.gz.enc s3://backup-bucket/marvelquant/
 ```
 
 ### 2. Strategy Backup
@@ -435,21 +435,21 @@ tar czf strategies_backup_$(date +%Y%m%d).tar.gz \
 1. **Service Won't Start**
 ```bash
 # Check logs
-sudo journalctl -u openalgo -n 50
+sudo journalctl -u marvelquant -n 50
 # Check permissions
-ls -la /var/python/openalgo
+ls -la /var/python/marvelquant
 # Check socket file
-ls -la /var/python/openalgo/*.sock
+ls -la /var/python/marvelquant/*.sock
 ```
 
 2. **502 Bad Gateway**
 ```bash
 # Check if service is running
-sudo systemctl status openalgo
+sudo systemctl status marvelquant
 # Check Nginx error log
 sudo tail -f /var/log/nginx/error.log
 # Restart services
-sudo systemctl restart openalgo nginx
+sudo systemctl restart marvelquant nginx
 ```
 
 3. **Database Connection Error**
@@ -457,7 +457,7 @@ sudo systemctl restart openalgo nginx
 # Check database service
 sudo systemctl status postgresql
 # Check connection string
-grep DATABASE_URL /var/python/openalgo/.env
+grep DATABASE_URL /var/python/marvelquant/.env
 # Test connection
 python -c "from app import db; db.create_all()"
 ```
@@ -465,10 +465,10 @@ python -c "from app import db; db.create_all()"
 4. **Permission Denied**
 ```bash
 # Fix ownership
-sudo chown -R www-data:www-data /var/python/openalgo
+sudo chown -R www-data:www-data /var/python/marvelquant
 # Fix permissions
-sudo chmod -R 755 /var/python/openalgo
-sudo chmod 700 /var/python/openalgo/keys
+sudo chmod -R 755 /var/python/marvelquant
+sudo chmod 700 /var/python/marvelquant/keys
 ```
 
 ## Performance Tuning

@@ -372,7 +372,7 @@ if __name__ == '__main__':
     port = int(os.getenv('FLASK_PORT', 5000))  # Default to 5000 if not set
     debug = os.getenv('FLASK_DEBUG', 'False').lower() in ('true', '1', 't')  # Default to False if not set
 
-    # Log the OpenAlgo access URL with enhanced styling
+    # Log the MarvelQuant access URL with enhanced styling
     import socket
 
     # If binding to all interfaces (0.0.0.0), show all available IPs
@@ -393,7 +393,7 @@ if __name__ == '__main__':
 
         # Show accessible URLs (excluding localhost) with blue highlighting
         logger.info("=" * 60)
-        logger.info("OpenAlgo is running!")
+        logger.info("MarvelQuant is running!")
         logger.info(f"Access the application at:")
         for url in urls:
             # Skip localhost URL
@@ -404,6 +404,6 @@ if __name__ == '__main__':
     else:
         # Single IP binding
         url = f"http://{host_ip}:{port}"
-        log_startup_banner(logger, "OpenAlgo is running!", url)
+        log_startup_banner(logger, "MarvelQuant is running!", url)
 
     socketio.run(app, host=host_ip, port=port, debug=debug, allow_unsafe_werkzeug=True)

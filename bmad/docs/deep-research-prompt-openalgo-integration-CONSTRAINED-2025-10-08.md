@@ -1,4 +1,4 @@
-# Deep Research Prompt: Backtester → OpenAlgo Integration (Technology Stack CONSTRAINED)
+# Deep Research Prompt: Backtester → MarvelQuant Integration (Technology Stack CONSTRAINED)
 
 **Generated**: 2025-10-08  
 **Target Platforms**: ChatGPT Deep Research / Gemini Deep Research / Grok DeepSearch  
@@ -28,13 +28,13 @@ All recommendations, patterns, examples, and code snippets MUST be compatible wi
 
 ## 🎯 Research Objective
 
-Conduct comprehensive research on **implementing a production-grade backtester-to-live-trading integration with OpenAlgo**, focusing exclusively on solutions that work within the existing Flask + Tailwind CSS + DaisyUI + Vanilla JavaScript technology stack.
+Conduct comprehensive research on **implementing a production-grade backtester-to-live-trading integration with MarvelQuant**, focusing exclusively on solutions that work within the existing Flask + Tailwind CSS + DaisyUI + Vanilla JavaScript technology stack.
 
 ### Context
 
-OpenAlgo is an open-source multi-broker trading platform (supporting 23+ brokers) built with Flask, Tailwind CSS, DaisyUI, and Vanilla JavaScript. I need to integrate a Python-based backtesting system with OpenAlgo for live trading execution, including:
+MarvelQuant is an open-source multi-broker trading platform (supporting 23+ brokers) built with Flask, Tailwind CSS, DaisyUI, and Vanilla JavaScript. I need to integrate a Python-based backtesting system with MarvelQuant for live trading execution, including:
 
-- **Deployment Pipeline**: Excel configuration → JSON validation → Backtest → Live deployment via OpenAlgo API
+- **Deployment Pipeline**: Excel configuration → JSON validation → Backtest → Live deployment via MarvelQuant API
 - **Portfolio Control UI**: Real-time monitoring and control interface for Portfolio → Strategy → Leg hierarchy
 - **Multi-Broker Market Data**: Aggregation from 4 brokers (Zerodha, Upstox, AngelOne, Fyers) with automatic failover
 - **Risk Management**: Portfolio-level Stop Loss, Target, and Trailing Stop enforcement
@@ -46,7 +46,7 @@ The following architectural decisions have been made and documented:
 
 1. **Integration Point**: Portfolio Manager (`app/pm`) with `is_live` parameter
 2. **Configuration Format**: Dual-format (Excel for editing, JSON for deployment with automated sync)
-3. **Order Execution**: OpenAlgo API as single unified interface (no direct broker APIs)
+3. **Order Execution**: MarvelQuant API as single unified interface (no direct broker APIs)
 4. **Market Data**: Multi-broker with performance-based selection and <1 second failover
 5. **UI Technology**: Tailwind CSS + DaisyUI + Vanilla JS + Flask + SSE (FIXED - cannot change)
 6. **Implementation Phases**: Phase 1 (API-first), Phase 2 (UI layer), Phase 3 (Advanced features)
@@ -94,12 +94,12 @@ Provide **immediately implementable technical specifications** for building this
 
 ### Thematic Focus
 
-**PRIORITY 1: OpenAlgo Ecosystem Integration**
-- How to extend OpenAlgo's existing Flask Blueprint architecture
-- Leveraging OpenAlgo's multi-broker API abstraction layer
-- Reusing OpenAlgo's existing UI components and patterns
-- OpenAlgo's authentication and API key management
-- How other developers have extended OpenAlgo
+**PRIORITY 1: MarvelQuant Ecosystem Integration**
+- How to extend MarvelQuant's existing Flask Blueprint architecture
+- Leveraging MarvelQuant's multi-broker API abstraction layer
+- Reusing MarvelQuant's existing UI components and patterns
+- MarvelQuant's authentication and API key management
+- How other developers have extended MarvelQuant
 
 **PRIORITY 2: DaisyUI + Vanilla JS UI Patterns**
 - DaisyUI collapse/accordion for Portfolio → Strategy → Leg hierarchy
@@ -124,22 +124,22 @@ Provide **immediately implementable technical specifications** for building this
 
 ## 🔍 Required Information Types
 
-### 1. OpenAlgo Ecosystem Integration (CRITICAL)
+### 1. MarvelQuant Ecosystem Integration (CRITICAL)
 
 **Research Questions:**
-- What is OpenAlgo's current Flask Blueprint structure? (Analyze GitHub: https://github.com/marketcalls/openalgo)
-- How does OpenAlgo organize routes, templates, and static files?
-- What authentication mechanisms does OpenAlgo use for API endpoints?
-- How does OpenAlgo's multi-broker abstraction layer work?
+- What is MarvelQuant's current Flask Blueprint structure? (Analyze GitHub: https://github.com/marketcalls/marvelquant)
+- How does MarvelQuant organize routes, templates, and static files?
+- What authentication mechanisms does MarvelQuant use for API endpoints?
+- How does MarvelQuant's multi-broker abstraction layer work?
 - What existing UI components and patterns can be reused?
-- Are there examples of developers extending OpenAlgo with custom blueprints?
+- Are there examples of developers extending MarvelQuant with custom blueprints?
 
 **Desired Outputs:**
-- OpenAlgo's file structure and Blueprint organization patterns
-- Authentication/authorization patterns used in OpenAlgo
-- Existing DaisyUI components in OpenAlgo's templates
+- MarvelQuant's file structure and Blueprint organization patterns
+- Authentication/authorization patterns used in MarvelQuant
+- Existing DaisyUI components in MarvelQuant's templates
 - Best practices for adding new blueprints without breaking existing functionality
-- Code examples of OpenAlgo API integration
+- Code examples of MarvelQuant API integration
 
 ### 2. DaisyUI Component Patterns for Trading UIs
 
@@ -415,9 +415,9 @@ GET /api/v1/portfolio/NIFTY_ATM_STRADDLE/stream
 - Risk areas and mitigation strategies
 - Estimated implementation complexity (person-weeks)
 
-### Section 1: OpenAlgo Ecosystem Integration (6-8 pages)
+### Section 1: MarvelQuant Ecosystem Integration (6-8 pages)
 
-**1.1 OpenAlgo Architecture Analysis**
+**1.1 MarvelQuant Architecture Analysis**
 - Current Flask Blueprint structure
 - Existing UI components and patterns
 - Authentication and API key management
@@ -432,7 +432,7 @@ GET /api/v1/portfolio/NIFTY_ATM_STRADDLE/stream
 **1.3 Code Examples**
 - Blueprint registration
 - Route definitions
-- Template examples using existing OpenAlgo patterns
+- Template examples using existing MarvelQuant patterns
 - API integration examples
 
 ### Section 2: DaisyUI + Vanilla JS UI Implementation (8-10 pages)
@@ -552,7 +552,7 @@ GET /api/v1/portfolio/NIFTY_ATM_STRADDLE/stream
 
 **5.4 Testing Strategies**
 - Unit testing Flask endpoints
-- Integration testing with OpenAlgo API
+- Integration testing with MarvelQuant API
 - Paper trading validation (duration, criteria)
 - Load testing for real-time updates
 - Disaster recovery testing
@@ -590,7 +590,7 @@ GET /api/v1/portfolio/NIFTY_ATM_STRADDLE/stream
 - Data flow from configuration → execution → results
 
 **7.2 Integration Point Specifications**
-- Exact locations where OpenAlgo API calls should be inserted
+- Exact locations where MarvelQuant API calls should be inserted
 - Required modifications to `run_portfolio()` function
 - Data structure transformations needed
 - Code examples showing before/after for key integration points
@@ -610,7 +610,7 @@ GET /api/v1/portfolio/NIFTY_ATM_STRADDLE/stream
 **7.5 Data Loading Adaptation (from Story 7.9)**
 - Current Parquet-based data loading architecture
 - Recommendations for adapting to real-time API data
-- Data structure mapping: Parquet → OpenAlgo API → Strategy
+- Data structure mapping: Parquet → MarvelQuant API → Strategy
 - Caching strategies for live market data
 - Real-time data synchronization patterns
 
@@ -703,10 +703,10 @@ GET /api/v1/portfolio/NIFTY_ATM_STRADDLE/stream
    - Identify which parameters apply to live trading vs backtest-only
    - Show parameter validation and error handling patterns
 
-11. **How should data loading be adapted from Parquet files (Story 7.9) to real-time OpenAlgo API for live trading?**
+11. **How should data loading be adapted from Parquet files (Story 7.9) to real-time MarvelQuant API for live trading?**
    - Analyze the HybridDataLoader architecture from Story 7.9
    - Provide specific recommendations for adapting to real-time API data
-   - Show data structure mapping: Parquet schema → OpenAlgo API → Strategy input
+   - Show data structure mapping: Parquet schema → MarvelQuant API → Strategy input
    - Include caching strategies and real-time synchronization patterns
 
 12. **How should configuration versioning prevent accidental deployment of backtest configs to live trading?**
@@ -720,7 +720,7 @@ GET /api/v1/portfolio/NIFTY_ATM_STRADDLE/stream
 ## ✅ Validation and Quality Criteria
 
 ### Source Credibility
-- Prioritize official documentation: Flask, Tailwind CSS, DaisyUI, OpenAlgo
+- Prioritize official documentation: Flask, Tailwind CSS, DaisyUI, MarvelQuant
 - Cross-reference patterns across multiple trading platforms
 - Verify that all code examples work with specified versions (Flask 2.x, Tailwind 4.1.14, DaisyUI 5.1.27)
 - Distinguish between proven practices and experimental approaches
@@ -753,10 +753,10 @@ GET /api/v1/portfolio/NIFTY_ATM_STRADDLE/stream
 
 ## 🔗 Preferred Sources
 
-### OpenAlgo Specific
-- **OpenAlgo GitHub**: https://github.com/marketcalls/openalgo (CRITICAL - analyze actual code)
-- OpenAlgo documentation (if available)
-- OpenAlgo community discussions and issues
+### MarvelQuant Specific
+- **MarvelQuant GitHub**: https://github.com/marketcalls/marvelquant (CRITICAL - analyze actual code)
+- MarvelQuant documentation (if available)
+- MarvelQuant community discussions and issues
 
 ### Technology Documentation
 - **Flask 2.x**: https://flask.palletsprojects.com/
@@ -862,7 +862,7 @@ If initial research reveals gaps, consider focused follow-up on:
 ### For ChatGPT Deep Research (o3/o1) - RECOMMENDED
 
 **Why ChatGPT Deep Research is Best for This Task:**
-- Excellent at analyzing GitHub repositories (can examine OpenAlgo codebase)
+- Excellent at analyzing GitHub repositories (can examine MarvelQuant codebase)
 - Strong at finding specific version documentation (Tailwind 4.1.14, DaisyUI 5.1.27)
 - Good at providing complete code examples
 - Can cross-reference multiple trading platforms
@@ -870,7 +870,7 @@ If initial research reveals gaps, consider focused follow-up on:
 **Optimization Tips:**
 1. **Emphasize the constraint**: Start with "CRITICAL: All solutions must work with Flask 2.x + Tailwind CSS 4.1.14 + DaisyUI 5.1.27 + Vanilla JavaScript. Do NOT suggest React, Vue, or any framework."
 2. **Request specific versions**: "Show DaisyUI 5.1.27 component examples" not just "DaisyUI examples"
-3. **Ask for OpenAlgo analysis**: "Analyze the OpenAlgo GitHub repository structure and existing patterns"
+3. **Ask for MarvelQuant analysis**: "Analyze the MarvelQuant GitHub repository structure and existing patterns"
 4. **Request complete code**: "Provide complete, runnable code examples, not pseudocode"
 5. **Specify output format**: "Include comparison tables for different approaches"
 
@@ -882,7 +882,7 @@ If initial research reveals gaps, consider focused follow-up on:
 **Expected Results:**
 - 20-30 pages of comprehensive research
 - Complete code examples for Flask + Vanilla JS + DaisyUI
-- Analysis of OpenAlgo's existing patterns
+- Analysis of MarvelQuant's existing patterns
 - Specific implementation guidance
 
 **Query Limits**: 25-250 queries/month (Plus vs Pro)
@@ -954,7 +954,7 @@ If initial research reveals gaps, consider focused follow-up on:
 1. **Upload context first**: Add your existing documentation to the Project
 2. **Use Chain of Thought**: Ask Claude to reason through implementation approaches
 3. **Request iterative refinement**: Start broad, then drill into specifics
-4. **Provide examples**: Show existing OpenAlgo patterns, ask for similar implementations
+4. **Provide examples**: Show existing MarvelQuant patterns, ask for similar implementations
 
 **Best Practices:**
 - Create a dedicated Project for this research
@@ -975,11 +975,11 @@ If initial research reveals gaps, consider focused follow-up on:
 
 - [ ] **Constraint is clear**: Technology stack (Flask + Tailwind + DaisyUI + Vanilla JS) is explicitly stated
 - [ ] **Versions specified**: Flask 2.x, Tailwind CSS 4.1.14, DaisyUI 5.1.27, Vanilla JavaScript ES6+
-- [ ] **OpenAlgo context provided**: GitHub repository link, existing architecture decisions
+- [ ] **MarvelQuant context provided**: GitHub repository link, existing architecture decisions
 - [ ] **Scope is defined**: Focus on implementation within stack, not stack selection
 - [ ] **Output format specified**: Executive summary + 6 sections with code examples
 - [ ] **Key questions listed**: 8 critical questions that must be answered
-- [ ] **Sources identified**: OpenAlgo GitHub, Flask docs, Tailwind docs, DaisyUI docs, trading platforms
+- [ ] **Sources identified**: MarvelQuant GitHub, Flask docs, Tailwind docs, DaisyUI docs, trading platforms
 
 ### During Research (ChatGPT/Gemini/Grok)
 
@@ -993,7 +993,7 @@ If initial research reveals gaps, consider focused follow-up on:
 
 - [ ] **Verify technology stack compliance**: All recommendations work with Flask + Tailwind + DaisyUI + Vanilla JS
 - [ ] **Check code examples**: Test that examples use correct syntax and versions
-- [ ] **Validate against OpenAlgo**: Ensure patterns align with OpenAlgo's existing architecture
+- [ ] **Validate against MarvelQuant**: Ensure patterns align with MarvelQuant's existing architecture
 - [ ] **Cross-reference sources**: Verify claims against official documentation
 - [ ] **Identify conflicting information**: Resolve discrepancies between sources
 - [ ] **Note confidence levels**: Distinguish proven practices from experimental approaches
@@ -1007,12 +1007,12 @@ If initial research reveals gaps, consider focused follow-up on:
 
 After completing this research, you should have:
 
-### 1. OpenAlgo Integration Blueprint
+### 1. MarvelQuant Integration Blueprint
 - **File structure**: Complete directory layout for portfolio manager Blueprint
-- **Blueprint registration**: How to add new Blueprint to OpenAlgo
-- **Template patterns**: How to extend OpenAlgo's existing templates
-- **Authentication integration**: How to use OpenAlgo's API key system
-- **Code examples**: Working Flask Blueprint code compatible with OpenAlgo
+- **Blueprint registration**: How to add new Blueprint to MarvelQuant
+- **Template patterns**: How to extend MarvelQuant's existing templates
+- **Authentication integration**: How to use MarvelQuant's API key system
+- **Code examples**: Working Flask Blueprint code compatible with MarvelQuant
 
 ### 2. DaisyUI Component Library
 - **Collapse components**: Nested accordion for Portfolio → Strategy → Leg hierarchy
@@ -1062,7 +1062,7 @@ After completing this research, you should have:
 ### 8. Testing Strategy
 - **Paper trading**: Duration (5+ days), validation criteria
 - **Unit testing**: Flask endpoint testing patterns
-- **Integration testing**: OpenAlgo API integration tests
+- **Integration testing**: MarvelQuant API integration tests
 - **Load testing**: Real-time update performance tests
 - **Disaster recovery**: Failover and recovery testing
 
@@ -1114,11 +1114,11 @@ After completing this research, you should have:
 - [ ] Confirm code examples use correct syntax and versions
 - [ ] Test code snippets for syntax errors
 
-**OpenAlgo Compatibility:**
-- [ ] Cross-check against OpenAlgo GitHub repository
-- [ ] Verify Blueprint patterns match OpenAlgo's structure
-- [ ] Ensure authentication patterns align with OpenAlgo
-- [ ] Confirm UI patterns use OpenAlgo's existing components
+**MarvelQuant Compatibility:**
+- [ ] Cross-check against MarvelQuant GitHub repository
+- [ ] Verify Blueprint patterns match MarvelQuant's structure
+- [ ] Ensure authentication patterns align with MarvelQuant
+- [ ] Confirm UI patterns use MarvelQuant's existing components
 
 **Source Verification:**
 - [ ] Check citations against official documentation
@@ -1178,7 +1178,7 @@ After completing this research, you should have:
 1. **Phase 1: API Layer (Week 1-2)**
    - Flask Blueprint setup
    - API endpoint implementation
-   - OpenAlgo integration
+   - MarvelQuant integration
    - Unit testing
 
 2. **Phase 2: UI Layer (Week 3-4)**
@@ -1217,7 +1217,7 @@ After completing this research, you should have:
 - [ ] **Code completeness**: Examples are complete and runnable, not pseudocode
 - [ ] **Source credibility**: All claims cited with URLs to official documentation
 - [ ] **Practical applicability**: Recommendations are implementable by Python/Flask developers
-- [ ] **OpenAlgo alignment**: Patterns match OpenAlgo's existing architecture
+- [ ] **MarvelQuant alignment**: Patterns match MarvelQuant's existing architecture
 
 ### Implementation Readiness
 
@@ -1248,7 +1248,7 @@ After completing this research, you should have:
 
 1. **Integration Point**: Portfolio Manager (`app/pm`) with `is_live` parameter ✅
 2. **Configuration Format**: Excel for editing, JSON for deployment with automated sync ✅
-3. **Order Execution**: OpenAlgo API as single unified interface ✅
+3. **Order Execution**: MarvelQuant API as single unified interface ✅
 4. **Market Data**: Multi-broker (Zerodha, Upstox, AngelOne, Fyers) with performance-based selection ✅
 5. **UI Technology**: Tailwind CSS + DaisyUI + Vanilla JS + Flask + SSE ✅
 6. **Database**: SQLite ✅
@@ -1309,7 +1309,7 @@ After completing this research, you should have:
 - Analyze the `run_portfolio()` function signature, parameters, and execution flow
 - Identify how the Portfolio Manager currently handles backtest mode
 - Document the module's class structure, key methods, and dependencies
-- Determine integration points where OpenAlgo API calls should be inserted
+- Determine integration points where MarvelQuant API calls should be inserted
 
 **Research Questions**:
 - What is the exact function signature of `run_portfolio()`?
@@ -1462,9 +1462,9 @@ After completing this research, you should have:
    - Telemetry and monitoring patterns
 
 2. **Live Trading Data Loading Recommendations** (2-3 pages)
-   - How to adapt data loading for real-time market data from OpenAlgo API
+   - How to adapt data loading for real-time market data from MarvelQuant API
    - Which components to reuse vs replace for live trading
-   - Data structure mapping: Parquet schema → OpenAlgo API response → Strategy input
+   - Data structure mapping: Parquet schema → MarvelQuant API response → Strategy input
    - Caching strategies for live market data (if applicable)
    - Real-time data update frequency and synchronization
    - Fallback mechanisms if real-time data is unavailable
@@ -1484,16 +1484,16 @@ After completing this research, you should have:
 - Telemetry tracks load times, bytes scanned, cache hit rates
 - NFS-based multi-user deployment with GCS backup
 
-**CRITICAL**: Understanding the data loading story is essential for designing how live trading will fetch real-time market data from OpenAlgo API instead of reading historical Parquet files. Provide specific recommendations for adapting this system.
+**CRITICAL**: Understanding the data loading story is essential for designing how live trading will fetch real-time market data from MarvelQuant API instead of reading historical Parquet files. Provide specific recommendations for adapting this system.
 
 ### Integration Analysis Requirements
 
 **Based on the codebase analysis above, provide specific recommendations for:**
 
-1. **Minimal Code Changes**: Identify the smallest set of changes needed to enable live trading via OpenAlgo
+1. **Minimal Code Changes**: Identify the smallest set of changes needed to enable live trading via MarvelQuant
 2. **Backward Compatibility**: Ensure backtest mode continues to work unchanged
 3. **Code Reuse**: Identify which existing modules/functions can be reused vs need replacement
-4. **Data Structure Mapping**: Map backtester data structures to OpenAlgo API request/response formats
+4. **Data Structure Mapping**: Map backtester data structures to MarvelQuant API request/response formats
 5. **Error Handling**: Identify where additional error handling is needed for live trading
 6. **Testing Strategy**: Recommend how to test live trading integration without affecting backtest functionality
 
@@ -1522,7 +1522,7 @@ Include in your research report:
    - Data flow from configuration → execution → results
 
 2. **Integration Point Specifications** (2-3 pages)
-   - Exact locations where OpenAlgo API calls should be inserted
+   - Exact locations where MarvelQuant API calls should be inserted
    - Required modifications to `run_portfolio()` function
    - Data structure transformations needed
    - Code examples showing before/after for key integration points
@@ -1547,7 +1547,7 @@ Include in your research report:
 1. ✅ **Immediately implementable solutions** - Developers can start coding from the research
 2. ✅ **Complete code examples** - Flask routes, Vanilla JS, DaisyUI components (not pseudocode)
 3. ✅ **Technology stack compliance** - 100% compatible with Flask + Tailwind + DaisyUI + Vanilla JS
-4. ✅ **OpenAlgo integration guidance** - Specific patterns for extending OpenAlgo
+4. ✅ **MarvelQuant integration guidance** - Specific patterns for extending MarvelQuant
 5. ✅ **Version-specific information** - Tailwind 4.1.14, DaisyUI 5.1.27 examples
 6. ✅ **Real-world examples** - References to actual trading platforms using similar stacks
 7. ✅ **Security and compliance** - SEBI requirements and implementation patterns
@@ -1560,7 +1560,7 @@ Include in your research report:
 - ❌ Suggests React, Vue, Angular, or any framework requiring stack changes
 - ❌ Provides pseudocode instead of complete, runnable examples
 - ❌ Uses incorrect versions (e.g., Tailwind 3.x instead of 4.1.14)
-- ❌ Ignores OpenAlgo's existing architecture and patterns
+- ❌ Ignores MarvelQuant's existing architecture and patterns
 - ❌ Provides generic advice without specific implementation details
 - ❌ Lacks citations and sources for claims
 - ❌ Misses critical security or compliance requirements

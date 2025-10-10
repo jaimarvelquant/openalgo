@@ -78,7 +78,7 @@ def get_quotes(symbol, exchange, auth_token):
         auth_token: Authentication token
 
     Returns:
-        Quote data in OpenAlgo format
+        Quote data in MarvelQuant format
     """
     try:
         # Parse auth_token
@@ -105,8 +105,8 @@ def get_quotes(symbol, exchange, auth_token):
         if response_data.get('type') == 'success' and 'result' in response_data:
             quote_data = response_data['result'][0]  # First instrument
 
-            # Transform to OpenAlgo format
-            openalgo_quote = {
+            # Transform to MarvelQuant format
+            marvelquant_quote = {
                 'symbol': symbol,
                 'exchange': exchange,
                 'ltp': float(quote_data.get('LastTradedPrice', 0)),
@@ -118,7 +118,7 @@ def get_quotes(symbol, exchange, auth_token):
                 'timestamp': quote_data.get('LastTradedTime', '')
             }
 
-            return openalgo_quote
+            return marvelquant_quote
 
         else:
             return {
@@ -182,7 +182,7 @@ def get_historical_data(symbol, exchange, from_date, to_date, interval, auth_tok
         response_data = client.get_ohlc(params)
 
         if response_data.get('type') == 'success':
-            # Transform OHLC data to OpenAlgo format
+            # Transform OHLC data to MarvelQuant format
             candles = []
             for candle in response_data.get('result', []):
                 candles.append({

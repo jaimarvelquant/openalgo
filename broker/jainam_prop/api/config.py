@@ -11,8 +11,8 @@ def get_jainam_base_url() -> str:
     base_url = os.getenv("JAINAM_BASE_URL", DEFAULT_JAINAM_BASE_URL).strip()
     normalized = base_url.rstrip("/")
 
-    # Jainam endpoints require HTTPS even on non-standard ports.
-    if normalized.startswith("http://"):
-        normalized = "https://" + normalized[len("http://") :]
+    # CRITICAL FIX: Do NOT force HTTPS - respect the protocol in the URL
+    # The server may require HTTP or HTTPS depending on configuration
+    # User has confirmed base URL is: http://smpb.jainam.in:4143
 
     return normalized

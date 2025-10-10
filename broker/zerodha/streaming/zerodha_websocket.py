@@ -495,7 +495,7 @@ class ZerodhaWebSocket:
                     max_size=self.MAX_MESSAGE_SIZE,
                     compression=None,  # Disable compression for binary data
                     extra_headers={
-                        'User-Agent': 'OpenAlgo-ZerodhaClient/1.0'
+                        'User-Agent': 'MarvelQuant-ZerodhaClient/1.0'
                     }
                 ),
                 timeout=self.CONNECT_TIMEOUT

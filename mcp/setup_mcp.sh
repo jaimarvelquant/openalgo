@@ -48,7 +48,7 @@ fi
 
 # Check if MCP servers exist
 if [ ! -f "$OPENALGO_SERVER" ]; then
-    print_error "OpenAlgo MCP server not found at $OPENALGO_SERVER"
+    print_error "MarvelQuant MCP server not found at $OPENALGO_SERVER"
     exit 1
 fi
 
@@ -61,7 +61,7 @@ print_status "Virtual environment and MCP servers found"
 
 # Get API key from user
 echo
-print_info "Please enter your OpenAlgo API key:"
+print_info "Please enter your MarvelQuant API key:"
 read -s API_KEY
 
 if [ -z "$API_KEY" ]; then
@@ -99,7 +99,7 @@ fi
 cat > "$CODEX_CONFIG_FILE" << EOF
 {
   "mcpServers": {
-    "openalgo": {
+    "marvelquant": {
       "command": "$VENV_PYTHON",
       "args": [
         "$OPENALGO_SERVER",
@@ -121,7 +121,7 @@ EOF
 cat > "$CLAUDE_CONFIG_FILE" << EOF
 {
   "mcpServers": {
-    "openalgo": {
+    "marvelquant": {
       "command": "$VENV_PYTHON",
       "args": [
         "$OPENALGO_SERVER",
@@ -144,11 +144,11 @@ print_status "Configuration files created"
 # Test MCP servers
 print_info "Testing MCP servers..."
 
-# Test OpenAlgo server
+# Test MarvelQuant server
 if $VENV_PYTHON "$OPENALGO_SERVER" --help > /dev/null 2>&1; then
-    print_status "OpenAlgo MCP server test passed"
+    print_status "MarvelQuant MCP server test passed"
 else
-    print_warning "OpenAlgo MCP server test failed - this is normal for MCP servers"
+    print_warning "MarvelQuant MCP server test failed - this is normal for MCP servers"
 fi
 
 # Test Playwright server
@@ -193,23 +193,23 @@ async def test_playwright():
         print(f"✗ Playwright test failed: {e}")
         return False
 
-def test_openalgo():
-    """Test OpenAlgo MCP server imports"""
+def test_marvelquant():
+    """Test MarvelQuant MCP server imports"""
     try:
-        from openalgo import api
-        print("✓ OpenAlgo import test passed")
+        from marvelquant import api
+        print("✓ MarvelQuant import test passed")
         return True
     except Exception as e:
-        print(f"✗ OpenAlgo import test failed: {e}")
+        print(f"✗ MarvelQuant import test failed: {e}")
         return False
 
 async def main():
     print("🧪 Testing MCP servers...")
     
-    openalgo_ok = test_openalgo()
+    marvelquant_ok = test_marvelquant()
     playwright_ok = await test_playwright()
     
-    if openalgo_ok and playwright_ok:
+    if marvelquant_ok and playwright_ok:
         print("\n🎉 All tests passed! MCP servers are ready.")
     else:
         print("\n⚠️  Some tests failed. Check the output above.")
@@ -239,7 +239,7 @@ print_info "  Codex: $CODEX_CONFIG_FILE"
 print_info "  Claude: $CLAUDE_CONFIG_FILE"
 echo
 print_info "Available MCP servers:"
-print_info "  - openalgo: Trading and market data functionality"
+print_info "  - marvelquant: Trading and market data functionality"
 print_info "  - playwright: Browser automation capabilities"
 echo
 print_warning "Next steps:"

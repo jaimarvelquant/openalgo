@@ -1,4 +1,4 @@
-#Mapping OpenAlgo API Request https://openalgo.in/docs
+#Mapping MarvelQuant API Request https://marvelquant.com/docs
 #Mapping Zerodha Broking Parameters https://kite.trade/docs/connect/v3/
 
 from database.token_db import get_br_symbol
@@ -21,7 +21,7 @@ def transform_data(data):
         "trigger_price": data.get("trigger_price", "0"),
         "disclosed_quantity": data.get("disclosed_quantity", "0"),  
         "validity":"DAY",
-        "tag": "openalgo",
+        "tag": "marvelquant",
     }
 
 
@@ -69,9 +69,9 @@ def map_product_type(product):
 
 def reverse_map_product_type(exchange,product):
     """
-    Reverse maps the broker product type to the OpenAlgo product type, considering the exchange.
+    Reverse maps the broker product type to the MarvelQuant product type, considering the exchange.
     """
-    # Exchange to OpenAlgo product type mapping for 'D'
+    # Exchange to MarvelQuant product type mapping for 'D'
     exchange_mapping = {
         "CNC": "CNC",
         "NRML": "NRML",

@@ -1,6 +1,6 @@
 """Jainam Prop data transformation helpers.
 
-This module is responsible for translating between OpenAlgo's canonical
+This module is responsible for translating between MarvelQuant's canonical
 order structure and the Jainam XTS Connect API requirements. It now also
 provides a database-backed symbol → token lookup that satisfies story 1.1-1
 acceptance criteria by resolving tokens from the shared ``symbol_token``
@@ -123,9 +123,9 @@ def _resolve_token(symbol: str, exchange: str) -> int:
 
 def transform_data(data):
     """
-    Transform OpenAlgo request to Jainam format
+    Transform MarvelQuant request to Jainam format
 
-    OpenAlgo Input:
+    MarvelQuant Input:
     {
         "symbol": "RELIANCE-EQ",
         "exchange": "NSE",
@@ -225,7 +225,7 @@ def transform_data(data):
 
 def transform_response(jainam_response):
     """
-    Transform Jainam response to OpenAlgo format
+    Transform Jainam response to MarvelQuant format
 
     Jainam Response:
     {
@@ -236,7 +236,7 @@ def transform_response(jainam_response):
         }
     }
 
-    OpenAlgo Response:
+    MarvelQuant Response:
     {
         "status": "success",
         "orderid": "12345678",
@@ -259,9 +259,9 @@ def get_token_from_symbol(symbol: str, exchange: str) -> int:
     """Retrieve Jainam instrument token for the supplied symbol/exchange.
 
     Args:
-        symbol: OpenAlgo symbol (case insensitive). Examples: ``RELIANCE-EQ``,
+        symbol: MarvelQuant symbol (case insensitive). Examples: ``RELIANCE-EQ``,
             ``NIFTY24OCTFUT``.
-        exchange: OpenAlgo exchange code (``NSE``, ``BSE``, ``NFO``...).
+        exchange: MarvelQuant exchange code (``NSE``, ``BSE``, ``NFO``...).
 
     Returns:
         Integer instrument token as stored in ``symbol_token``.
@@ -307,7 +307,7 @@ _JAINAM_TO_OPENALGO_EXCHANGE = {
 
 
 def map_exchange_to_jainam(exchange: str) -> str:
-    """Map OpenAlgo exchange code to Jainam exchange segment.
+    """Map MarvelQuant exchange code to Jainam exchange segment.
 
     Raises ``ValueError`` if the exchange is not supported by the Jainam XTS
     integration so that calling code can surface configuration issues early.
@@ -328,7 +328,7 @@ def map_exchange_to_jainam(exchange: str) -> str:
 
 
 def map_jainam_to_exchange(exchange_segment: str) -> str:
-    """Map Jainam exchange segment back to OpenAlgo exchange code."""
+    """Map Jainam exchange segment back to MarvelQuant exchange code."""
 
     if not exchange_segment:
         return ""

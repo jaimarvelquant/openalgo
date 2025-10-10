@@ -237,7 +237,7 @@ class TestConstants:
 
     def test_service_name(self):
         """SERVICE constant is defined."""
-        assert SERVICE == "openalgo:jainam"
+        assert SERVICE == "marvelquant:jainam"
 
     def test_fields_defined(self):
         """FIELDS contains all expected credential keys."""

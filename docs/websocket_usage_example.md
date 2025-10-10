@@ -1,8 +1,8 @@
 # WebSocket Usage Example: Subscribing to Stock Data
 
-This document provides a simple example of how to use the OpenAlgo WebSocket API to subscribe and unsubscribe to market data. The examples cover different subscription modes (LTP, Quote, Depth) and show both the server setup and client implementation.
+This document provides a simple example of how to use the MarvelQuant WebSocket API to subscribe and unsubscribe to market data. The examples cover different subscription modes (LTP, Quote, Depth) and show both the server setup and client implementation.
 
-> **Note about price format**: Different brokers use different price formats. For example, Angel broker sends prices in paise (1/100th of a rupee), which the OpenAlgo WebSocket adapter automatically converts to rupees by dividing by 100. All prices received from the OpenAlgo WebSocket API are normalized to standard formats, regardless of the underlying broker.
+> **Note about price format**: Different brokers use different price formats. For example, Angel broker sends prices in paise (1/100th of a rupee), which the MarvelQuant WebSocket adapter automatically converts to rupees by dividing by 100. All prices received from the MarvelQuant WebSocket API are normalized to standard formats, regardless of the underlying broker.
 
 > **Cross-platform compatibility**: The WebSocket proxy implementation includes specific optimizations for Windows environments, ensuring reliable operation across all platforms.
 
@@ -12,17 +12,17 @@ Before running the example, make sure you have the WebSocket server running. The
 
 ```bash
 # Navigate to your project directory
-cd /path/to/web-openalgo
+cd /path/to/web-marvelquant
 
 # Start the Flask application with the WebSocket server
-python -m openalgo.app
+python -m marvelquant.app
 ```
 
 Alternatively, you can run the WebSocket server directly for testing:
 
 ```bash
 # Run the standalone WebSocket server
-python -m openalgo.test_websocket
+python -m marvelquant.test_websocket
 ```
 
 ## 2. Client Example: Python with websockets
@@ -37,7 +37,7 @@ import sys
 
 # Configuration
 WS_URL = "ws://localhost:8765"  # Update if your server is on a different host/port
-API_KEY = "7c943a439ef0da4f3b8301730c84c7a84d5427c108db39378ca9415ee8db33bf"  # Your OpenAlgo API key
+API_KEY = "7c943a439ef0da4f3b8301730c84c7a84d5427c108db39378ca9415ee8db33bf"  # Your MarvelQuant API key
 
 # Test symbols
 RELIANCE_NSE = {"exchange": "NSE", "symbol": "RELIANCE"}
@@ -200,7 +200,7 @@ async def run_all_tests():
 
 def main():
     """Main function to run the WebSocket tests"""
-    print("OpenAlgo WebSocket Client Test")
+    print("MarvelQuant WebSocket Client Test")
     print(f"Connecting to: {WS_URL}")
     print(f"API Key: {API_KEY[:8]}...{API_KEY[-8:]}")
     
@@ -229,8 +229,8 @@ if __name__ == "__main__":
 Here's a JavaScript example that can be used in a browser or Node.js application:
 
 ```javascript
-// Your OpenAlgo API Key - replace with your actual key
-const API_KEY = "your_openalgo_api_key_here";
+// Your MarvelQuant API Key - replace with your actual key
+const API_KEY = "your_marvelquant_api_key_here";
 
 // WebSocket server URL
 const WS_URL = "ws://localhost:8765"; // Update with your server address

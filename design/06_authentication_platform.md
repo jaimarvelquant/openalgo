@@ -1,8 +1,8 @@
-# OpenAlgo Authentication & Security Platform
+# MarvelQuant Authentication & Security Platform
 
 ## Executive Summary
 
-OpenAlgo implements a comprehensive multi-layered security architecture with authentication mechanisms including session-based login, API key authentication, TOTP-based two-factor authentication, and secure password reset via email or TOTP. The platform features robust encryption, secure session management, and extensive security controls.
+MarvelQuant implements a comprehensive multi-layered security architecture with authentication mechanisms including session-based login, API key authentication, TOTP-based two-factor authentication, and secure password reset via email or TOTP. The platform features robust encryption, secure session management, and extensive security controls.
 
 ## Authentication Architecture
 
@@ -182,7 +182,7 @@ def setup_totp(user_id: int) -> Dict:
     # Generate provisioning URI
     provisioning_uri = totp.provisioning_uri(
         name=user.email,
-        issuer_name='OpenAlgo'
+        issuer_name='MarvelQuant'
     )
 
     # Generate QR code
@@ -298,7 +298,7 @@ class SMTPSettings(Base):
     use_tls = Column(Boolean, default=True)
     use_ssl = Column(Boolean, default=False)
     from_email = Column(String(255), nullable=False)
-    from_name = Column(String(255), default='OpenAlgo')
+    from_name = Column(String(255), default='MarvelQuant')
     helo_hostname = Column(String(255))
     is_active = Column(Boolean, default=True)
     last_test_at = Column(DateTime(timezone=True))
@@ -512,7 +512,7 @@ module.exports = {
             "luxury",
             "dracula",
             {
-                openalgo: {  // Custom theme
+                marvelquant: {  // Custom theme
                     "primary": "#0ea5e9",
                     "secondary": "#6366f1",
                     "accent": "#f59e0b",
@@ -563,7 +563,7 @@ import pytz
 app.config['SESSION_TYPE'] = 'filesystem'
 app.config['SESSION_PERMANENT'] = False
 app.config['SESSION_USE_SIGNER'] = True
-app.config['SESSION_KEY_PREFIX'] = 'openalgo:'
+app.config['SESSION_KEY_PREFIX'] = 'marvelquant:'
 app.config['SESSION_COOKIE_SECURE'] = USE_HTTPS  # True in production
 app.config['SESSION_COOKIE_HTTPONLY'] = True
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
@@ -779,4 +779,4 @@ def log_security_event(event_type: str, user_id: int = None,
 
 ## Conclusion
 
-The OpenAlgo authentication and security platform provides enterprise-grade security with multiple authentication methods, comprehensive encryption, secure session management, and robust password reset mechanisms. The theme system enhances user experience with 20+ themes including dark mode, while SMTP configuration enables email-based workflows. All security features follow industry best practices and standards.
+The MarvelQuant authentication and security platform provides enterprise-grade security with multiple authentication methods, comprehensive encryption, secure session management, and robust password reset mechanisms. The theme system enhances user experience with 20+ themes including dark mode, while SMTP configuration enables email-based workflows. All security features follow industry best practices and standards.

@@ -1,7 +1,7 @@
 import logging
 
 class FivePaisaExchangeMapper:
-    """Maps OpenAlgo exchange codes to 5Paisa-specific exchange codes"""
+    """Maps MarvelQuant exchange codes to 5Paisa-specific exchange codes"""
 
     # Exchange mapping for 5Paisa broker
     # N = NSE, B = BSE, M = MCX
@@ -32,10 +32,10 @@ class FivePaisaExchangeMapper:
     @staticmethod
     def get_exchange_code(exchange: str) -> str:
         """
-        Convert OpenAlgo exchange code to 5Paisa exchange code
+        Convert MarvelQuant exchange code to 5Paisa exchange code
 
         Args:
-            exchange (str): OpenAlgo exchange code (e.g., 'NSE', 'BSE', 'NFO')
+            exchange (str): MarvelQuant exchange code (e.g., 'NSE', 'BSE', 'NFO')
 
         Returns:
             str: 5Paisa exchange code ('N', 'B', 'M')
@@ -45,10 +45,10 @@ class FivePaisaExchangeMapper:
     @staticmethod
     def get_exchange_type(exchange: str) -> str:
         """
-        Convert OpenAlgo exchange to 5Paisa exchange type
+        Convert MarvelQuant exchange to 5Paisa exchange type
 
         Args:
-            exchange (str): OpenAlgo exchange code (e.g., 'NSE', 'BSE', 'NFO')
+            exchange (str): MarvelQuant exchange code (e.g., 'NSE', 'BSE', 'NFO')
 
         Returns:
             str: 5Paisa exchange type ('C', 'D', 'U')

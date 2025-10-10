@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-OpenAlgo – New Broker Integration Test
+MarvelQuant – New Broker Integration Test
 • Stage‑by‑stage progress output
 • Immediate reporting of any failing symbol / order‑id
 • Final green / red roll‑up
@@ -238,7 +238,7 @@ class Tester:
 if __name__=="__main__":
     try: from openalgo import api as OAClient
     except ImportError:
-        print(red("openalgo SDK missing – pip install openalgo")); sys.exit(1)
+        print(red("marvelquant SDK missing – pip install marvelquant")); sys.exit(1)
 
     client=OAClient(api_key=API_KEY,host=HOST)
     success=Tester(client).run()

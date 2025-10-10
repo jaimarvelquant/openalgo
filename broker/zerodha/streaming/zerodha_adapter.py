@@ -23,7 +23,7 @@ from .zerodha_websocket import ZerodhaWebSocket
 class ZerodhaWebSocketAdapter(BaseBrokerWebSocketAdapter):
     """
     Fixed Zerodha-specific implementation of the WebSocket adapter.
-    Properly implements OpenAlgo WebSocket proxy interface with correct topic formatting.
+    Properly implements MarvelQuant WebSocket proxy interface with correct topic formatting.
     """
     
     def __init__(self):
@@ -479,7 +479,7 @@ class ZerodhaWebSocketAdapter(BaseBrokerWebSocketAdapter):
             self.logger.error(f"Error handling ticks: {e}")
     
     def _transform_tick(self, tick: Dict) -> Optional[Dict]:
-        """Transform Zerodha tick to OpenAlgo format with index support"""
+        """Transform Zerodha tick to MarvelQuant format with index support"""
         try:
             token = tick.get('instrument_token')
             if not token:
@@ -680,7 +680,7 @@ class ZerodhaWebSocketAdapter(BaseBrokerWebSocketAdapter):
         self.logger.error(f"WebSocket error: {error}")
         
     def _transform_tick(self, tick: Dict) -> Optional[Dict]:
-        """Transform Zerodha tick to OpenAlgo format with index support"""
+        """Transform Zerodha tick to MarvelQuant format with index support"""
         try:
             token = tick.get('instrument_token')
             if not token:

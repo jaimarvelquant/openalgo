@@ -17,7 +17,7 @@ The Expiry API allows you to retrieve expiry dates for F&O (Futures and Options)
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `apikey` | string | Yes | Your OpenAlgo API key for authentication |
+| `apikey` | string | Yes | Your MarvelQuant API key for authentication |
 | `symbol` | string | Yes | Underlying symbol (e.g., NIFTY, BANKNIFTY, RELIANCE) |
 | `exchange` | string | Yes | Exchange code (NFO, BFO, MCX, CDS) |
 | `instrumenttype` | string | Yes | Type of instrument - "futures" or "options" |
@@ -38,7 +38,7 @@ The Expiry API allows you to retrieve expiry dates for F&O (Futures and Options)
 **Request:**
 ```json
 {
-    "apikey": "openalgo-api-key",
+    "apikey": "marvelquant-api-key",
     "symbol": "NIFTY",
     "exchange": "NFO",
     "instrumenttype": "futures"
@@ -63,7 +63,7 @@ The Expiry API allows you to retrieve expiry dates for F&O (Futures and Options)
 **Request:**
 ```json
 {
-    "apikey": "openalgo-api-key",
+    "apikey": "marvelquant-api-key",
     "symbol": "NIFTY",
     "exchange": "NFO",
     "instrumenttype": "options"
@@ -103,7 +103,7 @@ The Expiry API allows you to retrieve expiry dates for F&O (Futures and Options)
 **Request:**
 ```json
 {
-    "apikey": "openalgo-api-key",
+    "apikey": "marvelquant-api-key",
     "symbol": "GOLD",
     "exchange": "MCX",
     "instrumenttype": "futures"
@@ -131,7 +131,7 @@ The Expiry API allows you to retrieve expiry dates for F&O (Futures and Options)
 **Request:**
 ```json
 {
-    "apikey": "openalgo-api-key",
+    "apikey": "marvelquant-api-key",
     "symbol": "USDINR",
     "exchange": "CDS",
     "instrumenttype": "futures"
@@ -176,7 +176,7 @@ The Expiry API allows you to retrieve expiry dates for F&O (Futures and Options)
 ```json
 {
     "status": "error",
-    "message": "Invalid openalgo apikey"
+    "message": "Invalid marvelquant apikey"
 }
 ```
 
@@ -196,7 +196,7 @@ The Expiry API allows you to retrieve expiry dates for F&O (Futures and Options)
 curl -X POST "http://127.0.0.1:5000/api/v1/expiry" \
   -H "Content-Type: application/json" \
   -d '{
-    "apikey": "openalgo-api-key",
+    "apikey": "marvelquant-api-key",
     "symbol": "NIFTY",
     "exchange": "NFO",
     "instrumenttype": "options"
@@ -209,7 +209,7 @@ curl -X POST "http://127.0.0.1:5000/api/v1/expiry" \
 curl -X POST "http://127.0.0.1:5000/api/v1/expiry" \
   -H "Content-Type: application/json" \
   -d '{
-    "apikey": "openalgo-api-key",
+    "apikey": "marvelquant-api-key",
     "symbol": "BANKNIFTY",
     "exchange": "NFO",
     "instrumenttype": "futures"
@@ -222,7 +222,7 @@ curl -X POST "http://127.0.0.1:5000/api/v1/expiry" \
 curl -X POST "http://127.0.0.1:5000/api/v1/expiry" \
   -H "Content-Type: application/json" \
   -d '{
-    "apikey": "openalgo-api-key",
+    "apikey": "marvelquant-api-key",
     "symbol": "GOLD",
     "exchange": "MCX",
     "instrumenttype": "futures"
@@ -235,7 +235,7 @@ curl -X POST "http://127.0.0.1:5000/api/v1/expiry" \
 curl -X POST "http://127.0.0.1:5000/api/v1/expiry" \
   -H "Content-Type: application/json" \
   -d '{
-    "apikey": "openalgo-api-key",
+    "apikey": "marvelquant-api-key",
     "symbol": "USDINR",
     "exchange": "CDS",
     "instrumenttype": "futures"
@@ -253,7 +253,7 @@ url = "http://127.0.0.1:5000/api/v1/expiry"
 
 # Request payload
 payload = {
-    "apikey": "openalgo-api-key",
+    "apikey": "marvelquant-api-key",
     "symbol": "NIFTY",
     "exchange": "NFO",
     "instrumenttype": "options"
@@ -282,7 +282,7 @@ const getExpiryDates = async () => {
     const url = "http://127.0.0.1:5000/api/v1/expiry";
     
     const payload = {
-        apikey: "openalgo-api-key",
+        apikey: "marvelquant-api-key",
         symbol: "NIFTY",
         exchange: "NFO",
         instrumenttype: "options"
@@ -329,7 +329,7 @@ getExpiryDates();
 
 | Message | Description |
 |---------|-------------|
-| "Invalid openalgo apikey" | The provided API key is invalid |
+| "Invalid marvelquant apikey" | The provided API key is invalid |
 | "Symbol parameter is required and cannot be empty" | Symbol field is missing or empty |
 | "Exchange parameter is required and cannot be empty" | Exchange field is missing or empty |
 | "Instrumenttype parameter is required and cannot be empty" | Instrumenttype field is missing or empty |
@@ -343,11 +343,11 @@ getExpiryDates();
 - Dates are sorted chronologically from earliest to latest
 - The API uses exact symbol matching to avoid confusion (e.g., "NIFTY" won't match "BANKNIFTY")
 - Different exchanges use different instrument type codes internally but the API accepts standardized "futures" and "options" parameters
-- Rate limiting is applied as per your OpenAlgo server configuration
+- Rate limiting is applied as per your MarvelQuant server configuration
 
 ## Rate Limits
 
-This API endpoint is subject to rate limiting. The default rate limit is 10 requests per second per API key, but this may vary based on your OpenAlgo server configuration.
+This API endpoint is subject to rate limiting. The default rate limit is 10 requests per second per API key, but this may vary based on your MarvelQuant server configuration.
 
 ## Common Use Cases
 
@@ -363,4 +363,4 @@ This API endpoint is subject to rate limiting. The default rate limit is 10 requ
 - Filter expiry dates based on your trading strategy requirements
 - Consider time to expiry when selecting contracts
 - Use the chronologically sorted expiry dates for time-based analysis
-- Validate the symbol format according to OpenAlgo symbol conventions before making API calls
+- Validate the symbol format according to MarvelQuant symbol conventions before making API calls

@@ -97,7 +97,7 @@ def get_holdings(auth):
 
 def get_open_position(tradingsymbol, exchange, product,auth):
 
-    #Convert Trading Symbol from OpenAlgo Format to Broker Format Before Search in OpenPosition
+    #Convert Trading Symbol from MarvelQuant Format to Broker Format Before Search in OpenPosition
     tradingsymbol = get_br_symbol(tradingsymbol,exchange)
     
 

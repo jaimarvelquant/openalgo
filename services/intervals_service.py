@@ -92,7 +92,7 @@ def get_intervals(
     Supports both API-based authentication and direct internal calls.
     
     Args:
-        api_key: OpenAlgo API key (for API-based calls)
+        api_key: MarvelQuant API key (for API-based calls)
         auth_token: Direct broker authentication token (for internal calls)
         broker: Direct broker name (for internal calls)
         
@@ -108,7 +108,7 @@ def get_intervals(
         if AUTH_TOKEN is None:
             return False, {
                 'status': 'error',
-                'message': 'Invalid openalgo apikey'
+                'message': 'Invalid marvelquant apikey'
             }, 403
         return get_intervals_with_auth(AUTH_TOKEN, broker_name)
     

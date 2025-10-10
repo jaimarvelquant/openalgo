@@ -8,7 +8,7 @@ This guide ensures CSRF protection works correctly across Ubuntu Server, Windows
 Run the automated test script from the project root:
 
 ```bash
-# Make sure the OpenAlgo server is running first
+# Make sure the MarvelQuant server is running first
 python test/test_csrf.py
 
 # Or test against a different URL
@@ -44,8 +44,8 @@ grep "CSRF_" .env
 **Ubuntu Server:**
 ```bash
 # Start with systemd
-sudo systemctl start openalgo
-sudo systemctl status openalgo
+sudo systemctl start marvelquant
+sudo systemctl status marvelquant
 
 # Or manually
 python app.py
@@ -139,7 +139,7 @@ python3 --version  # Should be 3.8+
 ls -la .env  # Should be readable by app user
 
 # Check service logs
-journalctl -u openalgo -n 50
+journalctl -u marvelquant -n 50
 ```
 
 ### Windows

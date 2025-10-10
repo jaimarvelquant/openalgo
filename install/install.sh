@@ -6,7 +6,7 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# openalgo Installation Banner
+# marvelquant Installation Banner
 echo -e "${BLUE}"
 echo "  ██████╗ ██████╗ ███████╗███╗   ██╗ █████╗ ██╗      ██████╗  ██████╗ "
 echo " ██╔═══██╗██╔══██╗██╔════╝████╗  ██║██╔══██╗██║     ██╔════╝ ██╔═══██╗"
@@ -17,7 +17,7 @@ echo "  ╚═════╝ ╚═╝     ╚══════╝╚═╝  �
 echo "                                                                        "
 echo -e "${NC}"
 
-# OpenAlgo Installation and Configuration Script
+# MarvelQuant Installation and Configuration Script
 
 
 
@@ -248,7 +248,7 @@ check_and_configure_swap() {
 }
 
 # Start logging
-log_message "Starting OpenAlgo installation log at: $LOG_FILE" "$BLUE"
+log_message "Starting MarvelQuant installation log at: $LOG_FILE" "$BLUE"
 log_message "----------------------------------------" "$BLUE"
 
 # Detect OS type and version
@@ -327,7 +327,7 @@ check_and_configure_swap
 check_timezone
 
 # Collect installation parameters
-log_message "OpenAlgo Installation Configuration" "$BLUE"
+log_message "MarvelQuant Installation Configuration" "$BLUE"
 log_message "----------------------------------------" "$BLUE"
 
 # Get domain name
@@ -401,12 +401,12 @@ API_KEY_PEPPER=$(generate_hex)
 
 # Installation paths with unique deployment name
 DEPLOY_NAME="${DOMAIN/./-}-${BROKER_NAME}"  # e.g., opendash-app-fyers
-BASE_PATH="/var/python/openalgo-flask/$DEPLOY_NAME"
-OPENALGO_PATH="$BASE_PATH/openalgo"
+BASE_PATH="/var/python/marvelquant-flask/$DEPLOY_NAME"
+OPENALGO_PATH="$BASE_PATH/marvelquant"
 VENV_PATH="$BASE_PATH/venv"
 SOCKET_PATH="$BASE_PATH"
-SOCKET_FILE="$SOCKET_PATH/openalgo.sock"
-SERVICE_NAME="openalgo-$DEPLOY_NAME"
+SOCKET_FILE="$SOCKET_PATH/marvelquant.sock"
+SERVICE_NAME="marvelquant-$DEPLOY_NAME"
 
 # Set Nginx configuration paths based on OS
 case "$OS_TYPE" in
@@ -425,7 +425,7 @@ case "$OS_TYPE" in
 esac
 NGINX_CONFIG_FILE="$NGINX_AVAILABLE/$DOMAIN.conf"
 
-log_message "\nStarting OpenAlgo installation for $DEPLOY_NAME..." "$YELLOW"
+log_message "\nStarting MarvelQuant installation for $DEPLOY_NAME..." "$YELLOW"
 
 # Update system packages
 log_message "\nUpdating system packages..." "$BLUE"
@@ -602,8 +602,8 @@ if ! command -v certbot >/dev/null 2>&1; then
 fi
 log_message "Certbot installed successfully" "$GREEN"
 
-# Check and handle existing OpenAlgo installation
-handle_existing "$BASE_PATH" "installation directory" "OpenAlgo directory for $DEPLOY_NAME"
+# Check and handle existing MarvelQuant installation
+handle_existing "$BASE_PATH" "installation directory" "MarvelQuant directory for $DEPLOY_NAME"
 
 # Create base directory
 log_message "\nCreating base directory..." "$BLUE"
@@ -611,9 +611,9 @@ sudo mkdir -p $BASE_PATH
 check_status "Failed to create base directory"
 
 # Clone repository
-log_message "\nCloning OpenAlgo repository..." "$BLUE"
-sudo git clone https://github.com/marketcalls/openalgo.git $OPENALGO_PATH
-check_status "Failed to clone OpenAlgo repository"
+log_message "\nCloning MarvelQuant repository..." "$BLUE"
+sudo git clone https://github.com/marketcalls/marvelquant.git $OPENALGO_PATH
+check_status "Failed to clone MarvelQuant repository"
 
 # Create virtual environment using uv
 log_message "\nSetting up Python virtual environment with uv..." "$BLUE"
@@ -947,13 +947,13 @@ sudo nginx -t
 check_status "Failed to validate Nginx configuration"
 
 # Check and handle existing systemd service
-handle_existing "/etc/systemd/system/$SERVICE_NAME.service" "systemd service" "OpenAlgo service file"
+handle_existing "/etc/systemd/system/$SERVICE_NAME.service" "systemd service" "MarvelQuant service file"
 
 # Create systemd service with unique name
 log_message "\nCreating systemd service..." "$BLUE"
 sudo tee /etc/systemd/system/$SERVICE_NAME.service > /dev/null << EOL
 [Unit]
-Description=OpenAlgo Gunicorn Daemon ($DEPLOY_NAME)
+Description=MarvelQuant Gunicorn Daemon ($DEPLOY_NAME)
 After=network.target
 
 [Service]
@@ -1063,13 +1063,13 @@ log_message "SSL: Enabled with Let's Encrypt" "$BLUE"
 log_message "Installation Log: $LOG_FILE" "$BLUE"
 
 log_message "\nNext Steps:" "$YELLOW"
-log_message "1. Visit https://$DOMAIN to access your OpenAlgo instance" "$GREEN"
+log_message "1. Visit https://$DOMAIN to access your MarvelQuant instance" "$GREEN"
 log_message "2. Configure your broker settings in the web interface" "$GREEN"
 log_message "3. Review the logs using: sudo journalctl -u $SERVICE_NAME" "$GREEN"
 log_message "4. Monitor the application status: sudo systemctl status $SERVICE_NAME" "$GREEN"
 
 log_message "\nUseful Commands:" "$YELLOW"
-log_message "Restart OpenAlgo: sudo systemctl restart $SERVICE_NAME" "$BLUE"
+log_message "Restart MarvelQuant: sudo systemctl restart $SERVICE_NAME" "$BLUE"
 log_message "View Logs: sudo journalctl -u $SERVICE_NAME" "$BLUE"
 log_message "Check Status: sudo systemctl status $SERVICE_NAME" "$BLUE"
 log_message "View Installation Log: cat $LOG_FILE" "$BLUE"

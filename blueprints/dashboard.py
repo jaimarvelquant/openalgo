@@ -32,8 +32,9 @@ def dashboard():
         if api_key:
             success, response, status_code = get_funds(api_key=api_key)
         else:
-            logger.error("No API key found for analyze mode")
-            return "API key required for analyze mode", 400
+            # Analyze mode enabled but no API key - fall back to live broker
+            logger.warning("Analyze mode enabled but no API key found - falling back to live broker")
+            success, response, status_code = get_funds(auth_token=AUTH_TOKEN, broker=broker)
     else:
         # Use live broker
         success, response, status_code = get_funds(auth_token=AUTH_TOKEN, broker=broker)

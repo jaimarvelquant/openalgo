@@ -9,7 +9,7 @@ The authentication service retrieves tokens and client ID from the database and 
 ### 1.1 Overview
 
 The authentication service is responsible for:
-- Validating OpenAlgo API keys
+- Validating MarvelQuant API keys
 - Retrieving broker-specific authentication tokens from the database
 - Getting the client ID (user_id) for broker WebSocket authentication
 - Determining the user's active broker
@@ -23,7 +23,7 @@ from database.auth_db import verify_api_key, get_auth_token, get_feed_token
 
 class AuthService:
     def validate_api_key(self, api_key):
-        """Validate OpenAlgo API key and retrieve associated tokens"""
+        """Validate MarvelQuant API key and retrieve associated tokens"""
         # Verify API key and get user_id
         result = verify_api_key(api_key)
         if not result or not result.get('valid'):
@@ -64,7 +64,7 @@ The symbol/token mapping component converts between user-friendly symbols and br
 
 ### 2.1 Overview
 
-This component uses the SymToken model from `openalgo.database.symbol` to:
+This component uses the SymToken model from `marvelquant.database.symbol` to:
 - Convert symbol+exchange to broker-specific token
 - Convert token back to symbol+exchange
 - Provide additional symbol information (tick size, lot size, etc.)
@@ -90,7 +90,7 @@ class SymbolMapper:
             
         Notes:
             This method uses the SymToken model from the database schema
-            defined in openalgo.database.symbol.
+            defined in marvelquant.database.symbol.
         """
         try:
             sym_token = SymToken.query.filter(

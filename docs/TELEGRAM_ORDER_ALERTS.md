@@ -1,7 +1,7 @@
 # Telegram Order Alerts
 
 ## Overview
-The OpenAlgo platform now supports automatic Telegram notifications for all order-related API calls. When users place, modify, cancel orders or manage positions through the API, they will receive real-time alerts on Telegram.
+The MarvelQuant platform now supports automatic Telegram notifications for all order-related API calls. When users place, modify, cancel orders or manage positions through the API, they will receive real-time alerts on Telegram.
 
 ## Features
 
@@ -41,7 +41,7 @@ Each alert contains:
 
 ### Prerequisites
 1. Telegram bot must be configured and running
-2. Users must link their OpenAlgo account with Telegram
+2. Users must link their MarvelQuant account with Telegram
 
 ### User Setup
 1. Start the Telegram bot from the web interface: `/telegram/bot/start`

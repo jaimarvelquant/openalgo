@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-The Telegram Bot Integration provides a secure, user-friendly interface for traders to monitor and interact with their OpenAlgo accounts through Telegram. The system offers read-only access to trading data, real-time market information, and comprehensive charting capabilities while maintaining strict security protocols and user isolation.
+The Telegram Bot Integration provides a secure, user-friendly interface for traders to monitor and interact with their MarvelQuant accounts through Telegram. The system offers read-only access to trading data, real-time market information, and comprehensive charting capabilities while maintaining strict security protocols and user isolation.
 
 ## Architecture Overview
 
@@ -16,12 +16,12 @@ graph TB
         BotFather[BotFather Config]
     end
 
-    subgraph "OpenAlgo Telegram Service"
+    subgraph "MarvelQuant Telegram Service"
         BotService[TelegramBotService]
         CommandHandlers[Command Handlers]
         CallbackHandlers[Callback Query Handlers]
         ChartGenerator[Chart Generator]
-        SDKClient[OpenAlgo SDK Client]
+        SDKClient[MarvelQuant SDK Client]
     end
 
     subgraph "Data Layer"
@@ -31,7 +31,7 @@ graph TB
         CommandLogs[Command Logs]
     end
 
-    subgraph "OpenAlgo Core"
+    subgraph "MarvelQuant Core"
         APILayer[REST API]
         MarketData[Market Data Service]
         AccountData[Account Service]
@@ -74,7 +74,7 @@ The central service managing all bot operations with approximately 1400 lines of
 #### Key Features:
 - **Asynchronous Architecture**: Built on python-telegram-bot with asyncio
 - **Thread Isolation**: Runs in separate thread with dedicated event loop
-- **SDK Integration**: Seamless integration with OpenAlgo Python SDK
+- **SDK Integration**: Seamless integration with MarvelQuant Python SDK
 - **State Management**: Maintains bot state across restarts
 - **Error Recovery**: Automatic retry and graceful degradation
 
@@ -143,7 +143,7 @@ CREATE TABLE command_logs (
 ##### Account Management Commands
 ```python
 /start - Initialize bot interaction
-/link <api_key> <host_url> - Link OpenAlgo account
+/link <api_key> <host_url> - Link MarvelQuant account
 /unlink - Remove account linkage
 /status - Check connection status
 ```
@@ -323,7 +323,7 @@ class SDKClientManager:
         self.max_cache_size = 100
         self.ttl = 3600  # 1 hour
 
-    def get_client(self, telegram_id: int) -> Optional[openalgo_api]:
+    def get_client(self, telegram_id: int) -> Optional[marvelquant_api]:
         """Get or create cached SDK client"""
         # Check cache
         if telegram_id in self.clients:
@@ -432,12 +432,12 @@ def format_positions_summary(positions: List[Dict]) -> str:
 
 ## Integration Points
 
-### 1. OpenAlgo SDK Integration
+### 1. MarvelQuant SDK Integration
 
 ```python
-class OpenAlgoIntegration:
+class MarvelQuantIntegration:
     def __init__(self, api_key: str, host_url: str):
-        self.client = openalgo_api(
+        self.client = marvelquant_api(
             api_key=api_key,
             host=host_url
         )
@@ -473,7 +473,7 @@ class MarketDataIntegration:
         end_date = datetime.now()
         start_date = end_date - timedelta(days=days)
 
-        # Fetch from OpenAlgo market data service
+        # Fetch from MarvelQuant market data service
         response = await self.client.historical(
             symbol=symbol,
             exchange=exchange,
@@ -521,7 +521,7 @@ TELEGRAM_MAX_MESSAGE_LENGTH=4096
 
 ```ini
 [Unit]
-Description=OpenAlgo Telegram Bot Service
+Description=MarvelQuant Telegram Bot Service
 After=network.target postgresql.service
 Wants=postgresql.service
 
@@ -529,9 +529,9 @@ Wants=postgresql.service
 Type=simple
 User=www-data
 Group=www-data
-WorkingDirectory=/opt/openalgo
-Environment="PATH=/opt/openalgo/venv/bin"
-ExecStart=/opt/openalgo/venv/bin/python -m services.telegram_bot_service
+WorkingDirectory=/opt/marvelquant
+Environment="PATH=/opt/marvelquant/venv/bin"
+ExecStart=/opt/marvelquant/venv/bin/python -m services.telegram_bot_service
 Restart=always
 RestartSec=10
 
@@ -540,7 +540,7 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectSystem=strict
 ProtectHome=true
-ReadWritePaths=/opt/openalgo/logs /opt/openalgo/database
+ReadWritePaths=/opt/marvelquant/logs /opt/marvelquant/database
 
 [Install]
 WantedBy=multi-user.target
@@ -802,6 +802,6 @@ class AlertSystem:
 
 ## Conclusion
 
-The Telegram Bot Integration System provides a robust, secure, and user-friendly interface for OpenAlgo users to monitor and analyze their trading activities. With recent enhancements in logging, shutdown processes, and message formatting, the system continues to evolve to meet trader needs while maintaining high security and performance standards.
+The Telegram Bot Integration System provides a robust, secure, and user-friendly interface for MarvelQuant users to monitor and analyze their trading activities. With recent enhancements in logging, shutdown processes, and message formatting, the system continues to evolve to meet trader needs while maintaining high security and performance standards.
 
 The comprehensive architecture ensures scalability, maintainability, and extensibility for future enhancements while providing immediate value through its current feature set.

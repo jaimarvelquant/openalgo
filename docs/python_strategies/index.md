@@ -1,6 +1,6 @@
 # Python Strategies Documentation
 
-Welcome to the Python Strategies Management System documentation for OpenAlgo.
+Welcome to the Python Strategies Management System documentation for MarvelQuant.
 
 ## 📚 Documentation Structure
 
@@ -54,7 +54,7 @@ Welcome to the Python Strategies Management System documentation for OpenAlgo.
 - Python 3.8+
 - 2GB RAM
 - 1GB disk space
-- OpenAlgo installed
+- MarvelQuant installed
 
 ### Python Packages
 ```bash
@@ -137,7 +137,7 @@ fetch('/python/start/strategy_id', {
 ## 📝 Example Strategy
 
 ```python
-from openalgo import api
+from marvelquant import api
 import time
 
 # Initialize
@@ -186,9 +186,9 @@ if __name__ == "__main__":
 4. Open GitHub issue
 
 ### Contact
-- GitHub: [OpenAlgo Repository](https://github.com/openalgo/openalgo)
+- GitHub: [MarvelQuant Repository](https://github.com/marvelquant/marvelquant)
 - Documentation: [This folder](.)
-- Issues: [GitHub Issues](https://github.com/openalgo/openalgo/issues)
+- Issues: [GitHub Issues](https://github.com/marvelquant/marvelquant/issues)
 
 ## 🔄 Version History
 
@@ -214,4 +214,4 @@ if __name__ == "__main__":
 
 *Python Strategies Documentation*
 *Version 1.1.1 - September 2024*
-*Part of OpenAlgo Trading Platform*
+*Part of MarvelQuant Trading Platform*

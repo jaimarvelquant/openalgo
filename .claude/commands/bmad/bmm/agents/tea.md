@@ -7,14 +7,14 @@
 <activation critical="MANDATORY">
   <step n="1">Load persona from this current agent file (already in context)</step>
   <step n="2">🚨 IMMEDIATE ACTION REQUIRED - BEFORE ANY OUTPUT:
-      - Use Read tool to load /Users/maruth/projects/openalgo/bmad/bmm/config.yaml NOW
+      - Use Read tool to load /Users/maruth/projects/marvelquant/bmad/bmm/config.yaml NOW
       - Store ALL fields as session variables: {user_name}, {communication_language}, {output_folder}
       - VERIFY: If config not loaded, STOP and report error to user
       - DO NOT PROCEED to step 3 until config is successfully loaded and variables stored</step>
   <step n="3">Remember: user's name is {user_name}</step>
-  <step n="4">Consult /Users/maruth/projects/openalgo/bmad/bmm/testarch/tea-index.csv to select knowledge fragments under `knowledge/` and load only the files needed for the current task</step>
-  <step n="5">Load the referenced fragment(s) from `/Users/maruth/projects/openalgo/bmad/bmm/testarch/knowledge/` before giving recommendations</step>
-  <step n="6">Cross-check recommendations with the current official Playwright, Cypress, Pact, and CI platform documentation; fall back to /Users/maruth/projects/openalgo/bmad/bmm/testarch/test-resources-for-ai-flat.txt only when deeper sourcing is required</step>
+  <step n="4">Consult /Users/maruth/projects/marvelquant/bmad/bmm/testarch/tea-index.csv to select knowledge fragments under `knowledge/` and load only the files needed for the current task</step>
+  <step n="5">Load the referenced fragment(s) from `/Users/maruth/projects/marvelquant/bmad/bmm/testarch/knowledge/` before giving recommendations</step>
+  <step n="6">Cross-check recommendations with the current official Playwright, Cypress, Pact, and CI platform documentation; fall back to /Users/maruth/projects/marvelquant/bmad/bmm/testarch/test-resources-for-ai-flat.txt only when deeper sourcing is required</step>
   <step n="7">Show greeting using {user_name} from config, communicate in {communication_language}, then display numbered list of
       ALL menu items from menu section</step>
   <step n="8">STOP and WAIT for user input - do NOT execute menu items automatically - accept number or trigger text</step>
@@ -28,7 +28,7 @@
     <handlers>
   <handler type="workflow">
     When menu item has: workflow="path/to/workflow.yaml"
-    1. CRITICAL: Always LOAD /Users/maruth/projects/openalgo/bmad/core/tasks/workflow.xml
+    1. CRITICAL: Always LOAD /Users/maruth/projects/marvelquant/bmad/core/tasks/workflow.xml
     2. Read the complete file - this is the CORE OS for executing BMAD workflows
     3. Pass the yaml path as 'workflow-config' parameter to those instructions
     4. Execute workflow.xml instructions precisely following all steps
@@ -55,14 +55,14 @@
   </persona>
   <menu>
     <item cmd="*help">Show numbered menu</item>
-    <item cmd="*framework" workflow="/Users/maruth/projects/openalgo/bmad/bmm/workflows/testarch/framework/workflow.yaml">Initialize production-ready test framework architecture</item>
-    <item cmd="*atdd" workflow="/Users/maruth/projects/openalgo/bmad/bmm/workflows/testarch/atdd/workflow.yaml">Generate E2E tests first, before starting implementation</item>
-    <item cmd="*automate" workflow="/Users/maruth/projects/openalgo/bmad/bmm/workflows/testarch/automate/workflow.yaml">Generate comprehensive test automation</item>
-    <item cmd="*test-design" workflow="/Users/maruth/projects/openalgo/bmad/bmm/workflows/testarch/test-design/workflow.yaml">Create comprehensive test scenarios</item>
-    <item cmd="*trace" workflow="/Users/maruth/projects/openalgo/bmad/bmm/workflows/testarch/trace/workflow.yaml">Map requirements to tests Given-When-Then BDD format</item>
-    <item cmd="*nfr-assess" workflow="/Users/maruth/projects/openalgo/bmad/bmm/workflows/testarch/nfr-assess/workflow.yaml">Validate non-functional requirements</item>
-    <item cmd="*ci" workflow="/Users/maruth/projects/openalgo/bmad/bmm/workflows/testarch/ci/workflow.yaml">Scaffold CI/CD quality pipeline</item>
-    <item cmd="*gate" workflow="/Users/maruth/projects/openalgo/bmad/bmm/workflows/testarch/gate/workflow.yaml">Write/update quality gate decision assessment</item>
+    <item cmd="*framework" workflow="/Users/maruth/projects/marvelquant/bmad/bmm/workflows/testarch/framework/workflow.yaml">Initialize production-ready test framework architecture</item>
+    <item cmd="*atdd" workflow="/Users/maruth/projects/marvelquant/bmad/bmm/workflows/testarch/atdd/workflow.yaml">Generate E2E tests first, before starting implementation</item>
+    <item cmd="*automate" workflow="/Users/maruth/projects/marvelquant/bmad/bmm/workflows/testarch/automate/workflow.yaml">Generate comprehensive test automation</item>
+    <item cmd="*test-design" workflow="/Users/maruth/projects/marvelquant/bmad/bmm/workflows/testarch/test-design/workflow.yaml">Create comprehensive test scenarios</item>
+    <item cmd="*trace" workflow="/Users/maruth/projects/marvelquant/bmad/bmm/workflows/testarch/trace/workflow.yaml">Map requirements to tests Given-When-Then BDD format</item>
+    <item cmd="*nfr-assess" workflow="/Users/maruth/projects/marvelquant/bmad/bmm/workflows/testarch/nfr-assess/workflow.yaml">Validate non-functional requirements</item>
+    <item cmd="*ci" workflow="/Users/maruth/projects/marvelquant/bmad/bmm/workflows/testarch/ci/workflow.yaml">Scaffold CI/CD quality pipeline</item>
+    <item cmd="*gate" workflow="/Users/maruth/projects/marvelquant/bmad/bmm/workflows/testarch/gate/workflow.yaml">Write/update quality gate decision assessment</item>
     <item cmd="*exit">Exit with confirmation</item>
   </menu>
 </agent>

@@ -1,0 +1,375 @@
+# Deep Research Prompt - Critical Updates Summary
+
+**Date**: 2025-10-08  
+**Updated File**: `deep-research-prompt-marvelquant-integration-CONSTRAINED-2025-10-08.md`  
+**Status**: ✅ ALL CRITICAL UPDATES COMPLETED
+
+---
+
+## 📊 Update Overview
+
+### File Statistics
+
+**Before Updates**:
+- Lines: 1,290
+- Critical Questions: 8
+- Research Areas: 10
+
+**After Updates**:
+- Lines: 1,600+ (increased by ~310 lines)
+- Critical Questions: 12 (added 4 new questions)
+- Research Areas: 11 (added 1 new area)
+- New Sections: 5 major additions
+
+---
+
+## ✅ Completed Updates (Priority Order)
+
+### 1. API Design Update - AlgoBaba Style (HIGHEST PRIORITY) ✅
+
+**Location**: Section 8 - API Design Patterns for Portfolio Control
+
+**Changes Made**:
+- ✅ Added mandatory requirement to follow AlgoBaba style from `/Users/maruth/projects/docs/bmad/live_integration/12-api-design-decision-summary.md`
+- ✅ Specified name-based hierarchical API (NOT ID-based)
+- ✅ Documented key principles: name-based identifiers, hierarchical paths, case-insensitive input
+- ✅ Provided approved endpoint examples from decision document
+- ✅ Added research questions for Flask implementation of name-based routing
+- ✅ Updated desired outputs to include name normalization, database schema, migration strategy
+- ✅ Added critical warning against ID-based endpoints
+
+**Key Additions**:
+```
+POST /api/v1/portfolio/NIFTY_ATM_STRADDLE/stop
+POST /api/v1/portfolio/NIFTY_ATM_STRADDLE/strategy/ATM_STRADDLE_1/disable
+POST /api/v1/portfolio/NIFTY_ATM_STRADDLE/strategy/ATM_STRADDLE_1/leg/CE_25000_BUY/close
+```
+
+**Impact**: All API design recommendations will now follow production-proven AlgoBaba patterns with name-based routing.
+
+---
+
+### 2. GitHub Repository Access Clarification (HIGH PRIORITY) ✅
+
+**Location**: Backtester Codebase Analysis - Repository Information
+
+**Changes Made**:
+- ✅ Confirmed ChatGPT Deep Research has direct access to private repository
+- ✅ Specified `backtester-worktree-1` as the latest version to analyze
+- ✅ Removed uncertainty about repository accessibility
+- ✅ Added alternative public repository option for other AI platforms
+- ✅ Updated instructions to emphasize direct codebase analysis (not just documentation)
+
+**Before**:
+```
+CRITICAL: If the GitHub repository is private or the URL is incorrect, 
+update with the correct public repository URL or note that codebase 
+analysis will be based on provided documentation only.
+```
+
+**After**:
+```
+Repository Access Status:
+✅ ChatGPT Deep Research: Has direct access to this private repository
+✅ Latest Version: backtester-worktree-1 is the current production worktree
+ℹ️ Alternative: Repository can be made public if needed for other AI platforms
+
+IMPORTANT: You have direct access to this repository. Analyze the actual codebase.
+```
+
+**Impact**: AI will confidently analyze actual codebase instead of relying only on documentation.
+
+---
+
+### 3. Parameter Documentation from btrun/util.py (HIGH PRIORITY) ✅
+
+**Location**: New Section 5 in Backtester Codebase Analysis
+
+**Changes Made**:
+- ✅ Added comprehensive requirement to extract ALL parameters from `btrun/util.py`
+- ✅ Specified analysis requirements: names, types, defaults, valid ranges, descriptions
+- ✅ Added research questions about parameter validation and live trading applicability
+- ✅ Defined expected outputs: Complete Parameter Reference Guide (3-5 pages)
+- ✅ Included Parameter Integration Recommendations (1-2 pages)
+- ✅ Added Developer Reference (1 page)
+
+**Expected Deliverables**:
+1. **Complete Parameter Reference Guide** (3-5 pages)
+   - Table format with: Parameter Name, Type, Default, Valid Range, Description, Live Trading Applicable
+   - Grouped by category (Entry, Exit, Risk Management, Position Sizing, Timing)
+   - Usage examples
+
+2. **Parameter Integration Recommendations** (1-2 pages)
+   - Which parameters for Excel configuration in live trading
+   - Different defaults for live vs backtest mode
+   - Validation before live deployment
+   - Error handling for invalid values
+
+3. **Developer Reference** (1 page)
+   - Quick reference table
+   - Common parameter combinations
+   - Troubleshooting guide
+
+**Impact**: Development team will have complete understanding of backtester's parameter system for live integration.
+
+---
+
+### 4. Data Loading Story Analysis (MEDIUM PRIORITY) ✅
+
+**Location**: New Section 6 in Backtester Codebase Analysis
+
+**Changes Made**:
+- ✅ Added requirement to analyze `/Users/maruth/projects/backtester-worktree-3/docs/stories/7.9.story.md`
+- ✅ Specified analysis of Parquet-based data loading architecture
+- ✅ Added research questions about adapting to real-time API data
+- ✅ Defined expected outputs: Data Loading Architecture Summary (2-3 pages)
+- ✅ Included Live Trading Data Loading Recommendations (2-3 pages)
+- ✅ Added Implementation Guidance (1-2 pages)
+
+**Key Insights to Extract**:
+- `is_live` parameter integration with Portfolio Manager
+- Parquet data partitioning (exchange/symbol/instrument/year/month/day)
+- Incremental updates (<1 second for single trading day)
+- Multi-tier caching (memory-mapped Arrow + LRU)
+- Telemetry tracking (load times, bytes scanned, cache hit rates)
+- NFS-based multi-user deployment with GCS backup
+
+**Expected Deliverables**:
+1. **Data Loading Architecture Summary** (2-3 pages)
+   - Current Parquet-based flow
+   - HybridDataLoader modes
+   - Incremental update pipeline
+   - Caching architecture
+
+2. **Live Trading Data Loading Recommendations** (2-3 pages)
+   - Adapting to real-time OpenAlgo API
+   - Components to reuse vs replace
+   - Data structure mapping: Parquet → OpenAlgo API → Strategy
+   - Caching strategies for live data
+
+3. **Implementation Guidance** (1-2 pages)
+   - Code changes in HybridDataLoader for live mode
+   - Switching between historical and live data sources
+   - Configuration parameters
+   - Error handling and testing
+
+**Impact**: Clear roadmap for transitioning from file-based to API-based data loading for live trading.
+
+---
+
+### 5. Excel to JSON Configuration Versioning (MEDIUM PRIORITY) ✅
+
+**Location**: New Section 11 - Configuration Versioning for Live vs Backtest Modes
+
+**Changes Made**:
+- ✅ Added comprehensive configuration versioning strategy
+- ✅ Specified safety mechanisms to prevent accidental live deployment of backtest configs
+- ✅ Defined semantic versioning scheme (MAJOR.MINOR.PATCH)
+- ✅ Added naming conventions for live vs backtest configurations
+- ✅ Included Git tagging and branch strategy
+- ✅ Specified configuration metadata structure with approval workflow
+- ✅ Added safety requirements (mode validation, audit trail, immutability)
+
+**Expected Deliverables**:
+1. **Configuration Versioning Strategy** (2-3 pages)
+   - Semantic versioning scheme
+   - Naming conventions: `portfolio_name_v1.2.3_live.xlsx`
+   - Git tagging and branch strategy
+   - Configuration metadata
+
+2. **Mode Validation and Safety Mechanisms** (2-3 pages)
+   - Explicit `mode` field (live/backtest)
+   - Validation rules
+   - Pre-deployment checklist
+   - Configuration diff tools
+   - Automated tests
+
+3. **Multi-Version Management** (1-2 pages)
+   - Managing multiple live configurations
+   - Configuration promotion workflow: backtest → paper → live
+   - Archival and retention policies
+
+4. **Implementation Patterns** (1-2 pages)
+   - Python validation code
+   - JSON schema with version and mode fields
+   - Git hooks
+   - Deployment scripts with safety checks
+
+**Safety Requirements**:
+- ✅ Configuration files MUST have explicit `mode: "live"` or `mode: "backtest"` field
+- ✅ Live deployment MUST validate `mode: "live"` before execution
+- ✅ Backtest configs MUST be rejected by live trading system
+- ✅ Configuration changes MUST be logged with timestamp, author, reason
+- ✅ Live changes MUST require approval
+- ✅ Versions MUST be immutable once deployed
+
+**Impact**: Production safety through comprehensive versioning and validation to prevent costly deployment errors.
+
+---
+
+## 📈 Updated Research Output Structure
+
+### New Sections Added
+
+**Section 7: Backtester Codebase Integration** (4-6 pages)
+- 7.1 Codebase Structure Summary
+- 7.2 Integration Point Specifications
+- 7.3 Parameter Documentation (from btrun/util.py) ← NEW
+- 7.4 Configuration Migration Plan
+- 7.5 Data Loading Adaptation (from Story 7.9) ← NEW
+- 7.6 Compatibility Assessment
+
+**Section 8: Configuration Versioning and Safety** (3-4 pages) ← NEW
+- 8.1 Configuration Versioning Strategy
+- 8.2 Mode Validation and Safety Mechanisms
+- 8.3 Multi-Version Management
+- 8.4 Implementation Patterns
+
+### Updated Sections
+
+**Section 4: API Design and Implementation - AlgoBaba Style** (5-7 pages)
+- 4.1 AlgoBaba Style API Patterns ← UPDATED
+- 4.2 Flask Blueprint Implementation for AlgoBaba Style ← UPDATED
+- 4.3 Database Schema for Name-Based API ← NEW
+- 4.4 Error Handling
+- 4.5 Authentication and Authorization
+
+---
+
+## 🎯 Updated Critical Research Questions
+
+**Added 4 New Questions** (Total: 12)
+
+9. **How should the AlgoBaba-style name-based API be implemented in Flask with case-insensitive routing?**
+   - Complete Flask Blueprint code for name-based endpoints
+   - Name normalization patterns (case-insensitive → UPPER_SNAKE_CASE)
+   - Database schema with name-based primary keys
+   - Hierarchical routing (portfolio/strategy/leg)
+
+10. **What are all the parameters in btrun/util.py and how should they be integrated into live trading?**
+   - Complete parameter reference guide extracted from btrun/util.py
+   - Parameter types, defaults, valid ranges, descriptions
+   - Live trading vs backtest-only parameters
+   - Validation and error handling patterns
+
+11. **How should data loading be adapted from Parquet files (Story 7.9) to real-time OpenAlgo API for live trading?**
+   - HybridDataLoader architecture analysis
+   - Recommendations for real-time API data adaptation
+   - Data structure mapping: Parquet → OpenAlgo API → Strategy
+   - Caching and synchronization patterns
+
+12. **How should configuration versioning prevent accidental deployment of backtest configs to live trading?**
+   - Comprehensive versioning strategy (semantic versioning, Git tagging)
+   - Validation mechanisms to enforce mode correctness
+   - Configuration metadata with version, mode, approval fields
+   - Safety checks and audit trail logging
+
+---
+
+## 📁 Files Updated
+
+1. **`deep-research-prompt-marvelquant-integration-CONSTRAINED-2025-10-08.md`**
+   - Added ~310 lines
+   - 5 major new sections
+   - 4 new critical questions
+   - Updated API design section with AlgoBaba style
+   - Clarified repository access
+
+2. **`RESEARCH-PROMPT-QUICK-START.md`**
+   - Updated file size reference (1,290+ → 1,600+)
+   - Updated critical questions count (8 → 12)
+   - Updated research areas count (10 → 11)
+   - Added new deliverables to expected outcomes
+   - Updated key features list
+
+---
+
+## 🚀 Impact Summary
+
+### For AI Research Platform
+
+**Enhanced Research Scope**:
+- Will analyze actual backtester codebase (not just documentation)
+- Will extract complete parameter system from btrun/util.py
+- Will analyze data loading story for live trading adaptation
+- Will provide AlgoBaba-style API implementation patterns
+- Will deliver comprehensive configuration versioning strategy
+
+**Increased Output Quality**:
+- More specific, implementation-ready recommendations
+- Context-aware suggestions based on actual codebase
+- Production-proven API design patterns (AlgoBaba style)
+- Safety mechanisms for configuration management
+
+### For Development Team
+
+**Immediate Benefits**:
+1. **Complete Parameter Documentation**: Full understanding of backtester's parameter system
+2. **AlgoBaba-Style API**: Production-proven API design patterns
+3. **Data Loading Roadmap**: Clear path from Parquet to real-time API
+4. **Configuration Safety**: Mechanisms to prevent costly deployment errors
+5. **Codebase-Specific Guidance**: Recommendations tailored to actual code
+
+**Risk Mitigation**:
+- Prevents accidental live deployment of backtest configurations
+- Ensures API follows proven production patterns
+- Provides clear data loading adaptation strategy
+- Documents all parameters for proper integration
+
+---
+
+## ✅ Verification Checklist
+
+- [x] API Design updated with AlgoBaba style reference
+- [x] GitHub repository access clarified (ChatGPT has direct access)
+- [x] Parameter documentation section added (btrun/util.py)
+- [x] Data loading story analysis section added (Story 7.9)
+- [x] Configuration versioning section added
+- [x] Expected outputs updated with new deliverables
+- [x] Critical research questions updated (8 → 12)
+- [x] Quick Start Guide updated with new file size and sections
+- [x] All priority items completed
+
+---
+
+## 📞 Next Steps
+
+### Immediate (Today):
+
+1. ✅ **Review the updated prompt** (10 min)
+   - Open: `deep-research-prompt-marvelquant-integration-CONSTRAINED-2025-10-08.md`
+   - Verify all updates are correct
+   - Check that AlgoBaba style document path is correct
+
+2. ✅ **Verify file paths** (5 min)
+   - Confirm `/Users/maruth/projects/docs/bmad/live_integration/12-api-design-decision-summary.md` exists
+   - Confirm `/Users/maruth/projects/backtester-worktree-3/docs/stories/7.9.story.md` exists
+   - Confirm `btrun/util.py` exists in backtester repository
+
+3. ✅ **Execute the research** (60-90 min)
+   - Copy entire updated prompt (1,600+ lines)
+   - Paste into ChatGPT Deep Research
+   - Review plan, execute
+
+### After Research:
+
+4. ✅ **Validate new deliverables** (2-3 hours)
+   - Verify AlgoBaba-style API recommendations
+   - Check parameter documentation completeness
+   - Review data loading adaptation recommendations
+   - Validate configuration versioning strategy
+
+5. ✅ **Extract implementation artifacts** (2-3 hours)
+   - Create parameter reference guide from research
+   - Document AlgoBaba-style API patterns
+   - Build configuration versioning implementation plan
+   - Design data loading adaptation strategy
+
+---
+
+**Status**: ✅ ALL CRITICAL UPDATES COMPLETED AND READY FOR EXECUTION
+
+**Updated Prompt File**: `/Users/maruth/projects/bmad/docs/deep-research-prompt-marvelquant-integration-CONSTRAINED-2025-10-08.md`  
+**Quick Start Guide**: `/Users/maruth/projects/bmad/docs/RESEARCH-PROMPT-QUICK-START.md`  
+**This Summary**: `/Users/maruth/projects/bmad/docs/RESEARCH-PROMPT-UPDATES-SUMMARY-2025-10-08.md`
+

@@ -1,6 +1,6 @@
 """
 Fyers Data Mapping
-Maps Fyers HSM data to OpenAlgo format for compatibility
+Maps Fyers HSM data to MarvelQuant format for compatibility
 """
 
 import time
@@ -9,22 +9,22 @@ from datetime import datetime
 
 class FyersDataMapper:
     """
-    Maps Fyers HSM WebSocket data to OpenAlgo format
+    Maps Fyers HSM WebSocket data to MarvelQuant format
     """
     
     def __init__(self):
         """Initialize the data mapper"""
         pass
     
-    def map_to_openalgo_ltp(self, fyers_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def map_to_marvelquant_ltp(self, fyers_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
-        Map Fyers data to OpenAlgo LTP format
+        Map Fyers data to MarvelQuant LTP format
         
         Args:
             fyers_data: Raw data from Fyers HSM WebSocket
             
         Returns:
-            OpenAlgo LTP format dict or None if mapping fails
+            MarvelQuant LTP format dict or None if mapping fails
         """
         try:
             if not fyers_data or "ltp" not in fyers_data:
@@ -62,8 +62,8 @@ class FyersDataMapper:
             # Round to precision
             ltp = round(ltp, precision)
             
-            # Map to OpenAlgo LTP format
-            openalgo_data = {
+            # Map to MarvelQuant LTP format
+            marvelquant_data = {
                 "symbol": f"{exchange}:{symbol_name}",
                 "exchange": exchange,
                 "token": fyers_data.get("exchange_token", ""),
@@ -72,21 +72,21 @@ class FyersDataMapper:
                 "data_type": "LTP"
             }
             
-            return openalgo_data
+            return marvelquant_data
             
         except Exception as e:
             print(f"Error mapping LTP data: {e}")
             return None
     
-    def map_to_openalgo_quote(self, fyers_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def map_to_marvelquant_quote(self, fyers_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
-        Map Fyers data to OpenAlgo Quote format
+        Map Fyers data to MarvelQuant Quote format
         
         Args:
             fyers_data: Raw data from Fyers HSM WebSocket
             
         Returns:
-            OpenAlgo Quote format dict or None if mapping fails
+            MarvelQuant Quote format dict or None if mapping fails
         """
         try:
             if not fyers_data:
@@ -129,8 +129,8 @@ class FyersDataMapper:
                 # Apply multiplier and segment conversion
                 return round(value / multiplier / segment_divisor, precision)
             
-            # Map to OpenAlgo Quote format
-            openalgo_data = {
+            # Map to MarvelQuant Quote format
+            marvelquant_data = {
                 "symbol": f"{exchange}:{symbol_name}",
                 "exchange": exchange,
                 "token": fyers_data.get("exchange_token", ""),
@@ -156,21 +156,21 @@ class FyersDataMapper:
                 "data_type": "Quote"
             }
             
-            return openalgo_data
+            return marvelquant_data
             
         except Exception as e:
             print(f"Error mapping Quote data: {e}")
             return None
     
-    def map_to_openalgo_depth(self, fyers_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    def map_to_marvelquant_depth(self, fyers_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
-        Map Fyers depth data to OpenAlgo Depth format
+        Map Fyers depth data to MarvelQuant Depth format
         
         Args:
             fyers_data: Raw depth data from Fyers HSM WebSocket
             
         Returns:
-            OpenAlgo Depth format dict or None if mapping fails
+            MarvelQuant Depth format dict or None if mapping fails
         """
         try:
             if not fyers_data or fyers_data.get("type") != "dp":
@@ -243,8 +243,8 @@ class FyersDataMapper:
             if buy_levels and sell_levels:
                 ltp = (buy_levels[0]["price"] + sell_levels[0]["price"]) / 2
             
-            # Map to OpenAlgo Depth format (matching other brokers)
-            openalgo_data = {
+            # Map to MarvelQuant Depth format (matching other brokers)
+            marvelquant_data = {
                 "symbol": f"{exchange}:{symbol_name}",
                 "exchange": exchange,
                 "token": fyers_data.get("exchange_token", ""),
@@ -257,7 +257,7 @@ class FyersDataMapper:
                 "data_type": "Depth"
             }
             
-            return openalgo_data
+            return marvelquant_data
             
         except Exception as e:
             print(f"Error mapping Depth data: {e}")
@@ -265,14 +265,14 @@ class FyersDataMapper:
     
     def map_index_to_synthetic_depth(self, fyers_data: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """
-        Map Fyers index data to synthetic OpenAlgo Depth format
+        Map Fyers index data to synthetic MarvelQuant Depth format
         Since indices don't have real depth, create synthetic depth from quote data
         
         Args:
             fyers_data: Raw index data from Fyers HSM WebSocket
             
         Returns:
-            OpenAlgo Depth format dict or None if mapping fails
+            MarvelQuant Depth format dict or None if mapping fails
         """
         try:
             if not fyers_data or fyers_data.get("type") != "if":
@@ -335,8 +335,8 @@ class FyersDataMapper:
                     "orders": 1
                 })
             
-            # Map to OpenAlgo Depth format
-            openalgo_data = {
+            # Map to MarvelQuant Depth format
+            marvelquant_data = {
                 "symbol": f"{exchange}:{symbol_name}",
                 "exchange": exchange,
                 "token": fyers_data.get("exchange_token", ""),
@@ -349,7 +349,7 @@ class FyersDataMapper:
                 "data_type": "Depth"
             }
             
-            return openalgo_data
+            return marvelquant_data
             
         except Exception as e:
             print(f"Error mapping Index to synthetic Depth data: {e}")
@@ -357,14 +357,14 @@ class FyersDataMapper:
     
     def map_fyers_data(self, fyers_data: Dict[str, Any], requested_type: str = "Quote") -> Optional[Dict[str, Any]]:
         """
-        Map Fyers data to appropriate OpenAlgo format based on requested type
+        Map Fyers data to appropriate MarvelQuant format based on requested type
         
         Args:
             fyers_data: Raw data from Fyers HSM WebSocket
             requested_type: Requested data type ("LTP", "Quote", or "Depth")
             
         Returns:
-            Mapped OpenAlgo data or None if mapping fails
+            Mapped MarvelQuant data or None if mapping fails
         """
         if not fyers_data:
             return None
@@ -373,29 +373,29 @@ class FyersDataMapper:
         fyers_type = fyers_data.get("type", "sf")
         
         if requested_type == "LTP":
-            return self.map_to_openalgo_ltp(fyers_data)
+            return self.map_to_marvelquant_ltp(fyers_data)
         elif requested_type == "Quote":
-            return self.map_to_openalgo_quote(fyers_data)
+            return self.map_to_marvelquant_quote(fyers_data)
         elif requested_type == "Depth" and fyers_type == "dp":
-            return self.map_to_openalgo_depth(fyers_data)
+            return self.map_to_marvelquant_depth(fyers_data)
         elif requested_type == "Depth" and fyers_type == "if":
             # Index depth request - create synthetic depth from index data
             return self.map_index_to_synthetic_depth(fyers_data)
         elif fyers_type == "sf":
             # Default to Quote for symbol feed
-            return self.map_to_openalgo_quote(fyers_data)
+            return self.map_to_marvelquant_quote(fyers_data)
         elif fyers_type == "if":
             # Index data - treat as Quote
-            return self.map_to_openalgo_quote(fyers_data)
+            return self.map_to_marvelquant_quote(fyers_data)
         elif fyers_type == "dp":
             # Depth data
-            return self.map_to_openalgo_depth(fyers_data)
+            return self.map_to_marvelquant_depth(fyers_data)
         
         return None
     
     def extract_symbol_info(self, symbol: str) -> Dict[str, str]:
         """
-        Extract exchange and symbol from OpenAlgo format
+        Extract exchange and symbol from MarvelQuant format
         
         Args:
             symbol: Symbol in format "EXCHANGE:SYMBOL" or just "SYMBOL"

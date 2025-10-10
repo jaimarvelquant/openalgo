@@ -13,13 +13,13 @@ logger = get_logger(__name__)
 
 def map_order_data(order_data):
     """
-    Processes and modifies order data from Groww format to OpenAlgo format.
+    Processes and modifies order data from Groww format to MarvelQuant format.
     
     Parameters:
     - order_data: A dictionary with either 'data' key or raw Groww API response with 'order_list'.
     
     Returns:
-    - The modified order_data with standardized fields in OpenAlgo format.
+    - The modified order_data with standardized fields in MarvelQuant format.
     """
     logger.info("Starting map_order_data function")
     logger.debug(f"Order data type: {type(order_data)}")
@@ -89,34 +89,34 @@ def map_order_data(order_data):
         broker_symbol = order.get('trading_symbol', '')
         exchange = order.get('exchange', '')
         
-        # Convert broker symbol to OpenAlgo format
-        openalgo_symbol = broker_symbol
+        # Convert broker symbol to MarvelQuant format
+        marvelquant_symbol = broker_symbol
         
         # If it's an options or futures symbol (especially for NFO exchange)
         if exchange == 'NFO' and broker_symbol and ' ' in broker_symbol:
             try:
                 # Import the conversion function
-                from broker.groww.database.master_contract_db import format_groww_to_openalgo_symbol
-                openalgo_symbol = format_groww_to_openalgo_symbol(broker_symbol, exchange)
-                logger.info(f"Transformed display symbol: {broker_symbol} -> {openalgo_symbol}")
+                from broker.groww.database.master_contract_db import format_groww_to_marvelquant_symbol
+                marvelquant_symbol = format_groww_to_marvelquant_symbol(broker_symbol, exchange)
+                logger.info(f"Transformed display symbol: {broker_symbol} -> {marvelquant_symbol}")
             except Exception as e:
                 logger.error(f"Error converting symbol format: {e}")
         
         # Look up in database as fallback
-        if openalgo_symbol == broker_symbol and ' ' in broker_symbol:
+        if marvelquant_symbol == broker_symbol and ' ' in broker_symbol:
             try:
                 # Look up in database
                 from broker.groww.database.master_contract_db import SymToken, db_session
                 db_record = db_session.query(SymToken).filter_by(brsymbol=broker_symbol, brexchange=exchange).first()
                 if db_record and db_record.symbol:
-                    openalgo_symbol = db_record.symbol
-                    logger.info(f"Found symbol in database: {broker_symbol} -> {openalgo_symbol}")
+                    marvelquant_symbol = db_record.symbol
+                    logger.info(f"Found symbol in database: {broker_symbol} -> {marvelquant_symbol}")
             except Exception as e:
                 logger.error(f"Error looking up symbol in database: {e}")
         
         mapped_order = {
             'orderid': order.get('groww_order_id', ''),
-            'symbol': openalgo_symbol,  # Using the converted OpenAlgo format symbol
+            'symbol': marvelquant_symbol,  # Using the converted MarvelQuant format symbol
             'exchange': order.get('exchange', 'NSE'),
             'transaction_type': order.get('transaction_type', ''),
             'order_type': order.get('order_type', 'MARKET'),
@@ -129,7 +129,7 @@ def map_order_data(order_data):
             'order_reference_id': order.get('order_reference_id', '')
         }
         
-        # Map status to OpenAlgo format
+        # Map status to MarvelQuant format
         status_map = {
             'NEW': 'open',
             'ACKED': 'open',
@@ -145,7 +145,7 @@ def map_order_data(order_data):
         mapped_order['status'] = status_map.get(original_status, 'open')
         logger.debug(f"Mapped status from '{original_status}' to '{mapped_order['status']}'")
         
-        # Map product type to OpenAlgo format
+        # Map product type to MarvelQuant format
         original_product = mapped_order['product']
         if original_product == 'CNC':
             mapped_order['product'] = 'CNC'
@@ -260,13 +260,13 @@ def calculate_order_statistics(order_data):
 
 def transform_order_data(orders):
     """
-    Transform order data from Groww API format to OpenAlgo standard format
+    Transform order data from Groww API format to MarvelQuant standard format
     
     Args:
         orders (dict): Order data from Groww API 
         
     Returns:
-        list: Transformed orders in OpenAlgo format for orderbook.py
+        list: Transformed orders in MarvelQuant format for orderbook.py
     """
     logger.info("Starting transform_order_data function")
     logger.debug(f"Input order data type: {type(orders)}")
@@ -327,7 +327,7 @@ def transform_order_data(orders):
         broker_symbol = order.get('trading_symbol', order.get('tradingsymbol', order.get('symbol', '')))
         exchange = order.get('exchange', 'NSE')
         
-        # Get proper OpenAlgo symbol from database using token lookup
+        # Get proper MarvelQuant symbol from database using token lookup
         token = None
         symbol = broker_symbol
         
@@ -335,22 +335,22 @@ def transform_order_data(orders):
         if 'token' in order:
             token = order.get('token')
             
-        # If we have a token or brsymbol (tradingsymbol/trading_symbol), look up the OpenAlgo symbol from the database
+        # If we have a token or brsymbol (tradingsymbol/trading_symbol), look up the MarvelQuant symbol from the database
         try:
             from database.token_db import get_oa_symbol
             
-            # Try to get the OpenAlgo symbol using the token if available
+            # Try to get the MarvelQuant symbol using the token if available
             if token:
-                openalgo_symbol = get_oa_symbol(token, exchange)
-                if openalgo_symbol:
-                    symbol = openalgo_symbol
-                    logger.info(f"Found OpenAlgo symbol by token: {broker_symbol} -> {symbol}")
+                marvelquant_symbol = get_oa_symbol(token, exchange)
+                if marvelquant_symbol:
+                    symbol = marvelquant_symbol
+                    logger.info(f"Found MarvelQuant symbol by token: {broker_symbol} -> {symbol}")
             
             # If token lookup failed or token wasn't available, try by broker symbol
             elif broker_symbol:
-                # First check if we already have the OpenAlgo symbol
+                # First check if we already have the MarvelQuant symbol
                 if exchange == "NFO" and (broker_symbol.endswith('CE') or broker_symbol.endswith('PE')):
-                    # Query the database to find the OpenAlgo symbol for this broker symbol
+                    # Query the database to find the MarvelQuant symbol for this broker symbol
                     from broker.groww.database.master_contract_db import SymToken, db_session
                     with db_session() as session:
                         record = session.query(SymToken).filter(
@@ -360,9 +360,9 @@ def transform_order_data(orders):
                         
                         if record and record.symbol:
                             symbol = record.symbol
-                            logger.info(f"Found OpenAlgo symbol in database: {broker_symbol} -> {symbol}")
+                            logger.info(f"Found MarvelQuant symbol in database: {broker_symbol} -> {symbol}")
         except Exception as e:
-            logger.error(f"Error looking up OpenAlgo symbol from database: {e}")
+            logger.error(f"Error looking up MarvelQuant symbol from database: {e}")
             # Fall back to the original symbol
             symbol = broker_symbol
         
@@ -378,7 +378,7 @@ def transform_order_data(orders):
         trigger_price = order.get('trigger_price', 0.0)
         quantity = order.get('quantity', 0)
         
-        # Map order type to OpenAlgo format
+        # Map order type to MarvelQuant format
         mapped_order_type = order_type
         if order_type == 'STOP_LOSS':
             mapped_order_type = 'SL'
@@ -415,25 +415,25 @@ def transform_order_data(orders):
         # Log key fields for debugging
         logger.debug(f"Order {i}: Symbol='{symbol}', ID='{order_id}', Type='{mapped_order_type}', Product='{mapped_product}'")
         
-        # For NFO instruments, ensure the symbol is in OpenAlgo format (AARTIIND29MAY25630CE)
+        # For NFO instruments, ensure the symbol is in MarvelQuant format (AARTIIND29MAY25630CE)
         exchange = order.get("exchange", "NSE")
         if exchange == 'NFO' and ' ' in symbol:
             try:
                 # Import the conversion function
-                from broker.groww.database.master_contract_db import format_groww_to_openalgo_symbol
-                openalgo_symbol = format_groww_to_openalgo_symbol(symbol, exchange)
-                if openalgo_symbol:
+                from broker.groww.database.master_contract_db import format_groww_to_marvelquant_symbol
+                marvelquant_symbol = format_groww_to_marvelquant_symbol(symbol, exchange)
+                if marvelquant_symbol:
                     # Store broker symbol for reference
                     broker_symbol = symbol
-                    # Use OpenAlgo symbol format for display
-                    symbol = openalgo_symbol
+                    # Use MarvelQuant symbol format for display
+                    symbol = marvelquant_symbol
                     logger.info(f"Transformed order symbol for UI: {broker_symbol} -> {symbol}")
             except Exception as e:
                 logger.error(f"Error converting order symbol format: {e}")
         
-        # Create transformed order in OpenAlgo format
+        # Create transformed order in MarvelQuant format
         transformed_order = {
-            "symbol": symbol,  # Now guaranteed to be in OpenAlgo format
+            "symbol": symbol,  # Now guaranteed to be in MarvelQuant format
             "exchange": order.get("exchange", "NSE"),
             "action": transaction_type,
             "quantity": quantity,
@@ -451,7 +451,7 @@ def transform_order_data(orders):
 
     logger.info(f"Successfully transformed {len(transformed_orders)} orders")
     
-    # Final check to ensure all symbols are in OpenAlgo format using database lookups
+    # Final check to ensure all symbols are in MarvelQuant format using database lookups
     # This avoids complex transformations since the database already has the correct symbols
     for order in transformed_orders:
         # Only process NFO symbols that might be in broker format
@@ -463,10 +463,10 @@ def transform_order_data(orders):
             if token:
                 try:
                     from database.token_db import get_oa_symbol
-                    openalgo_symbol = get_oa_symbol(token, order.get('exchange', 'NSE'))
-                    if openalgo_symbol:
-                        order['symbol'] = openalgo_symbol
-                        logger.info(f"Final token lookup: {symbol} -> {openalgo_symbol}")
+                    marvelquant_symbol = get_oa_symbol(token, order.get('exchange', 'NSE'))
+                    if marvelquant_symbol:
+                        order['symbol'] = marvelquant_symbol
+                        logger.info(f"Final token lookup: {symbol} -> {marvelquant_symbol}")
                         continue
                 except Exception as e:
                     logger.error(f"Error in final token lookup: {e}")
@@ -550,22 +550,22 @@ def transform_tradebook_data(tradebook_data):
         token = trade.get('token', trade.get('instrument_token', None))
         symbol = broker_symbol
         
-        # Try to get OpenAlgo symbol from database
+        # Try to get MarvelQuant symbol from database
         try:
             from database.token_db import get_oa_symbol
             
-            # Try to get the OpenAlgo symbol using the token if available
+            # Try to get the MarvelQuant symbol using the token if available
             if token:
-                openalgo_symbol = get_oa_symbol(token, exchange)
-                if openalgo_symbol:
-                    symbol = openalgo_symbol
-                    logger.info(f"Found OpenAlgo symbol by token: {broker_symbol} -> {symbol}")
+                marvelquant_symbol = get_oa_symbol(token, exchange)
+                if marvelquant_symbol:
+                    symbol = marvelquant_symbol
+                    logger.info(f"Found MarvelQuant symbol by token: {broker_symbol} -> {symbol}")
             
             # If token lookup failed or token wasn't available, try by broker symbol
             elif broker_symbol:
                 # For options/futures specifically, try database lookup
                 if exchange == "NFO" and (broker_symbol.endswith('CE') or broker_symbol.endswith('PE') or 'FUT' in broker_symbol):
-                    # Query the database to find the OpenAlgo symbol for this broker symbol
+                    # Query the database to find the MarvelQuant symbol for this broker symbol
                     from broker.groww.database.master_contract_db import SymToken, db_session
                     with db_session() as session:
                         record = session.query(SymToken).filter(
@@ -575,9 +575,9 @@ def transform_tradebook_data(tradebook_data):
                         
                         if record and record.symbol:
                             symbol = record.symbol
-                            logger.info(f"Found OpenAlgo symbol in database: {broker_symbol} -> {symbol}")
+                            logger.info(f"Found MarvelQuant symbol in database: {broker_symbol} -> {symbol}")
         except Exception as e:
-            logger.error(f"Error looking up OpenAlgo symbol from database: {e}")
+            logger.error(f"Error looking up MarvelQuant symbol from database: {e}")
         
         # Get other trade fields
         product = trade.get('productType', trade.get('product', ''))
@@ -729,22 +729,22 @@ def transform_positions_data(positions_data):
         else:
             symbol = broker_symbol
         
-        # Try to get OpenAlgo symbol from database
+        # Try to get MarvelQuant symbol from database
         try:
             from database.token_db import get_oa_symbol
             
-            # Try to get the OpenAlgo symbol using the token if available
+            # Try to get the MarvelQuant symbol using the token if available
             if token:
-                openalgo_symbol = get_oa_symbol(token, exchange)
-                if openalgo_symbol:
-                    symbol = openalgo_symbol
-                    logger.info(f"Found OpenAlgo symbol by token: {broker_symbol} -> {symbol}")
+                marvelquant_symbol = get_oa_symbol(token, exchange)
+                if marvelquant_symbol:
+                    symbol = marvelquant_symbol
+                    logger.info(f"Found MarvelQuant symbol by token: {broker_symbol} -> {symbol}")
             
             # If token lookup failed or token wasn't available, try by broker symbol
             elif broker_symbol:
                 # For options/futures specifically, try database lookup
                 if exchange == "NFO" and (broker_symbol.endswith('CE') or broker_symbol.endswith('PE') or 'FUT' in broker_symbol):
-                    # Query the database to find the OpenAlgo symbol for this broker symbol
+                    # Query the database to find the MarvelQuant symbol for this broker symbol
                     from broker.groww.database.master_contract_db import SymToken, db_session
                     with db_session() as session:
                         record = session.query(SymToken).filter(
@@ -754,9 +754,9 @@ def transform_positions_data(positions_data):
                         
                         if record and record.symbol:
                             symbol = record.symbol
-                            logger.info(f"Found OpenAlgo symbol in database: {broker_symbol} -> {symbol}")
+                            logger.info(f"Found MarvelQuant symbol in database: {broker_symbol} -> {symbol}")
         except Exception as e:
-            logger.error(f"Error looking up OpenAlgo symbol from database: {e}")
+            logger.error(f"Error looking up MarvelQuant symbol from database: {e}")
         
         # Continue with the rest of your transformation
         quantity = float(position.get('quantity', 0))

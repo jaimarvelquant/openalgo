@@ -1,6 +1,6 @@
 # Trading Strategies
 
-The `strategies` directory houses the logic for the various automated trading strategies that can be executed by the OpenAlgo platform.
+The `strategies` directory houses the logic for the various automated trading strategies that can be executed by the MarvelQuant platform.
 
 ## Strategy Definition
 

@@ -20,7 +20,7 @@ POST /api/v1/intervals
 
 | Parameter | Type   | Required | Description           |
 |-----------|--------|----------|-----------------------|
-| apikey    | string | Yes      | Your OpenAlgo API key |
+| apikey    | string | Yes      | Your MarvelQuant API key |
 
 ### Response
 
@@ -61,7 +61,7 @@ POST /api/v1/quotes
 
 | Parameter | Type   | Required | Description                                |
 |-----------|--------|----------|--------------------------------------------|
-| apikey    | string | Yes      | Your OpenAlgo API key                      |
+| apikey    | string | Yes      | Your MarvelQuant API key                      |
 | symbol    | string | Yes      | Trading symbol (e.g., SBIN)               |
 | exchange  | string | Yes      | Exchange name (e.g., NSE)                 |
 
@@ -108,7 +108,7 @@ POST /api/v1/history
 
 | Parameter  | Type   | Required | Description                                |
 |------------|--------|----------|--------------------------------------------|
-| apikey     | string | Yes      | Your OpenAlgo API key                      |
+| apikey     | string | Yes      | Your MarvelQuant API key                      |
 | symbol     | string | Yes      | Trading symbol (e.g., SBIN)               |
 | exchange   | string | Yes      | Exchange name (e.g., NSE)                 |
 | interval   | string | Yes      | Timeframe interval (from intervals API)    |
@@ -156,7 +156,7 @@ POST /api/v1/depth
 
 | Parameter | Type   | Required | Description                                |
 |-----------|--------|----------|--------------------------------------------|
-| apikey    | string | Yes      | Your OpenAlgo API key                      |
+| apikey    | string | Yes      | Your MarvelQuant API key                      |
 | symbol    | string | Yes      | Trading symbol (e.g., SBIN)               |
 | exchange  | string | Yes      | Exchange name (e.g., NSE)                 |
 
@@ -268,7 +268,7 @@ import requests
 def get_supported_intervals(api_key):
     """Get supported intervals for the broker"""
     response = requests.post(
-        "https://api.openalgo.in/api/v1/intervals",
+        "https://api.marvelquant.com/api/v1/intervals",
         json={"apikey": api_key}
     )
     return response.json()
@@ -276,7 +276,7 @@ def get_supported_intervals(api_key):
 def get_historical_data(api_key, symbol, exchange, interval, start_date, end_date):
     """Get historical data using interval from intervals API"""
     response = requests.post(
-        "https://api.openalgo.in/api/v1/history",
+        "https://api.marvelquant.com/api/v1/history",
         json={
             "apikey": api_key,
             "symbol": symbol,

@@ -1,6 +1,6 @@
 # Configuration Management
 
-OpenAlgo uses environment variables as the primary method for configuration. This allows for flexibility in different deployment environments (development, testing, production) without modifying the codebase.
+MarvelQuant uses environment variables as the primary method for configuration. This allows for flexibility in different deployment environments (development, testing, production) without modifying the codebase.
 
 ## Mechanism
 
@@ -30,7 +30,7 @@ Based on `.sample.env`, key configuration categories and variables include:
     *   `API_KEY_PEPPER`: A secret random string added before hashing/encrypting sensitive data like API keys, passwords, and broker tokens. **Must be changed for production.**
 
 *   **Database Configuration:**
-    *   `DATABASE_URL`: SQLAlchemy database connection string (e.g., `sqlite:///db/openalgo.db`, `postgresql://user:pass@host/db`).
+    *   `DATABASE_URL`: SQLAlchemy database connection string (e.g., `sqlite:///db/marvelquant.db`, `postgresql://user:pass@host/db`).
     *   `DB_POOL_SIZE`, `DB_MAX_OVERFLOW`, `DB_POOL_TIMEOUT`, `DB_POOL_RECYCLE`: Parameters controlling the SQLAlchemy connection pool (as noted in memory). These might be added to the `.env` file for customization.
 
 *   **Server Configuration:**

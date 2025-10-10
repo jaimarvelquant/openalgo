@@ -1,5 +1,5 @@
 """
-OpenAlgo WebSocket Market Depth Example
+MarvelQuant WebSocket Market Depth Example
 """
 
 from openalgo import api

@@ -9,7 +9,7 @@ import logging
 logger = logging.getLogger(__name__)
 
 # Get the database path from environment variable or use default
-DB_PATH = os.getenv('DATABASE_URL', 'sqlite:///db/openalgo.db')
+DB_PATH = os.getenv('DATABASE_URL', 'sqlite:///db/marvelquant.db')
 
 # Ensure the directory exists
 os.makedirs(os.path.dirname(DB_PATH.replace('sqlite:///', '')), exist_ok=True)

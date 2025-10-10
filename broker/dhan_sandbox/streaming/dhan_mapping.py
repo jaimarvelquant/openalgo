@@ -1,11 +1,11 @@
 """
 Mapping utilities for Dhan broker integration.
-Provides exchange code mappings between OpenAlgo and Dhan formats.
+Provides exchange code mappings between MarvelQuant and Dhan formats.
 """
 from typing import Dict
 
 # Exchange code mappings
-# OpenAlgo exchange code -> Dhan exchange code
+# MarvelQuant exchange code -> Dhan exchange code
 OPENALGO_TO_DHAN_EXCHANGE = {
     "NSE": "NSE_EQ",
     "BSE": "BSE_EQ",
@@ -18,29 +18,29 @@ OPENALGO_TO_DHAN_EXCHANGE = {
     "BSE_INDEX": "IDX_I"
 }
 
-# Dhan exchange code -> OpenAlgo exchange code
+# Dhan exchange code -> MarvelQuant exchange code
 DHAN_TO_OPENALGO_EXCHANGE = {v: k for k, v in OPENALGO_TO_DHAN_EXCHANGE.items()}
 
-def get_dhan_exchange(openalgo_exchange: str) -> str:
+def get_dhan_exchange(marvelquant_exchange: str) -> str:
     """
-    Convert OpenAlgo exchange code to Dhan exchange code.
+    Convert MarvelQuant exchange code to Dhan exchange code.
     
     Args:
-        openalgo_exchange (str): Exchange code in OpenAlgo format
+        marvelquant_exchange (str): Exchange code in MarvelQuant format
         
     Returns:
         str: Exchange code in Dhan format
     """
-    return OPENALGO_TO_DHAN_EXCHANGE.get(openalgo_exchange, openalgo_exchange)
+    return OPENALGO_TO_DHAN_EXCHANGE.get(marvelquant_exchange, marvelquant_exchange)
     
-def get_openalgo_exchange(dhan_exchange: str) -> str:
+def get_marvelquant_exchange(dhan_exchange: str) -> str:
     """
-    Convert Dhan exchange code to OpenAlgo exchange code.
+    Convert Dhan exchange code to MarvelQuant exchange code.
     
     Args:
         dhan_exchange (str): Exchange code in Dhan format
         
     Returns:
-        str: Exchange code in OpenAlgo format
+        str: Exchange code in MarvelQuant format
     """
     return DHAN_TO_OPENALGO_EXCHANGE.get(dhan_exchange, dhan_exchange)

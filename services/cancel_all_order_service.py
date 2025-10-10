@@ -182,7 +182,7 @@ def cancel_all_orders(
     
     Args:
         order_data: Order data (optional, may contain additional filters)
-        api_key: OpenAlgo API key (for API-based calls)
+        api_key: MarvelQuant API key (for API-based calls)
         auth_token: Direct broker authentication token (for internal calls)
         broker: Direct broker name (for internal calls)
         
@@ -208,7 +208,7 @@ def cancel_all_orders(
         if AUTH_TOKEN is None:
             error_response = {
                 'status': 'error',
-                'message': 'Invalid openalgo apikey'
+                'message': 'Invalid marvelquant apikey'
             }
             # Skip logging for invalid API keys to prevent database flooding
             return False, error_response, 403

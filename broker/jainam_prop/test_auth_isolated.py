@@ -1,7 +1,7 @@
 """
 Isolated credential validation tests for Jainam Prop direct authentication.
 
-These tests execute without requiring the wider OpenAlgo environment by
+These tests execute without requiring the wider MarvelQuant environment by
 mocking the minimal dependencies required by auth_api.
 """
 

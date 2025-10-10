@@ -1,8 +1,8 @@
-# OpenAlgo API Layer Architecture
+# MarvelQuant API Layer Architecture
 
 ## Executive Summary
 
-The API layer serves as the primary programmatic interface for the OpenAlgo platform, providing comprehensive RESTful endpoints for trading operations, market data access, and portfolio management. Built with Flask-RESTX, it offers automatic API documentation, robust validation, and standardized responses across 25+ broker integrations.
+The API layer serves as the primary programmatic interface for the MarvelQuant platform, providing comprehensive RESTful endpoints for trading operations, market data access, and portfolio management. Built with Flask-RESTX, it offers automatic API documentation, robust validation, and standardized responses across 25+ broker integrations.
 
 ## Core Architecture
 
@@ -23,7 +23,7 @@ from flask_restx import Api, Namespace
 
 api = Api(
     version='1.0',
-    title='OpenAlgo Trading API',
+    title='MarvelQuant Trading API',
     description='Unified trading API for 25+ Indian brokers',
     doc='/api/v1/docs',
     prefix='/api/v1',

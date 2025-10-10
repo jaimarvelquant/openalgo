@@ -1,6 +1,6 @@
 # Utilities
 
-The `./design/08_utilities.md` directory contains helper modules, classes, and functions that provide common functionalities used across different parts of the OpenAlgo application. Encapsulating these utilities promotes code reuse and separation of concerns.
+The `./design/08_utilities.md` directory contains helper modules, classes, and functions that provide common functionalities used across different parts of the MarvelQuant application. Encapsulating these utilities promotes code reuse and separation of concerns.
 
 ## Key Utility Modules
 
@@ -46,7 +46,7 @@ Based on the directory listing, here are some of the key utility modules and the
 
 ## Enhanced Logging System
 
-The logging utility (`utils/logging.py`) represents a significant enhancement to OpenAlgo's infrastructure:
+The logging utility (`utils/logging.py`) represents a significant enhancement to MarvelQuant's infrastructure:
 
 ### Key Features
 *   **Colored Output**: Automatic color-coding of log levels and components for enhanced readability

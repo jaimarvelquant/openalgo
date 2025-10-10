@@ -97,19 +97,19 @@ def copy_from_dataframe(df):
         raise
 
 
-# Functions for symbol format conversion between OpenAlgo and Groww formats
-def format_openalgo_to_groww_symbol(symbol, exchange):
+# Functions for symbol format conversion between MarvelQuant and Groww formats
+def format_marvelquant_to_groww_symbol(symbol, exchange):
     """
-    Convert OpenAlgo symbol format to Groww symbol format
+    Convert MarvelQuant symbol format to Groww symbol format
     
     Args:
-        symbol (str): Symbol in OpenAlgo format (e.g., AARTIIND29MAY25630CE)
+        symbol (str): Symbol in MarvelQuant format (e.g., AARTIIND29MAY25630CE)
         exchange (str): Exchange code (NSE, BSE, NFO, etc.)
     
     Returns:
         str: Symbol in Groww format (e.g., "AARTIIND 29MAY25 630 CE")
     """
-    logger.info(f"Converting symbol from OpenAlgo to Groww format: {{symbol}}, {exchange}")
+    logger.info(f"Converting symbol from MarvelQuant to Groww format: {{symbol}}, {exchange}")
     
     # If it's already in the right format or invalid, return as is
     if not symbol or len(symbol) < 6:
@@ -213,18 +213,18 @@ def format_openalgo_to_groww_symbol(symbol, exchange):
     return symbol
 
 
-def format_groww_to_openalgo_symbol(groww_symbol, exchange):
+def format_groww_to_marvelquant_symbol(groww_symbol, exchange):
     """
-    Convert Groww symbol format to OpenAlgo symbol format
+    Convert Groww symbol format to MarvelQuant symbol format
     
     Args:
         groww_symbol (str): Symbol in Groww format (e.g., "AARTIIND 29MAY25 630 CE")
         exchange (str): Exchange code (NSE, BSE, NFO, etc.)
     
     Returns:
-        str: Symbol in OpenAlgo format (e.g., "AARTIIND29MAY25630CE")
+        str: Symbol in MarvelQuant format (e.g., "AARTIIND29MAY25630CE")
     """
-    logger.info(f"Converting symbol from Groww to OpenAlgo format: {{groww_symbol}}, {exchange}")
+    logger.info(f"Converting symbol from Groww to MarvelQuant format: {{groww_symbol}}, {exchange}")
     
     if not groww_symbol:
         return groww_symbol
@@ -234,7 +234,7 @@ def format_groww_to_openalgo_symbol(groww_symbol, exchange):
         # Remove any extra whitespace and convert to uppercase
         clean_symbol = groww_symbol.strip().upper()
         
-        # If already in OpenAlgo format (no spaces), return as is
+        # If already in MarvelQuant format (no spaces), return as is
         if ' ' not in clean_symbol:
             return clean_symbol
         
@@ -250,11 +250,11 @@ def format_groww_to_openalgo_symbol(groww_symbol, exchange):
             strike_price = parts[2]  # Strike price as string
             option_type = parts[3]   # CE or PE
             
-            # Combine into OpenAlgo format: [BaseSymbol][ExpirationDate][StrikePrice][OptionType]
+            # Combine into MarvelQuant format: [BaseSymbol][ExpirationDate][StrikePrice][OptionType]
             # Example: AARTIIND29MAY25630CE
-            openalgo_symbol = f"{base_symbol}{date_str}{strike_price}{option_type}"
-            logger.info(f"Converted to OpenAlgo format: {openalgo_symbol}")
-            return openalgo_symbol
+            marvelquant_symbol = f"{base_symbol}{date_str}{strike_price}{option_type}"
+            logger.info(f"Converted to MarvelQuant format: {marvelquant_symbol}")
+            return marvelquant_symbol
             
         # For futures
         elif len(parts) >= 3 and parts[-1] == 'FUT':
@@ -262,11 +262,11 @@ def format_groww_to_openalgo_symbol(groww_symbol, exchange):
             base_symbol = parts[0]
             date_str = parts[1]   # Format: DDMMMYY (e.g., 29MAY25)
             
-            # Combine into OpenAlgo format: [BaseSymbol][ExpirationDate]FUT
+            # Combine into MarvelQuant format: [BaseSymbol][ExpirationDate]FUT
             # Example: NIFTY29MAY25FUT
-            openalgo_symbol = f"{base_symbol}{date_str}FUT"
-            logger.info(f"Converted to OpenAlgo format: {openalgo_symbol}")
-            return openalgo_symbol
+            marvelquant_symbol = f"{base_symbol}{date_str}FUT"
+            logger.info(f"Converted to MarvelQuant format: {marvelquant_symbol}")
+            return marvelquant_symbol
         
         # Handle case where option type might be missing
         elif len(parts) == 3:
@@ -288,9 +288,9 @@ def format_groww_to_openalgo_symbol(groww_symbol, exchange):
                     option_type = "CE"  
                     
                     # Combine into standard format
-                    openalgo_symbol = f"{base_symbol}{date_str}{strike_price}{option_type}"
-                    logger.info(f"Converted to OpenAlgo format (assumed {{option_type}}): {openalgo_symbol}")
-                    return openalgo_symbol
+                    marvelquant_symbol = f"{base_symbol}{date_str}{strike_price}{option_type}"
+                    logger.info(f"Converted to MarvelQuant format (assumed {{option_type}}): {marvelquant_symbol}")
+                    return marvelquant_symbol
                 except ValueError:
                     # Third part is not a number, might not be an option
                     pass
@@ -308,7 +308,7 @@ def find_symbol_by_token(token, exchange):
         exchange (str): Exchange code
     
     Returns:
-        str: Symbol in OpenAlgo format, or None if not found
+        str: Symbol in MarvelQuant format, or None if not found
     """
     result = db_session.query(SymToken).filter_by(token=token, exchange=exchange).first()
     if result:
@@ -321,7 +321,7 @@ def find_token_by_symbol(symbol, exchange):
     Find token in DB by symbol and exchange
     
     Args:
-        symbol (str): Symbol in either OpenAlgo or Groww format
+        symbol (str): Symbol in either MarvelQuant or Groww format
         exchange (str): Exchange code
     
     Returns:
@@ -334,15 +334,15 @@ def find_token_by_symbol(symbol, exchange):
     
     # If not found and it's an NFO symbol, try with formatted version
     if exchange == 'NFO':
-        # Try with OpenAlgo format if it was in Groww format
-        openalgo_symbol = format_groww_to_openalgo_symbol(symbol, exchange)
-        if openalgo_symbol != symbol:
-            result = db_session.query(SymToken).filter_by(symbol=openalgo_symbol, exchange=exchange).first()
+        # Try with MarvelQuant format if it was in Groww format
+        marvelquant_symbol = format_groww_to_marvelquant_symbol(symbol, exchange)
+        if marvelquant_symbol != symbol:
+            result = db_session.query(SymToken).filter_by(symbol=marvelquant_symbol, exchange=exchange).first()
             if result:
                 return result.token
         
-        # Try with Groww format if it was in OpenAlgo format
-        groww_symbol = format_openalgo_to_groww_symbol(symbol, exchange)
+        # Try with Groww format if it was in MarvelQuant format
+        groww_symbol = format_marvelquant_to_groww_symbol(symbol, exchange)
         if groww_symbol != symbol:
             result = db_session.query(SymToken).filter_by(symbol=groww_symbol, exchange=exchange).first()
             if result:
@@ -649,13 +649,13 @@ def process_groww_data(path):
         index_mask = (df['instrument_type'] == 'IDX') | (df['segment'] == 'IDX')
         df_mapped.loc[index_mask, 'instrumenttype'] = 'INDEX'
         
-        # Format the symbol for F&O (NFO) instruments to match OpenAlgo format
+        # Format the symbol for F&O (NFO) instruments to match MarvelQuant format
         def format_fo_symbol(row):
             # Skip non-FNO instruments or those with missing expiry
             if row['brexchange'] != 'NSE' or pd.isna(row['expiry']) or row['expiry'] == '':
                 return row['symbol']
                 
-            # For segment='FNO', format according to OpenAlgo standard
+            # For segment='FNO', format according to MarvelQuant standard
             if 'segment' in df.columns and df.loc[row.name, 'segment'] == 'FNO':
                 try:
                     # Format expiry date (assuming yyyy-mm-dd format in input)
@@ -698,7 +698,7 @@ def process_groww_data(path):
         logger.error(f"Error processing Groww instrument data: {e}")
         return pd.DataFrame()
     
-    # Map instrument types to OpenAlgo standard types
+    # Map instrument types to MarvelQuant standard types
     instrument_type_map = {
         'EQUITY': 'EQ',
         'INDEX': 'INDEX',
@@ -713,7 +713,7 @@ def process_groww_data(path):
     # Apply instrument type mapping
     all_instruments['instrumenttype'] = all_instruments['instrument_type'].map(instrument_type_map).fillna('EQ')
     
-    # Map exchanges to OpenAlgo standard exchanges
+    # Map exchanges to MarvelQuant standard exchanges
     exchange_map = {
         'NSE': 'NSE',
         'BSE': 'BSE',
@@ -744,10 +744,10 @@ def process_groww_data(path):
     all_instruments.loc[all_instruments['brsymbol'].isna() | (all_instruments['brsymbol'] == ''), 'brsymbol'] = \
         all_instruments.loc[all_instruments['brsymbol'].isna() | (all_instruments['brsymbol'] == ''), 'symbol']
     
-    # For F&O instruments, format the symbol in OpenAlgo format
+    # For F&O instruments, format the symbol in MarvelQuant format
     fo_mask = all_instruments['exchange'] == 'NFO'
     if fo_mask.any():
-        # Format F&O symbols according to OpenAlgo standard
+        # Format F&O symbols according to MarvelQuant standard
         def format_fo_symbol(row):
             if pd.isna(row['expiry']) or row['expiry'] == '':
                 return row['symbol']
@@ -850,7 +850,7 @@ def master_contract_download():
         token_df['lotsize'] = pd.to_numeric(token_df['lotsize'], errors='coerce').fillna(1).astype(int)
         token_df['tick_size'] = pd.to_numeric(token_df['tick_size'], errors='coerce').fillna(0.05)
         
-        # Step 5: Add OpenAlgo symbols where needed (converting Groww format to OpenAlgo format)
+        # Step 5: Add MarvelQuant symbols where needed (converting Groww format to MarvelQuant format)
         # Identify rows that need conversion (NFO options and futures)
         nfo_options = token_df[
             (token_df['exchange'] == 'NFO') & 
@@ -858,9 +858,9 @@ def master_contract_download():
         ]
         
         for idx, row in nfo_options.iterrows():
-            # Convert the broker symbol to OpenAlgo format if spaces are detected
+            # Convert the broker symbol to MarvelQuant format if spaces are detected
             if ' ' in row['brsymbol']:
-                token_df.at[idx, 'symbol'] = format_groww_to_openalgo_symbol(row['brsymbol'], 'NFO')
+                token_df.at[idx, 'symbol'] = format_groww_to_marvelquant_symbol(row['brsymbol'], 'NFO')
         
         # Step 6: Insert into database
         logger.info(f"Inserting {len(token_df)} records into database")

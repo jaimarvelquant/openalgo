@@ -2,13 +2,13 @@
 
 ## System Overview
 
-The OpenAlgo Sandbox Mode is built as a modular, thread-safe system that runs parallel to the live trading infrastructure while maintaining complete isolation. This document details the architectural design and implementation.
+The MarvelQuant Sandbox Mode is built as a modular, thread-safe system that runs parallel to the live trading infrastructure while maintaining complete isolation. This document details the architectural design and implementation.
 
 ## Architecture Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         OpenAlgo Core                            │
+│                         MarvelQuant Core                            │
 │                                                                   │
 │  ┌──────────────────────────────────────────────────────────┐  │
 │  │                    Flask Application                       │  │
@@ -1370,7 +1370,7 @@ SMART_ORDER_DELAY=0.5
 
 ```bash
 # Run sandbox migration
-cd openalgo
+cd marvelquant
 uv run upgrade/migrate_sandbox.py
 
 # Or using Python directly

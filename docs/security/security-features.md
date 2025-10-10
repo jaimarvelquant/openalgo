@@ -1,12 +1,12 @@
-# OpenAlgo Security Features
+# MarvelQuant Security Features
 
 ## Overview
 
-OpenAlgo includes a comprehensive security module designed to protect your trading platform from malicious traffic, bots, and unauthorized access attempts. This is especially crucial when hosting OpenAlgo on public-facing IPs or custom domains.
+MarvelQuant includes a comprehensive security module designed to protect your trading platform from malicious traffic, bots, and unauthorized access attempts. This is especially crucial when hosting MarvelQuant on public-facing IPs or custom domains.
 
 ## Why Security Matters for Algo Traders
 
-When you host OpenAlgo on a public IP or custom domain, your trading platform becomes accessible to the internet. This exposure can attract:
+When you host MarvelQuant on a public IP or custom domain, your trading platform becomes accessible to the internet. This exposure can attract:
 
 - **Web Scrapers** attempting to harvest your trading data
 - **Bots** probing for vulnerabilities
@@ -62,7 +62,7 @@ Protects against brute force attacks on your API endpoints.
 - **Attempt Tracking**: Logs every invalid API key attempt
 - **Auto-Ban Threshold**: 10 invalid attempts in 24 hours triggers 48-hour ban
 - **Hashed Storage**: API keys are hashed before tracking for privacy
-- **Integration**: Works seamlessly with all OpenAlgo API endpoints
+- **Integration**: Works seamlessly with all MarvelQuant API endpoints
 
 #### Protection Against
 - API key brute force attacks
@@ -138,7 +138,7 @@ These thresholds are optimized to:
 
 ### Accessing the Security Dashboard
 
-1. Log in to OpenAlgo
+1. Log in to MarvelQuant
 2. Click on your profile dropdown
 3. Select "Security"
 
@@ -188,7 +188,7 @@ To give an IP a fresh start:
 
 1. **Enable HTTPS**: Use SSL certificates for encrypted connections
 2. **Strong API Keys**: Use complex, randomly generated API keys
-3. **Regular Updates**: Keep OpenAlgo updated for latest security patches
+3. **Regular Updates**: Keep MarvelQuant updated for latest security patches
 4. **Backup Strategy**: Regular backups before applying bans
 
 ## Security Response Workflow

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The WebSocket UI provides a comprehensive testing interface for real-time market data streaming in OpenAlgo. It connects directly to the WebSocket proxy server at `ws://localhost:8765` and displays live market data for RELIANCE and TCS symbols.
+The WebSocket UI provides a comprehensive testing interface for real-time market data streaming in MarvelQuant. It connects directly to the WebSocket proxy server at `ws://localhost:8765` and displays live market data for RELIANCE and TCS symbols.
 
 ## Architecture
 
@@ -380,16 +380,16 @@ Enable debug logging by checking the event log for:
 - **Subscription details**: Sent/received message payloads
 - **Data flow**: Market data update frequency
 
-## Integration with OpenAlgo
+## Integration with MarvelQuant
 
 ### Flask Integration
 - **Blueprint Registration**: Auto-registered in main Flask app
 - **Session Management**: Uses existing user session system
-- **API Key Integration**: Leverages OpenAlgo API key system
+- **API Key Integration**: Leverages MarvelQuant API key system
 
 ### Database Integration
 - **API Key Lookup**: Queries existing API key database
-- **User Authentication**: Uses OpenAlgo user session management
+- **User Authentication**: Uses MarvelQuant user session management
 - **No Additional Storage**: No new database tables required
 
 ### WebSocket Proxy Integration

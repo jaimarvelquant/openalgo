@@ -95,7 +95,7 @@ def test_navigation_update():
     return True
 
 if __name__ == "__main__":
-    # Change to OpenAlgo root directory if needed
+    # Change to MarvelQuant root directory if needed
     if os.path.basename(os.getcwd()) == 'test':
         os.chdir('..')
     

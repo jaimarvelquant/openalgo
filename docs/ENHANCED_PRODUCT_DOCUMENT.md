@@ -1,9 +1,9 @@
-# OpenAlgo+ - Professional Multi-Account Trading Platform
+# MarvelQuant+ - Professional Multi-Account Trading Platform
 ## Product Requirements Document v1.0
 
 ### Executive Summary
 
-OpenAlgo+ is a complete rebuild of the original OpenAlgo platform, transforming it from a single-user trading bridge into a comprehensive multi-account trading execution platform. Built with modern technologies (FastAPI, NextJS, PostgreSQL, Redis, QuestDB, Docker), it provides institutional-grade trading infrastructure for individual traders and families managing unlimited accounts across different brokers. The platform focuses on real-time trade execution, advanced option strategy deployment, risk controls, and professional-grade automation capabilities.
+MarvelQuant+ is a complete rebuild of the original MarvelQuant platform, transforming it from a single-user trading bridge into a comprehensive multi-account trading execution platform. Built with modern technologies (FastAPI, NextJS, PostgreSQL, Redis, QuestDB, Docker), it provides institutional-grade trading infrastructure for individual traders and families managing unlimited accounts across different brokers. The platform focuses on real-time trade execution, advanced option strategy deployment, risk controls, and professional-grade automation capabilities.
 
 ### Technology Stack
 
@@ -1130,7 +1130,7 @@ GET    /api/v1/admin/active-sessions/
 
 #### 1. IST Timezone Implementation
 
-**Centralized Timezone Management**: All components of OpenAlgo+ use IST (Indian Standard Time) for consistency and regulatory compliance.
+**Centralized Timezone Management**: All components of MarvelQuant+ use IST (Indian Standard Time) for consistency and regulatory compliance.
 
 - **Application Configuration**:
   ```python
@@ -1147,7 +1147,7 @@ GET    /api/v1/admin/active-sessions/
   ```sql
   -- PostgreSQL timezone setting
   SET timezone = 'Asia/Kolkata';
-  ALTER DATABASE openalgo SET timezone = 'Asia/Kolkata';
+  ALTER DATABASE marvelquant SET timezone = 'Asia/Kolkata';
   
   -- QuestDB timezone configuration
   SET time.zone = 'Asia/Kolkata';
@@ -1514,7 +1514,7 @@ services:
   api:
     build: ./backend
     environment:
-      - DATABASE_URL=postgresql://user:pass@postgres:5432/openalgo
+      - DATABASE_URL=postgresql://user:pass@postgres:5432/marvelquant
       - REDIS_URL=redis://redis:6379
       - QUESTDB_URL=http://questdb:9000
     ports:
@@ -1528,7 +1528,7 @@ services:
   postgres:
     image: postgres:15-alpine
     environment:
-      - POSTGRES_DB=openalgo
+      - POSTGRES_DB=marvelquant
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=pass
     volumes:
@@ -1680,4 +1680,4 @@ volumes:
 
 ### Conclusion
 
-OpenAlgo+ represents a significant evolution from a single-user trading bridge to a professional multi-account trading platform. By focusing on the needs of serious individual traders and families managing unlimited accounts, implementing advanced option strategies, and providing institutional-grade risk controls, the platform empowers traders to execute sophisticated strategies with confidence. The modern architecture ensures scalability, reliability, and performance that matches professional trading desks while remaining accessible to individual traders.
+MarvelQuant+ represents a significant evolution from a single-user trading bridge to a professional multi-account trading platform. By focusing on the needs of serious individual traders and families managing unlimited accounts, implementing advanced option strategies, and providing institutional-grade risk controls, the platform empowers traders to execute sophisticated strategies with confidence. The modern architecture ensures scalability, reliability, and performance that matches professional trading desks while remaining accessible to individual traders.

@@ -75,7 +75,7 @@ class BrokerData:
             br_symbol = get_br_symbol(symbol, exchange)
             token = get_token(symbol, exchange)
 
-            # Convert OpenAlgo exchange to broker exchange for API calls
+            # Convert MarvelQuant exchange to broker exchange for API calls
             api_exchange = exchange
             if exchange == "NSE_INDEX":
                 api_exchange = "NSE"
@@ -123,7 +123,7 @@ class BrokerData:
             br_symbol = get_br_symbol(symbol, exchange)
             token = get_token(symbol, exchange)
 
-            # Convert OpenAlgo exchange to broker exchange for API calls
+            # Convert MarvelQuant exchange to broker exchange for API calls
             api_exchange = exchange
             if exchange == "NSE_INDEX":
                 api_exchange = "NSE"

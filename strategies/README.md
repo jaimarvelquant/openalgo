@@ -1,7 +1,7 @@
 # Python Strategy Management System
 
 ## Overview
-A complete web-based strategy hosting and scheduling system for OpenAlgo, accessible at `/python`.
+A complete web-based strategy hosting and scheduling system for MarvelQuant, accessible at `/python`.
 
 ## Features
 - **Upload & Manage**: Upload Python strategy scripts through web interface
@@ -18,7 +18,7 @@ A complete web-based strategy hosting and scheduling system for OpenAlgo, access
 pip install apscheduler psutil
 ```
 
-2. The system is already integrated into OpenAlgo. Access it at:
+2. The system is already integrated into MarvelQuant. Access it at:
 ```
 http://localhost:5000/python
 ```
@@ -74,7 +74,7 @@ def main():
             # 1. Fetch market data
             # 2. Calculate indicators
             # 3. Generate signals
-            # 4. Place orders via OpenAlgo API
+            # 4. Place orders via MarvelQuant API
             
             print(f"[{datetime.now()}] Running strategy...")
             time.sleep(60)  # Check every minute
@@ -97,7 +97,7 @@ The following environment variables are automatically set for each strategy:
 - `STRATEGY_ID`: Unique identifier for the strategy
 - `STRATEGY_NAME`: Name of the strategy
 - `OPENALGO_API_KEY`: API key from .env file
-- `OPENALGO_HOST`: OpenAlgo host URL
+- `OPENALGO_HOST`: MarvelQuant host URL
 - Plus any custom parameters you define
 
 ## Directory Structure
@@ -115,12 +115,12 @@ logs/
 
 ## API Integration
 
-Example of integrating with OpenAlgo API in your strategy:
+Example of integrating with MarvelQuant API in your strategy:
 
 ```python
 import requests
 
-class OpenAlgoAPI:
+class MarvelQuantAPI:
     def __init__(self, host, api_key):
         self.host = host
         self.api_key = api_key
@@ -172,6 +172,6 @@ Example: Start at 09:15, stop at 15:30, run Monday-Friday
 
 See `examples/simple_ema_strategy.py` for a complete working example that:
 - Implements EMA crossover logic
-- Integrates with OpenAlgo API
+- Integrates with MarvelQuant API
 - Handles errors gracefully
 - Uses environment parameters

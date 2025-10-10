@@ -4,9 +4,9 @@ Flattrade-specific mapping utilities for the WebSocket adapter
 from typing import Dict, Set, Optional
 
 class FlattradeExchangeMapper:
-    """Maps between OpenAlgo exchange names and Flattrade exchange codes"""
+    """Maps between MarvelQuant exchange names and Flattrade exchange codes"""
     
-    # OpenAlgo to Flattrade exchange mapping
+    # MarvelQuant to Flattrade exchange mapping
     EXCHANGE_MAP = {
         'NSE': 'NSE',
         'BSE': 'BSE',
@@ -23,12 +23,12 @@ class FlattradeExchangeMapper:
     
     @classmethod
     def to_flattrade_exchange(cls, oa_exchange: str) -> Optional[str]:
-        """Convert OpenAlgo exchange to Flattrade exchange format"""
+        """Convert MarvelQuant exchange to Flattrade exchange format"""
         return cls.EXCHANGE_MAP.get(oa_exchange.upper())
     
     @classmethod
     def to_oa_exchange(cls, flattrade_exchange: str) -> Optional[str]:
-        """Convert Flattrade exchange to OpenAlgo exchange format"""
+        """Convert Flattrade exchange to MarvelQuant exchange format"""
         return cls.FLATTRADE_TO_OPENALGO.get(flattrade_exchange.upper())
 
 

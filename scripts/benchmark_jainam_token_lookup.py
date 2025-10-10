@@ -77,7 +77,7 @@ def _build_synthetic_contract(
 ) -> Tuple[pd.DataFrame, Dict[str, str]]:
     """Construct a synthetic master contract DataFrame.
 
-    Returns the dataframe and a mapping of OpenAlgo exchange → sample symbol.
+    Returns the dataframe and a mapping of MarvelQuant exchange → sample symbol.
     """
 
     if instrument_count <= 0:

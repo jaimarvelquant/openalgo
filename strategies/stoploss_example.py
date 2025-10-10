@@ -1,14 +1,14 @@
 """
-🔁 OpenAlgo Python Bot is running.
+🔁 MarvelQuant Python Bot is running.
 """
 
 from openalgo import api
 import time
 from datetime import datetime
 
-# Setup OpenAlgo client
+# Setup MarvelQuant client
 client = api(
-    api_key="your-openalgo-api-key",  # Replace with your API key
+    api_key="your-marvelquant-api-key",  # Replace with your API key
     host="http://127.0.0.1:5000",  # Replace with your API host
     ws_url="ws://127.0.0.1:8765"  # Explicit WebSocket URL (can be different from REST API host)
 )
@@ -98,7 +98,7 @@ def send_exit_order():
 
 # === Main Execution ===
 if __name__ == "__main__":
-    print("🔁 OpenAlgo Python Bot is running.")
+    print("🔁 MarvelQuant Python Bot is running.")
 
     if place_entry_order() and wait_for_execution():
         try:

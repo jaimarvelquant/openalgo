@@ -1,8 +1,8 @@
-# OpenAlgo Sandbox Mode (API Analyzer)
+# MarvelQuant Sandbox Mode (API Analyzer)
 
 ## Overview
 
-OpenAlgo Sandbox Mode, also known as **API Analyzer**, is a sophisticated simulation environment that enables traders and developers to test their trading strategies with realistic market conditions using simulated funds. This mode provides a risk-free environment to validate strategies, test algorithms, and understand market dynamics before deploying in live trading.
+MarvelQuant Sandbox Mode, also known as **API Analyzer**, is a sophisticated simulation environment that enables traders and developers to test their trading strategies with realistic market conditions using simulated funds. This mode provides a risk-free environment to validate strategies, test algorithms, and understand market dynamics before deploying in live trading.
 
 **Key Features:**
 - ✅ Realistic order execution with live market data
@@ -773,7 +773,7 @@ def cancel_pending_orders_eod(exchange):
 
 ### Real-Time Data Sources
 
-All market data is fetched from **live broker feeds** via OpenAlgo services:
+All market data is fetched from **live broker feeds** via MarvelQuant services:
 
 | Data Type | Service | Update Frequency | Usage |
 |-----------|---------|------------------|-------|
@@ -987,7 +987,7 @@ def batch_fetch_quotes(symbols, exchange):
 These values are automatically loaded from the `.env` file:
 
 ```bash
-# OpenAlgo Rate Limit Settings
+# MarvelQuant Rate Limit Settings
 LOGIN_RATE_LIMIT_MIN = "5 per minute"
 LOGIN_RATE_LIMIT_HOUR = "25 per hour"
 RESET_RATE_LIMIT = "15 per hour"
@@ -1048,7 +1048,7 @@ Sections:
 
 ### Database File
 
-**Location:** `openalgo/sandbox/sandbox.db`
+**Location:** `marvelquant/sandbox/sandbox.db`
 
 All sandbox-related tables are stored in a **separate SQLite database** to isolate from live trading data.
 
@@ -1646,4 +1646,4 @@ if total_margin_required > available_cash_with_collateral:
 
 ---
 
-*This documentation provides a complete blueprint for building OpenAlgo Sandbox Mode. All specifications are based on real-world broker behavior and industry-standard practices.*
+*This documentation provides a complete blueprint for building MarvelQuant Sandbox Mode. All specifications are based on real-world broker behavior and industry-standard practices.*

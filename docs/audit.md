@@ -1,8 +1,8 @@
-# OpenAlgo Security Audit
+# MarvelQuant Security Audit
 
 Date: 2025-07-28
 
-This document provides a high-level summary of the security audit conducted on the OpenAlgo platform. For a more granular breakdown, please see the [Comprehensive Security Audit Report](SECURITY_AUDIT_REPORT.md).
+This document provides a high-level summary of the security audit conducted on the MarvelQuant platform. For a more granular breakdown, please see the [Comprehensive Security Audit Report](SECURITY_AUDIT_REPORT.md).
 
 ## Summary of Findings
 

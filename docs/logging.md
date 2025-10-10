@@ -1,8 +1,8 @@
-# OpenAlgo Centralized Logging Guide
+# MarvelQuant Centralized Logging Guide
 
 ## **Overview**
 
-OpenAlgo uses a centralized logging system to ensure consistent, secure, and configurable log management across the entire codebase. All logs are handled by the `utils/logging.py` module. The logging configuration is validated at startup by `utils/env_check.py` to ensure proper setup.
+MarvelQuant uses a centralized logging system to ensure consistent, secure, and configurable log management across the entire codebase. All logs are handled by the `utils/logging.py` module. The logging configuration is validated at startup by `utils/env_check.py` to ensure proper setup.
 
 ---
 
@@ -94,7 +94,7 @@ A: Avoid logging raw request payloads. The system automatically redacts sensitiv
 
 ## **Codebase Compliance**
 
-As of June 2025, the centralized logging system has been fully implemented across all major directories of the OpenAlgo project, including `/services`, `/blueprints`, `/restx_api`, `/websocket_proxy`, and `/broker`.
+As of June 2025, the centralized logging system has been fully implemented across all major directories of the MarvelQuant project, including `/services`, `/blueprints`, `/restx_api`, `/websocket_proxy`, and `/broker`.
 
 All modules adhere to the following standards:
 *   A single logger instance is created per module using `get_logger(__name__)`.
@@ -133,4 +133,4 @@ LOG_RETENTION=14
 
 ## **Need Help?**
 
-Open an issue in the repo or contact the OpenAlgo dev team.
+Open an issue in the repo or contact the MarvelQuant dev team.

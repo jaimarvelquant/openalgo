@@ -1,7 +1,7 @@
-# OpenAlgo Security Audit Report
+# MarvelQuant Security Audit Report
 
 **Date:** 2025-09-01
-**Project:** OpenAlgo
+**Project:** MarvelQuant
 **Scope:** Full codebase audit.
 **Focus:** Identify vulnerabilities common in open-source, multi-contributor projects, with a specific emphasis on SQL Injection, Input Validation, and Dependency Management.
 
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-This security audit of the OpenAlgo platform was conducted to identify and prioritize vulnerabilities based on the current state of the codebase. The platform maintains a solid security foundation with robust authentication and session management. However, several high-risk areas persist that require immediate attention to mitigate potential exploitation, especially in an open-source context.
+This security audit of the MarvelQuant platform was conducted to identify and prioritize vulnerabilities based on the current state of the codebase. The platform maintains a solid security foundation with robust authentication and session management. However, several high-risk areas persist that require immediate attention to mitigate potential exploitation, especially in an open-source context.
 
 The most significant risks continue to be:
 1.  **Inadequate Input Validation:** Allowing non-numeric or improperly formatted data into core application logic.

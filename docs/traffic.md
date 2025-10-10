@@ -1,7 +1,7 @@
 # Latency and Traffic Monitoring Tools
 
 ## Overview
-OpenAlgo provides two powerful monitoring tools - `/latency` and `/traffic` - that help traders understand and optimize their trading system's performance. These tools offer real-time insights into order execution latency and API traffic patterns.
+MarvelQuant provides two powerful monitoring tools - `/latency` and `/traffic` - that help traders understand and optimize their trading system's performance. These tools offer real-time insights into order execution latency and API traffic patterns.
 
 ## Latency Monitor (/latency)
 

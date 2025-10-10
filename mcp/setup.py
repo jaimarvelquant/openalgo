@@ -9,8 +9,8 @@ setup(
     name="playwright-mcp-server",
     version="1.0.0",
     description="Playwright MCP Server for browser automation",
-    author="OpenAlgo",
-    author_email="support@openalgo.in",
+    author="MarvelQuant",
+    author_email="support@marvelquant.com",
     packages=find_packages(),
     install_requires=[
         "playwright>=1.55.0",

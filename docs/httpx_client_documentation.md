@@ -2,7 +2,7 @@
 
 ## Overview
 
-The OpenAlgo HTTPX client module provides optimized HTTP connection pooling for all broker API communications. It features automatic protocol negotiation between HTTP/2 and HTTP/1.1, ensuring optimal performance across different broker infrastructures.
+The MarvelQuant HTTPX client module provides optimized HTTP connection pooling for all broker API communications. It features automatic protocol negotiation between HTTP/2 and HTTP/1.1, ensuring optimal performance across different broker infrastructures.
 
 ## Architecture
 
@@ -185,7 +185,7 @@ Three test scripts are provided in the `test/` directory:
 Tests HTTP protocol detection with various configurations.
 
 ```bash
-cd openalgo
+cd marvelquant
 python test/test_http_protocol.py
 ```
 
@@ -193,7 +193,7 @@ python test/test_http_protocol.py
 Tests major broker APIs to identify their HTTP protocol support.
 
 ```bash
-cd openalgo
+cd marvelquant
 python test/test_broker_protocol.py
 ```
 
@@ -201,7 +201,7 @@ python test/test_broker_protocol.py
 Comprehensive test of all broker APIs with performance measurements.
 
 ```bash
-cd openalgo
+cd marvelquant
 python test/test_flattrade_protocol.py
 ```
 

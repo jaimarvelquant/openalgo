@@ -1,10 +1,10 @@
 # Comprehensive Security Audit Report
 
-This document provides a comprehensive security audit of the OpenAlgo platform, outlining identified strengths, weaknesses, and actionable recommendations for improvement.
+This document provides a comprehensive security audit of the MarvelQuant platform, outlining identified strengths, weaknesses, and actionable recommendations for improvement.
 
 ## 1. Executive Summary
 
-The OpenAlgo platform incorporates several strong security measures, including CSRF protection, secure cookie configuration, a Content Security Policy (CSP), rate limiting, and environment-based configuration. However, several areas require attention to mitigate potential security risks. The most critical issues identified are overly permissive file permissions in the startup script and the conditional use of `ngrok`, which could expose the application to external threats if misconfigured.
+The MarvelQuant platform incorporates several strong security measures, including CSRF protection, secure cookie configuration, a Content Security Policy (CSP), rate limiting, and environment-based configuration. However, several areas require attention to mitigate potential security risks. The most critical issues identified are overly permissive file permissions in the startup script and the conditional use of `ngrok`, which could expose the application to external threats if misconfigured.
 
 ## 2. Security Strengths
 

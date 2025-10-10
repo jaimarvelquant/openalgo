@@ -1,5 +1,5 @@
 """
-OpenAlgo WebSocket Quote Feed Example
+MarvelQuant WebSocket Quote Feed Example
 """
 
 from openalgo import api

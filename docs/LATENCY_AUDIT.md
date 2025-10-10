@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document provides an audit of the latency optimization performed on the OpenAlgo AMI application, specifically focusing on the HTTP connection management for the Angel broker API.
+This document provides an audit of the latency optimization performed on the MarvelQuant AMI application, specifically focusing on the HTTP connection management for the Angel broker API.
 
 **Date of Implementation:** March 11, 2025  
 **Developer:** Cascade AI
@@ -35,14 +35,14 @@ The high latency was primarily caused by:
 
 1. **Replaced HTTP Client Library**:
    - Changed from `http.client` to the `httpx` library
-   - Implementation expanded to all files in `openalgo/broker/angel/api/`:
+   - Implementation expanded to all files in `marvelquant/broker/angel/api/`:
      - order_api.py
      - auth_api.py
      - data.py
      - funds.py
 
 2. **Connection Pooling Implementation**:
-   - Created a shared httpx client in `openalgo/utils/httpx_client.py`
+   - Created a shared httpx client in `marvelquant/utils/httpx_client.py`
    ```python
    def get_httpx_client():
        global _httpx_client

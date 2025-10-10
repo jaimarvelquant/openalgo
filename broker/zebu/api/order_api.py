@@ -48,7 +48,7 @@ def get_holdings(auth):
     return get_api_response("/NorenWClientTP/Holdings",auth,method="POST")
 
 def get_open_position(tradingsymbol, exchange, producttype,auth):
-    #Convert Trading Symbol from OpenAlgo Format to Broker Format Before Search in OpenPosition
+    #Convert Trading Symbol from MarvelQuant Format to Broker Format Before Search in OpenPosition
     tradingsymbol = get_br_symbol(tradingsymbol,exchange)
     positions_data = get_positions(auth)
 
@@ -207,7 +207,7 @@ def close_all_positions(current_api_key,auth):
             quantity = abs(int(position['netqty']))
 
 
-            #get openalgo symbol to send to placeorder function
+            #get marvelquant symbol to send to placeorder function
             symbol = get_symbol(position['token'],position['exch'])
             logger.info(f"The Symbol is {symbol}")
 

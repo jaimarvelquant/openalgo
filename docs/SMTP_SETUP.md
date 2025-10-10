@@ -1,8 +1,8 @@
-# SMTP Email Setup for OpenAlgo
+# SMTP Email Setup for MarvelQuant
 
 ## Migration (Add Email to Existing Installation)
 
-Run this command in your OpenAlgo directory:
+Run this command in your MarvelQuant directory:
 
 ```bash
 python upgrade/migrate_smtp_simple.py
@@ -65,7 +65,7 @@ HELO Hostname: smtp.gmail.com
 
 2. **Find Your Server IP:**
    ```bash
-   # From your OpenAlgo server, run:
+   # From your MarvelQuant server, run:
    curl -4 ifconfig.me
    # Or visit: https://whatismyipaddress.com/
    ```
@@ -96,7 +96,7 @@ HELO Hostname: smtp.gmail.com
 3. Select **App passwords**
 4. Choose **Mail** from dropdown
 5. Generate password and copy the 16-character code
-6. Use this password in OpenAlgo (NOT your regular password)
+6. Use this password in MarvelQuant (NOT your regular password)
 
 ### For Google Workspace:
 1. Go to [Google Account Settings](https://myaccount.google.com/apppasswords)
@@ -374,13 +374,13 @@ Set up monitoring for:
 - [App Passwords Setup](https://support.google.com/accounts/answer/185833) - How to generate App Passwords
 - [Admin Console Guide](https://support.google.com/a/answer/2956491) - SMTP relay service configuration
 
-### OpenAlgo Resources
+### MarvelQuant Resources
 
 - **Built-in Debug**: Use SMTP Debug function in profile
-- **Log Files**: Check OpenAlgo logs for detailed error messages
+- **Log Files**: Check MarvelQuant logs for detailed error messages
 - **GitHub Issues**: Report SMTP-specific problems
 - **Documentation**: `/docs/PASSWORD_RESET.md` for complete system overview
 
 ---
 
-**That's it!** Your OpenAlgo can now send emails for password resets and notifications using your preferred email provider. Choose the configuration that best fits your organization's setup and security requirements.
+**That's it!** Your MarvelQuant can now send emails for password resets and notifications using your preferred email provider. Choose the configuration that best fits your organization's setup and security requirements.

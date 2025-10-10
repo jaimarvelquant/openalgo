@@ -82,66 +82,87 @@ class OrderAPIClient(BaseAPIClient):
 
     def get_orderbook(self, client_id: str = None) -> dict:
         """
-        Get orderbook.
+        Get orderbook using regular endpoint.
 
-        Note: Uses regular orders endpoint (/interactive/orders), not dealer endpoint.
-        The original implementation (before Task 24.1) used this endpoint successfully
-        for PRO accounts. Dealer endpoints require special dealer privileges.
+        CRITICAL: For PRO accounts (isInvestorClient=False), clientID parameter is REQUIRED.
+        Reference: xts_connect.py get_order_book() method (line 458-467)
+
+        Endpoint: GET /interactive/orders
 
         Args:
-            client_id: Optional client ID (for compatibility, but not used by this endpoint)
+            client_id: Client ID (REQUIRED for PRO accounts, optional for investor accounts)
 
         Returns:
             Orderbook data
         """
-        # Use regular orders endpoint (not dealer endpoint)
-        # This was the original behavior before Task 24.1 refactoring
-        return self._get('orders', timeout=15.0)
+        params = {}
+        if client_id:
+            params['clientID'] = client_id
+        return self._get('orders', params=params, timeout=15.0)
 
-    def get_tradebook(self) -> dict:
+    def get_tradebook(self, client_id: str = None) -> dict:
         """
         Get tradebook using regular endpoint.
 
         Works for PRO accounts without dealer privileges.
         This was the original behavior before Task 24.1 refactoring.
 
+        CRITICAL: For PRO accounts (isInvestorClient=False), clientID parameter is REQUIRED.
+        Reference: xts_connect.py get_trade() method (line 718-728)
+
         Endpoint: GET /interactive/orders/trades
+
+        Args:
+            client_id: Client ID (REQUIRED for PRO accounts, optional for investor accounts)
 
         Returns:
             Tradebook data
         """
-        return self._get('trades', timeout=15.0)
+        params = {}
+        if client_id:
+            params['clientID'] = client_id
+        return self._get('trades', params=params, timeout=15.0)
 
-    def get_positions(self, day_or_net: str = "NetWise") -> dict:
+    def get_positions(self, client_id: str = None, day_or_net: str = "NetWise") -> dict:
         """
         Get positions using regular endpoint.
 
-        Works for PRO accounts without dealer privileges.
-        This was the original behavior before Task 24.1 refactoring.
+        CRITICAL: For PRO accounts (isInvestorClient=False), clientID parameter is REQUIRED.
+        Reference: xts_connect.py get_position_netwise() method (line 795-803)
 
         Endpoint: GET /interactive/portfolio/positions
 
         Args:
+            client_id: Client ID (REQUIRED for PRO accounts, optional for investor accounts)
             day_or_net: "DayWise" or "NetWise" (default: "NetWise")
 
         Returns:
             Positions data
         """
-        return self._get('portfolio.positions', params={'dayOrNet': day_or_net}, timeout=15.0)
+        params = {'dayOrNet': day_or_net}
+        if client_id:
+            params['clientID'] = client_id
+        return self._get('portfolio.positions', params=params, timeout=15.0)
 
-    def get_holdings(self) -> dict:
+    def get_holdings(self, client_id: str = None) -> dict:
         """
         Get holdings using regular endpoint.
 
-        Works for both PRO and Dealer accounts.
-        This was the original behavior before Task 24.1 refactoring.
+        CRITICAL: For PRO accounts (isInvestorClient=False), clientID parameter is REQUIRED.
+        Reference: xts_connect.py get_holding() method (line 742-751)
 
         Endpoint: GET /interactive/portfolio/holdings
+
+        Args:
+            client_id: Client ID (REQUIRED for PRO accounts, optional for investor accounts)
 
         Returns:
             Holdings data
         """
-        return self._get('portfolio.holdings', timeout=15.0)
+        params = {}
+        if client_id:
+            params['clientID'] = client_id
+        return self._get('portfolio.holdings', params=params, timeout=15.0)
 
     # ========================================================================
     # Dealer Endpoints (For Dealer accounts with special privileges)
@@ -253,7 +274,7 @@ def place_order_api(data, auth_token):
     Refactored to use OrderAPIClient (Task 24.1).
 
     Args:
-        data: OpenAlgo order data
+        data: MarvelQuant order data
         auth_token: Authentication token (JSON string with interactive_token and user_id)
 
     Returns:
@@ -273,16 +294,16 @@ def place_order_api(data, auth_token):
         client = OrderAPIClient(auth_token=interactive_token)
         response_data = client.place_order(jainam_order)
 
-        # Transform response to OpenAlgo format
-        openalgo_response = transform_response(response_data)
+        # Transform response to MarvelQuant format
+        marvelquant_response = transform_response(response_data)
 
         # Create response object
         response_obj = SimpleNamespace(status=200)
 
-        order_id = openalgo_response.get('orderid', '')
+        order_id = marvelquant_response.get('orderid', '')
 
         logger.info(f"Jainam order placed: {order_id}")
-        return response_obj, openalgo_response, order_id
+        return response_obj, marvelquant_response, order_id
 
     except httpx.HTTPStatusError as e:
         logger.error(f"HTTP error placing Jainam order: {e}")
@@ -333,11 +354,11 @@ def modify_order_api(order_id, data, auth_token):
         client = OrderAPIClient(auth_token=interactive_token)
         response_data = client.modify_order(jainam_order)
 
-        openalgo_response = transform_response(response_data)
+        marvelquant_response = transform_response(response_data)
         response_obj = SimpleNamespace(status=200)
 
         logger.info(f"Jainam order modified: {order_id}")
-        return response_obj, openalgo_response, order_id
+        return response_obj, marvelquant_response, order_id
 
     except httpx.HTTPStatusError as e:
         logger.error(f"HTTP error modifying Jainam order: {e}")
@@ -383,11 +404,11 @@ def cancel_order_api(order_id, auth_token):
         client = OrderAPIClient(auth_token=interactive_token)
         response_data = client.cancel_order(cancel_data)
 
-        openalgo_response = transform_response(response_data)
+        marvelquant_response = transform_response(response_data)
         response_obj = SimpleNamespace(status=200)
 
         logger.info(f"Jainam order cancelled: {order_id}")
-        return response_obj, openalgo_response
+        return response_obj, marvelquant_response
 
     except httpx.HTTPStatusError as e:
         logger.error(f"HTTP error cancelling Jainam order: {e}")
@@ -439,8 +460,9 @@ def get_order_book(auth_token):
         logger.info(f"Fetching order book from Jainam for user {user_id}")
 
         # Use OrderAPIClient (regular endpoint for PRO accounts)
+        # CRITICAL FIX: Do NOT pass clientID parameter for regular PRO accounts
         client = OrderAPIClient(auth_token=interactive_token)
-        response_data = client.get_orderbook()
+        response_data = client.get_orderbook(client_id=None)
 
         # Check for error response
         if not isinstance(response_data, dict):
@@ -566,8 +588,9 @@ def get_positions(auth_token):
         logger.info(f"Fetching positions from Jainam for user {user_id}")
 
         # Use OrderAPIClient (regular endpoint for PRO accounts)
+        # CRITICAL FIX: Do NOT pass clientID parameter for regular PRO accounts
         client = OrderAPIClient(auth_token=interactive_token)
-        response_data = client.get_positions(day_or_net="NetWise")
+        response_data = client.get_positions(client_id=None, day_or_net="NetWise")
 
         logger.info(f"Positions retrieved successfully")
         return response_data
@@ -646,8 +669,9 @@ def get_holdings(auth_token):
         logger.info(f"Fetching holdings from Jainam for user {user_id}")
 
         # Use OrderAPIClient (regular endpoint for PRO accounts)
+        # CRITICAL FIX: Do NOT pass clientID parameter for regular PRO accounts
         client = OrderAPIClient(auth_token=interactive_token)
-        response_data = client.get_holdings()
+        response_data = client.get_holdings(client_id=None)
 
         logger.info(f"Holdings retrieved successfully")
         return response_data
@@ -712,7 +736,7 @@ def get_trade_book(auth_token):
         auth_token: Authentication token (string or dict)
 
     Returns:
-        dict: Trade book data transformed to OpenAlgo format using transform_trade_book()
+        dict: Trade book data transformed to MarvelQuant format using transform_trade_book()
 
     Example Response:
         {
@@ -739,8 +763,17 @@ def get_trade_book(auth_token):
         logger.info(f"Fetching trade book from Jainam for user {user_id}")
 
         # Use OrderAPIClient (regular endpoint for PRO accounts)
+        # CRITICAL FIX: Do NOT pass clientID parameter for regular PRO accounts
+        # The reference implementation is designed for dealer accounts, not regular PRO accounts
+        # Passing clientID causes "Supplied client not mapped under dealer" error (e-trade-00002)
+        # Without clientID, we get "Data Not Available" (e-tradeBook-0005) when no trades exist - this is correct!
         client = OrderAPIClient(auth_token=interactive_token)
-        response_data = client.get_tradebook()
+        response_data = client.get_tradebook(client_id=None)
+
+        # DEBUG: Log the actual response to diagnose empty tradebook issue
+        logger.info(f"Tradebook API response type: {response_data.get('type') if isinstance(response_data, dict) else type(response_data)}")
+        logger.info(f"Tradebook API response keys: {list(response_data.keys()) if isinstance(response_data, dict) else 'N/A'}")
+        logger.info(f"Tradebook API response (first 500 chars): {str(response_data)[:500]}")
 
         if not isinstance(response_data, dict):
             logger.error("Unexpected response format received from Jainam trade book API")
@@ -770,9 +803,14 @@ def get_trade_book(auth_token):
         # Extract trade data from either 'result' or 'data' key (Jainam/XTS uses 'result')
         trade_data = response_data.get('result', response_data.get('data', []))
 
+        # DEBUG: Log trade data extraction
+        logger.info(f"Extracted trade_data type: {type(trade_data)}, length: {len(trade_data) if isinstance(trade_data, (list, dict)) else 'N/A'}")
+        if trade_data:
+            logger.info(f"First trade data item: {trade_data[0] if isinstance(trade_data, list) and len(trade_data) > 0 else trade_data}")
+
         # Handle empty trade book (return empty list)
         if not response_data or not trade_data:
-            logger.info("Trade book is empty")
+            logger.info(f"Trade book is empty - response_data: {bool(response_data)}, trade_data: {bool(trade_data)}")
             return {
                 'status': 'success',
                 'trades': []
@@ -787,12 +825,18 @@ def get_trade_book(auth_token):
         return transformed_data
 
     except httpx.HTTPStatusError as e:
+        # DEBUG: Log the HTTP error details
+        logger.info(f"HTTPStatusError caught - Status: {e.response.status_code}, Response: {e.response.text[:500]}")
+
         # Handle "Data Not Available" as a success case with empty data
         if e.response.status_code == 400:
             try:
                 error_data = e.response.json()
                 error_code = error_data.get('code', '')
                 description = error_data.get('description', '').lower()
+
+                # DEBUG: Log the error details
+                logger.info(f"HTTP 400 error - Code: {error_code}, Description: {description}")
 
                 # Jainam returns "e-tradeBook-0005" with "Data Not Available" when no trades exist
                 if 'e-tradebook-0005' in error_code.lower() or 'data not available' in description:
@@ -801,7 +845,8 @@ def get_trade_book(auth_token):
                         'status': 'success',
                         'trades': []
                     }
-            except:
+            except Exception as parse_error:
+                logger.error(f"Failed to parse HTTP 400 error response: {parse_error}")
                 pass  # If we can't parse the error, fall through to generic error handling
 
         logger.error(f"HTTP error getting Jainam trade book: {e.response.status_code} - {e.response.text}")
@@ -995,7 +1040,7 @@ def get_open_position(tradingsymbol, exchange, producttype, auth_token):
     exchange, and product type match.
 
     Args:
-        tradingsymbol (str): Trading symbol in OpenAlgo format (e.g., 'SBIN-EQ')
+        tradingsymbol (str): Trading symbol in MarvelQuant format (e.g., 'SBIN-EQ')
         exchange (str): Exchange code (e.g., 'NSE', 'BSE')
         producttype (str): Product type (e.g., 'CNC', 'MIS', 'NRML')
         auth_token: Authentication token (string or dict)

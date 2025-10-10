@@ -13,7 +13,7 @@ def map_order_data(order_data):
     - order_data: Either raw API response or list of pre-mapped orders
     
     Returns:
-    - List of mapped orders in OpenAlgo format
+    - List of mapped orders in MarvelQuant format
     """
     # If it's a list, data is already mapped
     if isinstance(order_data, list):
@@ -32,7 +32,7 @@ def map_order_data(order_data):
     mapped_orders = []
     for order in orders:
         mapped_order = {}
-        # Get OpenAlgo symbol from token
+        # Get MarvelQuant symbol from token
         symbol_from_db = get_symbol(order.get('token'), order.get('exchange'))
         if symbol_from_db:
             mapped_order['tsym'] = symbol_from_db
@@ -123,7 +123,7 @@ def calculate_order_statistics(order_data):
 
 def transform_order_data(orders):
     """
-    Transform order data to match OpenAlgo format.
+    Transform order data to match MarvelQuant format.
     
     Returns:
     - List of transformed orders in the format expected by orderbook.html
@@ -174,7 +174,7 @@ def map_trade_data(trade_data):
     - trade_data: Response from Firstock's tradebook API containing status and data fields
     
     Returns:
-    - List of mapped trades in OpenAlgo format
+    - List of mapped trades in MarvelQuant format
     """
     # If it's a list, data is already mapped
     if isinstance(trade_data, list):
@@ -193,7 +193,7 @@ def map_trade_data(trade_data):
     mapped_trades = []
     for trade in trades:
         mapped_trade = {}
-        # Get OpenAlgo symbol from token
+        # Get MarvelQuant symbol from token
         symbol_from_db = get_symbol(trade.get('token'), trade.get('exchange'))
         if symbol_from_db:
             mapped_trade['tsym'] = symbol_from_db
@@ -220,7 +220,7 @@ def map_trade_data(trade_data):
 
 def transform_tradebook_data(trades):
     """
-    Transform trade data to match OpenAlgo format.
+    Transform trade data to match MarvelQuant format.
     
     Parameters:
     - trades: List of trades from map_trade_data
@@ -282,7 +282,7 @@ def map_portfolio_data(portfolio_data):
     - portfolio_data: Response from Firstock's holdings API containing status and data fields
 
     Returns:
-    - List of mapped holdings in OpenAlgo format
+    - List of mapped holdings in MarvelQuant format
     """
     logger.info(f"Raw portfolio data: {json.dumps(portfolio_data, indent=2)}")
 
@@ -316,7 +316,7 @@ def map_portfolio_data(portfolio_data):
             mapped_holding['tick_size'] = float(holding.get('tickSize', '0.05'))
             mapped_holding['lot_size'] = int(holding.get('lotSize', '1'))
 
-            # Get OpenAlgo symbol from token
+            # Get MarvelQuant symbol from token
             if holding.get('token'):
                 symbol_from_db = get_symbol(holding.get('token'), holding.get('exchange'))
                 if symbol_from_db:
@@ -399,7 +399,7 @@ def calculate_portfolio_statistics(holdings_data):
 
 def transform_holdings_data(holdings):
     """
-    Transform holdings data to match OpenAlgo format.
+    Transform holdings data to match MarvelQuant format.
 
     Parameters:
     - holdings: List of holdings from map_portfolio_data
@@ -459,7 +459,7 @@ def map_position_data(position_data):
     - position_data: Response from Firstock's position book API containing status and data fields
     
     Returns:
-    - List of mapped positions in OpenAlgo format
+    - List of mapped positions in MarvelQuant format
     """
     # If it's a list, data is already mapped
     if isinstance(position_data, list):
@@ -487,7 +487,7 @@ def map_position_data(position_data):
         logger.debug("\nDEBUG: Processing position:")
         logger.debug(f"Raw position data: {json.dumps(position, indent=2)}")
         mapped_position = {}
-        # Get OpenAlgo symbol from token
+        # Get MarvelQuant symbol from token
         symbol_from_db = get_symbol(position.get('token'), position.get('exchange'))
         logger.info(f"DEBUG: Looking up symbol - Token: {position.get('token')}, Exchange: {position.get('exchange')}")
         if symbol_from_db:
@@ -522,7 +522,7 @@ def map_position_data(position_data):
 
 def transform_positions_data(positions):
     """
-    Transform position data to match OpenAlgo format.
+    Transform position data to match MarvelQuant format.
     
     Parameters:
     - positions: List of positions from map_position_data

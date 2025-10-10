@@ -206,11 +206,12 @@ def authenticate_direct() -> Tuple[Optional[str], Optional[str], Optional[str], 
             user_id,
             bool(is_investor),
         )
-        return interactive_token, market_token, user_id, None
+        # Return is_investor flag for PRO account handling
+        return interactive_token, market_token, user_id, is_investor, None
     except Exception as exc:
         error_message = str(exc)
         logger.error("Jainam direct authentication failed: %s", error_message)
-        return None, None, None, error_message
+        return None, None, None, None, error_message
 
 
 def authenticate_broker(*_args, **_kwargs):
@@ -218,7 +219,7 @@ def authenticate_broker(*_args, **_kwargs):
     Backwards-compatible wrapper to support plugin loader expectations.
 
     Returns:
-        tuple: (interactive_token, market_token, user_id, error_message)
+        tuple: (interactive_token, market_token, user_id, is_investor_client, error_message)
     """
     return authenticate_direct()
 

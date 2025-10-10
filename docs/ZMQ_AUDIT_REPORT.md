@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-This audit examines the ZMQ (ZeroMQ) and WebSocket implementation in OpenAlgo, specifically addressing the multi-instance port conflict issue and identifying performance improvement opportunities. The analysis reveals that while the system has implemented dynamic port allocation for ZMQ, there's a critical architectural issue where the WebSocket proxy server is hardcoded to connect to port 5555, preventing proper multi-instance operation.
+This audit examines the ZMQ (ZeroMQ) and WebSocket implementation in MarvelQuant, specifically addressing the multi-instance port conflict issue and identifying performance improvement opportunities. The analysis reveals that while the system has implemented dynamic port allocation for ZMQ, there's a critical architectural issue where the WebSocket proxy server is hardcoded to connect to port 5555, preventing proper multi-instance operation.
 
 ## Architecture Overview
 
@@ -29,7 +29,7 @@ This audit examines the ZMQ (ZeroMQ) and WebSocket implementation in OpenAlgo, s
 
 ### Multi-Instance Port Conflict Issue
 
-**Problem**: When running two OpenAlgo instances:
+**Problem**: When running two MarvelQuant instances:
 - Instance 1: Flask on 5000, WebSocket on 8765, expects ZMQ on 5555
 - Instance 2: Flask on 5001, WebSocket on 8766, expects ZMQ on 5556
 
@@ -150,10 +150,10 @@ Use ZMQ IPC (Inter-Process Communication) sockets with unique names per instance
 **Implementation**:
 ```python
 # Adapter
-self.socket.bind(f"ipc:///tmp/openalgo_{instance_id}.ipc")
+self.socket.bind(f"ipc:///tmp/marvelquant_{instance_id}.ipc")
 
 # Proxy
-self.socket.connect(f"ipc:///tmp/openalgo_{instance_id}.ipc")
+self.socket.connect(f"ipc:///tmp/marvelquant_{instance_id}.ipc")
 ```
 
 ## Performance Optimization Recommendations
@@ -273,7 +273,7 @@ def _normalize_market_data(self, message, mode):
 
 ## Conclusion
 
-The OpenAlgo WebSocket implementation is well-architected with good separation of concerns and error handling. However, the hardcoded ZMQ port in the WebSocket proxy prevents proper multi-instance operation. The recommended immediate fix is to implement dynamic port configuration (Solution 1), which requires minimal code changes and maintains backward compatibility.
+The MarvelQuant WebSocket implementation is well-architected with good separation of concerns and error handling. However, the hardcoded ZMQ port in the WebSocket proxy prevents proper multi-instance operation. The recommended immediate fix is to implement dynamic port configuration (Solution 1), which requires minimal code changes and maintains backward compatibility.
 
 For performance optimization, message batching and binary serialization offer the best return on investment, potentially reducing network overhead by 50-70% for high-frequency data streams.
 

@@ -1,4 +1,4 @@
-# OpenAlgo Installation Guide
+# MarvelQuant Installation Guide
 
 ## Prerequisites
 
@@ -53,14 +53,14 @@
 ssh user@your_server_ip
 
 # Create a directory for installation
-mkdir -p ~/openalgo-install
-cd ~/openalgo-install
+mkdir -p ~/marvelquant-install
+cd ~/marvelquant-install
 
 # Download the installation script
-wget https://raw.githubusercontent.com/marketcalls/openalgo/main/install/install.sh
+wget https://raw.githubusercontent.com/marketcalls/marvelquant/main/install/install.sh
 
 # Or using curl
-curl -O https://raw.githubusercontent.com/marketcalls/openalgo/main/install/install.sh
+curl -O https://raw.githubusercontent.com/marketcalls/marvelquant/main/install/install.sh
 
 # Make the script executable
 chmod +x install.sh
@@ -86,13 +86,13 @@ The installation process will:
 - **Auto-configure SELinux** on RHEL-based systems
 - Obtain and install Let's Encrypt SSL certificate
 - Configure Nginx with SSL and WebSocket support
-- Set up the OpenAlgo application with unique deployment name
+- Set up the MarvelQuant application with unique deployment name
 - Create systemd service with unique name based on domain and broker
 - Generate detailed installation logs in the logs directory
 
 #### Multi-Domain Deployment
 The installation script supports deploying multiple instances on the same server:
-- Each deployment gets a unique service name (e.g., openalgo-yourdomain-broker)
+- Each deployment gets a unique service name (e.g., marvelquant-yourdomain-broker)
 - Separate configuration files and directories for each deployment
 - Individual log files for each installation in the logs directory
 - Independent SSL certificates for each domain
@@ -124,10 +124,10 @@ After installation completes, verify each deployment:
 1. **Check Service Status**
    ```bash
    # Example for Fyers deployment
-   sudo systemctl status openalgo-fyers-yourdomain-fyers
+   sudo systemctl status marvelquant-fyers-yourdomain-fyers
    
    # Example for Zerodha deployment
-   sudo systemctl status openalgo-zerodha-yourdomain-zerodha
+   sudo systemctl status marvelquant-zerodha-yourdomain-zerodha
    ```
 
 2. **Verify Nginx Configuration**
@@ -178,12 +178,12 @@ After installation completes, verify each deployment:
    Example scenario: Managing multiple broker deployments
    ```bash
    # Example 1: Fyers deployment on fyers.yourdomain.com
-   sudo journalctl -u openalgo-fyers-yourdomain-fyers    # View logs
-   sudo systemctl restart openalgo-fyers-yourdomain-fyers # Restart service
+   sudo journalctl -u marvelquant-fyers-yourdomain-fyers    # View logs
+   sudo systemctl restart marvelquant-fyers-yourdomain-fyers # Restart service
    
    # Example 2: Zerodha deployment on zerodha.yourdomain.com
-   sudo journalctl -u openalgo-zerodha-yourdomain-zerodha # View logs
-   sudo systemctl restart openalgo-zerodha-yourdomain-zerodha # Restart service
+   sudo journalctl -u marvelquant-zerodha-yourdomain-zerodha # View logs
+   sudo systemctl restart marvelquant-zerodha-yourdomain-zerodha # Restart service
    ```
 
 3. **Nginx Issues**
@@ -245,8 +245,8 @@ After installation completes, verify each deployment:
 
    # The script auto-configures SELinux, but if issues persist:
    sudo setsebool -P httpd_can_network_connect on
-   sudo semanage fcontext -a -t httpd_sys_rw_content_t "/var/python/openalgo-flask(/.*)?"
-   sudo restorecon -Rv /var/python/openalgo-flask
+   sudo semanage fcontext -a -t httpd_sys_rw_content_t "/var/python/marvelquant-flask(/.*)?"
+   sudo restorecon -Rv /var/python/marvelquant-flask
    ```
 
 2. **Firewalld not configured**
@@ -276,30 +276,30 @@ After installation completes, verify each deployment:
 
 1. **Service Management Examples**
    ```bash
-   # List all OpenAlgo services
-   systemctl list-units "openalgo-*"
+   # List all MarvelQuant services
+   systemctl list-units "marvelquant-*"
    
    # Example outputs:
-   # openalgo-fyers-yourdomain-fyers.service    loaded active running
-   # openalgo-zerodha-yourdomain-zerodha.service loaded active running
+   # marvelquant-fyers-yourdomain-fyers.service    loaded active running
+   # marvelquant-zerodha-yourdomain-zerodha.service loaded active running
    
    # Restart specific deployment
-   sudo systemctl restart openalgo-fyers-yourdomain-fyers
+   sudo systemctl restart marvelquant-fyers-yourdomain-fyers
    
    # Check status of specific deployment
-   sudo systemctl status openalgo-zerodha-yourdomain-zerodha
+   sudo systemctl status marvelquant-zerodha-yourdomain-zerodha
    ```
 
 2. **Log Management Examples**
    ```bash
    # View real-time logs for Fyers deployment
-   sudo journalctl -f -u openalgo-fyers-yourdomain-fyers
+   sudo journalctl -f -u marvelquant-fyers-yourdomain-fyers
    
    # View last 100 lines of Zerodha deployment logs
-   sudo journalctl -n 100 -u openalgo-zerodha-yourdomain-zerodha
+   sudo journalctl -n 100 -u marvelquant-zerodha-yourdomain-zerodha
    
    # View logs since last hour for specific deployment
-   sudo journalctl --since "1 hour ago" -u openalgo-fyers-yourdomain-fyers
+   sudo journalctl --since "1 hour ago" -u marvelquant-fyers-yourdomain-fyers
    ```
 
 3. **Nginx Configuration Examples**
@@ -318,14 +318,14 @@ After installation completes, verify each deployment:
 4. **Installation Directory Examples**
    ```bash
    # List deployment directories
-   ls -l /var/python/openalgo-flask/
+   ls -l /var/python/marvelquant-flask/
    
    # Example structure:
-   # /var/python/openalgo-flask/fyers-yourdomain-fyers/
-   # /var/python/openalgo-flask/zerodha-yourdomain-zerodha/
+   # /var/python/marvelquant-flask/fyers-yourdomain-fyers/
+   # /var/python/marvelquant-flask/zerodha-yourdomain-zerodha/
    
    # Check specific deployment files
-   ls -l /var/python/openalgo-flask/fyers-yourdomain-fyers/
+   ls -l /var/python/marvelquant-flask/fyers-yourdomain-fyers/
    ```
 
 ## Security Notes
@@ -344,7 +344,7 @@ After installation completes, verify each deployment:
      ```
 
 2. **SELinux (RHEL-based systems)**
-   - The installation script **automatically configures SELinux** for OpenAlgo
+   - The installation script **automatically configures SELinux** for MarvelQuant
    - Sets correct contexts for application directories
    - Enables httpd network connections
    - Creates custom policies if needed
@@ -377,7 +377,7 @@ After installation completes, verify each deployment:
 ## Support
 
 For issues and support:
-- Check the [GitHub repository](https://github.com/marketcalls/openalgo)
+- Check the [GitHub repository](https://github.com/marketcalls/marvelquant)
 - Review the logs using commands provided above
 - Contact support with relevant log information
 

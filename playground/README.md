@@ -1,14 +1,14 @@
-# OpenAlgo Playground
+# MarvelQuant Playground
 
 ⚠️ **SECURITY WARNING: FOR DEVELOPMENT USE ONLY** ⚠️
 
 **This playground is intended for development and testing purposes only. NEVER deploy this on production servers or expose it to the internet.**
 
-Welcome to the OpenAlgo Playground! This is a rich, interactive browser-based client designed for developers and users to test, explore, and debug the OpenAlgo platform's features in real time.
+Welcome to the MarvelQuant Playground! This is a rich, interactive browser-based client designed for developers and users to test, explore, and debug the MarvelQuant platform's features in real time.
 
 The Playground provides a complete UI to interact with most of the core functionalities, including the REST API and the WebSocket data streams, without writing a single line of code.
 
-![OpenAlgo Playground Screenshot](Playground-screenshot.png)
+![MarvelQuant Playground Screenshot](Playground-screenshot.png)
 
 
 ## Security Considerations
@@ -34,7 +34,7 @@ If you must use this in a more secure environment:
 
 ## Features
 
-- **Connection Management:** Configure your API Key and server URLs to connect to your local OpenAlgo instance.
+- **Connection Management:** Configure your API Key and server URLs to connect to your local MarvelQuant instance.
 - **Real-time Watchlist:** Search for any symbol across exchanges and add it to a persistent watchlist.
 - **Dual Operating Modes:**
     - **Live Mode (Toggle ON):** Uses **WebSockets** for real-time data on the watchlist (LTP) and in the data panels (Quote, Depth).
@@ -56,7 +56,7 @@ The Playground is a self-contained feature. To use it, simply open the `index.ht
 
 ### 2. Configuration
 
-**⚠️ SECURITY CRITICAL:** For the Playground to communicate with the Flask backend from your browser, you must disable CORS enforcement in your OpenAlgo environment.
+**⚠️ SECURITY CRITICAL:** For the Playground to communicate with the Flask backend from your browser, you must disable CORS enforcement in your MarvelQuant environment.
 
 **WARNING: This setting disables important security protections and should NEVER be used on production servers.**
 
@@ -74,7 +74,7 @@ CORS_ENABLED = 'FALSE'
 
 ### 3. Running the Playground
 
-1.  Start the main OpenAlgo application by running `python app.py`.
+1.  Start the main MarvelQuant application by running `python app.py`.
 2.  Open `index.html` in your web browser.
     
 
@@ -131,6 +131,6 @@ The following features have been removed for security reasons:
 
 ## Contributing
 
-This Playground is a living feature. If you have ideas for improvements or find a bug, feel free to open an issue or submit a pull request to the main [OpenAlgo repository](https://github.com/marketcalls/openalgo).
+This Playground is a living feature. If you have ideas for improvements or find a bug, feel free to open an issue or submit a pull request to the main [MarvelQuant repository](https://github.com/marketcalls/marvelquant).
 
 **Security-related contributions are especially welcome!**

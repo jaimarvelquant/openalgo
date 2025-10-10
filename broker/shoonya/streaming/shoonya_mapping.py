@@ -4,9 +4,9 @@ Shoonya-specific mapping utilities for the WebSocket adapter
 from typing import Dict, Set, Optional
 
 class ShoonyaExchangeMapper:
-    """Maps between OpenAlgo exchange names and Shoonya exchange codes"""
+    """Maps between MarvelQuant exchange names and Shoonya exchange codes"""
     
-    # OpenAlgo to Shoonya exchange mapping
+    # MarvelQuant to Shoonya exchange mapping
     EXCHANGE_MAP = {
         'NSE': 'NSE',
         'BSE': 'BSE',
@@ -23,12 +23,12 @@ class ShoonyaExchangeMapper:
     
     @classmethod
     def to_shoonya_exchange(cls, oa_exchange: str) -> Optional[str]:
-        """Convert OpenAlgo exchange to Shoonya exchange format"""
+        """Convert MarvelQuant exchange to Shoonya exchange format"""
         return cls.EXCHANGE_MAP.get(oa_exchange.upper())
     
     @classmethod
     def to_oa_exchange(cls, shoonya_exchange: str) -> Optional[str]:
-        """Convert Shoonya exchange to OpenAlgo exchange format"""
+        """Convert Shoonya exchange to MarvelQuant exchange format"""
         return cls.SHOONYA_TO_OPENALGO.get(shoonya_exchange.upper())
 
 

@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Python Strategy Management System is a comprehensive web-based platform for managing, executing, and scheduling Python trading strategies within OpenAlgo. It provides complete process isolation, cross-platform compatibility, and a user-friendly interface.
+The Python Strategy Management System is a comprehensive web-based platform for managing, executing, and scheduling Python trading strategies within MarvelQuant. It provides complete process isolation, cross-platform compatibility, and a user-friendly interface.
 
 ## Architecture
 
@@ -137,7 +137,7 @@ All confirmations use DaisyUI modals:
 ## File Structure
 
 ```
-openalgo/
+marvelquant/
 ├── blueprints/
 │   └── python_strategy.py          # Core backend logic
 ├── templates/python_strategy/
@@ -278,7 +278,7 @@ openalgo/
 ### Process Won't Stop
 - Check process ID in configs
 - Use system task manager
-- Restart OpenAlgo if needed
+- Restart MarvelQuant if needed
 
 ## Best Practices
 
@@ -334,7 +334,7 @@ For issues or questions:
 1. Check logs in `log/strategies/`
 2. Review browser console for errors
 3. Verify Python environment
-4. Contact OpenAlgo support team
+4. Contact MarvelQuant support team
 
 ---
 

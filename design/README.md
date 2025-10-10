@@ -1,16 +1,16 @@
-# OpenAlgo Design Documentation
+# MarvelQuant Design Documentation
 
 ## Introduction
 
-Welcome to the design documentation for OpenAlgo, a comprehensive broker-agnostic algorithmic trading platform with advanced strategy hosting capabilities.
+Welcome to the design documentation for MarvelQuant, a comprehensive broker-agnostic algorithmic trading platform with advanced strategy hosting capabilities.
 
 ### Purpose
 
-This documentation provides a comprehensive understanding of the OpenAlgo system architecture, core components, design patterns, data flows, and operational considerations. It serves as a guide for developers, architects, and maintainers involved in the development and extension of the platform.
+This documentation provides a comprehensive understanding of the MarvelQuant system architecture, core components, design patterns, data flows, and operational considerations. It serves as a guide for developers, architects, and maintainers involved in the development and extension of the platform.
 
 ### Overview
 
-OpenAlgo is a full-featured trading platform that provides:
+MarvelQuant is a full-featured trading platform that provides:
 * **RESTful API Interface**: Built with Flask for programmatic trading
 * **Python Strategy Hosting**: Complete strategy management system with scheduling and monitoring
 * **Multi-Broker Support**: Unified interface for 20+ Indian brokers
@@ -98,7 +98,7 @@ OpenAlgo is a full-featured trading platform that provides:
 └──────────────┴──────────────┴──────────────┴──────────────┘
                               │
 ┌─────────────────────────────────────────────────────────────┐
-│                    OpenAlgo Platform                        │
+│                    MarvelQuant Platform                        │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌─────────────────────────────────────────────────────┐   │
 │  │              Application Layer (Flask)               │   │
@@ -202,7 +202,7 @@ A comprehensive strategy hosting system that enables traders to:
 
 ## Supported Brokers
 
-OpenAlgo currently supports 20+ Indian brokers including:
+MarvelQuant currently supports 20+ Indian brokers including:
 - Zerodha, Angel One, Upstox, Groww
 - 5Paisa, IIFL, Kotak Securities
 - Dhan, Fyers, Alice Blue

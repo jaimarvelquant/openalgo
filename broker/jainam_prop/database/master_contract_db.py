@@ -605,7 +605,7 @@ def _prepare_symbol_token_records(df: pd.DataFrame) -> List[Dict[str, object]]:
         segment_value = _normalise_exchange_segment(
             get(row, "ExchangeSegment", "exchange")
         )
-        exchange_value = _map_segment_to_openalgo_exchange(segment_value)
+        exchange_value = _map_segment_to_marvelquant_exchange(segment_value)
 
         lotsize_value = _coerce_int(get(row, "LotSize", "lot_size"), default=1)
         instrument_value = get(
@@ -647,7 +647,7 @@ def _prepare_symbol_token_records(df: pd.DataFrame) -> List[Dict[str, object]]:
     return list(prepared.values())
 
 
-def _map_segment_to_openalgo_exchange(segment: str) -> str:
+def _map_segment_to_marvelquant_exchange(segment: str) -> str:
     """Wrapper that reuses existing mapping but ensures uppercase input."""
 
     if not segment:

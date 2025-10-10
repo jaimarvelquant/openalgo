@@ -1,12 +1,12 @@
-# OpenAlgo Sandbox Mode - Overview
+# MarvelQuant Sandbox Mode - Overview
 
 ## What is Sandbox Mode?
 
-OpenAlgo is an **open-source application** that provides Sandbox Mode (also called **API Analyzer Mode**) - a sophisticated simulated trading environment that makes it **easier for traders** to test strategies, validate algorithms, and practice trading using real-time market data without risking actual capital.
+MarvelQuant is an **open-source application** that provides Sandbox Mode (also called **API Analyzer Mode**) - a sophisticated simulated trading environment that makes it **easier for traders** to test strategies, validate algorithms, and practice trading using real-time market data without risking actual capital.
 
 ## Important: Regulatory Compliance
 
-> **⚖️ NOT Virtual/Paper Trading**: OpenAlgo Sandbox is fundamentally different from prohibited "virtual trading" platforms. It is an **open-source, self-hosted personal test environment** that:
+> **⚖️ NOT Virtual/Paper Trading**: MarvelQuant Sandbox is fundamentally different from prohibited "virtual trading" platforms. It is an **open-source, self-hosted personal test environment** that:
 > - **Open-source software** - transparent, community-driven development
 > - Runs on **your own system** with **your own broker APIs**
 > - Makes it **easier to test strategies** safely before live deployment
@@ -65,7 +65,7 @@ OpenAlgo is an **open-source application** that provides Sandbox Mode (also call
 ## How It Works
 
 ### 1. Enable Sandbox Mode
-Toggle the "Analyzer Mode" switch in OpenAlgo settings or use the API:
+Toggle the "Analyzer Mode" switch in MarvelQuant settings or use the API:
 
 ```python
 from services.analyzer_service import toggle_analyzer_mode
@@ -94,7 +94,7 @@ When enabled, two daemon threads automatically start:
 - Processes T+1 settlement at midnight (00:00 IST) - moves CNC positions to holdings
 
 ### 3. Place Orders
-All standard OpenAlgo API endpoints work in sandbox mode:
+All standard MarvelQuant API endpoints work in sandbox mode:
 
 ```python
 # Place a market order
@@ -179,7 +179,7 @@ UPDATE P&L (Real-time MTM)
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                   OpenAlgo Application                   │
+│                   MarvelQuant Application                   │
 │                                                           │
 │  ┌────────────┐     ┌──────────────┐                    │
 │  │ Analyzer   │────>│   Sandbox    │                    │

@@ -34,8 +34,8 @@ docker-compose up -d
 
 2. **Or if using plain Docker:**
 ```bash
-docker build -t openalgo:latest .
-docker run -d --name openalgo-web -p 5000:5000 -p 8765:8765 openalgo:latest
+docker build -t marvelquant:latest .
+docker run -d --name marvelquant-web -p 5000:5000 -p 8765:8765 marvelquant:latest
 ```
 
 ### For Non-Docker Users:
@@ -69,10 +69,10 @@ To monitor Socket.IO connections after applying the fix, you can check the logs:
 
 ```bash
 # For Docker users
-docker logs openalgo-web
+docker logs marvelquant-web
 
 # Check only warnings and errors
-docker logs openalgo-web 2>&1 | grep -E "WARNING|ERROR"
+docker logs marvelquant-web 2>&1 | grep -E "WARNING|ERROR"
 ```
 
 ## Notes

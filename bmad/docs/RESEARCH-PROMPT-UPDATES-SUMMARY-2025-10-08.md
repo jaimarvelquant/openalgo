@@ -1,7 +1,7 @@
 # Deep Research Prompt - Critical Updates Summary
 
 **Date**: 2025-10-08  
-**Updated File**: `deep-research-prompt-openalgo-integration-CONSTRAINED-2025-10-08.md`  
+**Updated File**: `deep-research-prompt-marvelquant-integration-CONSTRAINED-2025-10-08.md`  
 **Status**: ✅ ALL CRITICAL UPDATES COMPLETED
 
 ---
@@ -142,9 +142,9 @@ IMPORTANT: You have direct access to this repository. Analyze the actual codebas
    - Caching architecture
 
 2. **Live Trading Data Loading Recommendations** (2-3 pages)
-   - Adapting to real-time OpenAlgo API
+   - Adapting to real-time MarvelQuant API
    - Components to reuse vs replace
-   - Data structure mapping: Parquet → OpenAlgo API → Strategy
+   - Data structure mapping: Parquet → MarvelQuant API → Strategy
    - Caching strategies for live data
 
 3. **Implementation Guidance** (1-2 pages)
@@ -252,10 +252,10 @@ IMPORTANT: You have direct access to this repository. Analyze the actual codebas
    - Live trading vs backtest-only parameters
    - Validation and error handling patterns
 
-11. **How should data loading be adapted from Parquet files (Story 7.9) to real-time OpenAlgo API for live trading?**
+11. **How should data loading be adapted from Parquet files (Story 7.9) to real-time MarvelQuant API for live trading?**
    - HybridDataLoader architecture analysis
    - Recommendations for real-time API data adaptation
-   - Data structure mapping: Parquet → OpenAlgo API → Strategy
+   - Data structure mapping: Parquet → MarvelQuant API → Strategy
    - Caching and synchronization patterns
 
 12. **How should configuration versioning prevent accidental deployment of backtest configs to live trading?**
@@ -268,7 +268,7 @@ IMPORTANT: You have direct access to this repository. Analyze the actual codebas
 
 ## 📁 Files Updated
 
-1. **`deep-research-prompt-openalgo-integration-CONSTRAINED-2025-10-08.md`**
+1. **`deep-research-prompt-marvelquant-integration-CONSTRAINED-2025-10-08.md`**
    - Added ~310 lines
    - 5 major new sections
    - 4 new critical questions
@@ -337,7 +337,7 @@ IMPORTANT: You have direct access to this repository. Analyze the actual codebas
 ### Immediate (Today):
 
 1. ✅ **Review the updated prompt** (10 min)
-   - Open: `deep-research-prompt-openalgo-integration-CONSTRAINED-2025-10-08.md`
+   - Open: `deep-research-prompt-marvelquant-integration-CONSTRAINED-2025-10-08.md`
    - Verify all updates are correct
    - Check that AlgoBaba style document path is correct
 
@@ -369,7 +369,7 @@ IMPORTANT: You have direct access to this repository. Analyze the actual codebas
 
 **Status**: ✅ ALL CRITICAL UPDATES COMPLETED AND READY FOR EXECUTION
 
-**Updated Prompt File**: `/Users/maruth/projects/bmad/docs/deep-research-prompt-openalgo-integration-CONSTRAINED-2025-10-08.md`  
+**Updated Prompt File**: `/Users/maruth/projects/bmad/docs/deep-research-prompt-marvelquant-integration-CONSTRAINED-2025-10-08.md`  
 **Quick Start Guide**: `/Users/maruth/projects/bmad/docs/RESEARCH-PROMPT-QUICK-START.md`  
 **This Summary**: `/Users/maruth/projects/bmad/docs/RESEARCH-PROMPT-UPDATES-SUMMARY-2025-10-08.md`
 

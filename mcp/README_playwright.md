@@ -22,13 +22,13 @@ Playwright MCP provides browser automation capabilities through the Model Contex
 ### 1. Run the Setup Script
 
 ```bash
-cd /Users/maruth/projects/openalgo
+cd /Users/maruth/projects/marvelquant
 ./mcp/setup_mcp.sh
 ```
 
 The script will:
 - Check dependencies
-- Prompt for your OpenAlgo API key
+- Prompt for your MarvelQuant API key
 - Create MCP configuration files for Codex and Claude
 - Test the MCP servers
 - Create backup of existing configurations
@@ -42,7 +42,7 @@ After running the setup script:
 ### 3. Verify Connection
 
 In Codex or Claude, you should see MCP servers connected:
-- `openalgo` - Trading functionality
+- `marvelquant` - Trading functionality
 - `playwright` - Browser automation
 
 ## Manual Configuration
@@ -56,18 +56,18 @@ Edit `~/Library/Application Support/Cursor/User/settings.json`:
 ```json
 {
   "mcpServers": {
-    "openalgo": {
-      "command": "/Users/maruth/projects/openalgo/.venv/bin/python3",
+    "marvelquant": {
+      "command": "/Users/maruth/projects/marvelquant/.venv/bin/python3",
       "args": [
-        "/Users/maruth/projects/openalgo/mcp/mcpserver.py",
+        "/Users/maruth/projects/marvelquant/mcp/mcpserver.py",
         "YOUR_API_KEY_HERE",
         "http://127.0.0.1:5000"
       ]
     },
     "playwright": {
-      "command": "/Users/maruth/projects/openalgo/.venv/bin/python3",
+      "command": "/Users/maruth/projects/marvelquant/.venv/bin/python3",
       "args": [
-        "/Users/maruth/projects/openalgo/mcp/playwright_mcp_server.py"
+        "/Users/maruth/projects/marvelquant/mcp/playwright_mcp_server.py"
       ]
     }
   }
@@ -81,18 +81,18 @@ Edit `~/Library/Application Support/Claude/claude_desktop_config.json`:
 ```json
 {
   "mcpServers": {
-    "openalgo": {
-      "command": "/Users/maruth/projects/openalgo/.venv/bin/python3",
+    "marvelquant": {
+      "command": "/Users/maruth/projects/marvelquant/.venv/bin/python3",
       "args": [
-        "/Users/maruth/projects/openalgo/mcp/mcpserver.py",
+        "/Users/maruth/projects/marvelquant/mcp/mcpserver.py",
         "YOUR_API_KEY_HERE",
         "http://127.0.0.1:5000"
       ]
     },
     "playwright": {
-      "command": "/Users/maruth/projects/openalgo/.venv/bin/python3",
+      "command": "/Users/maruth/projects/marvelquant/.venv/bin/python3",
       "args": [
-        "/Users/maruth/projects/openalgo/mcp/playwright_mcp_server.py"
+        "/Users/maruth/projects/marvelquant/mcp/playwright_mcp_server.py"
       ]
     }
   }
@@ -208,7 +208,7 @@ The current implementation uses a single browser instance. For multiple instance
 
 For issues with:
 - **Playwright MCP**: Check this documentation
-- **OpenAlgo MCP**: See `mcp/README.md`
+- **MarvelQuant MCP**: See `mcp/README.md`
 - **MCP Protocol**: Check Model Context Protocol specifications
 - **Browser Automation**: See Playwright documentation
 
@@ -216,5 +216,5 @@ For issues with:
 
 1. Test basic browser automation
 2. Explore web scraping capabilities
-3. Integrate with OpenAlgo trading workflows
+3. Integrate with MarvelQuant trading workflows
 4. Build custom automation scripts

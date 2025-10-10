@@ -1,6 +1,6 @@
 """
 Order data transformation module for Jainam
-Handles order-specific data conversions between OpenAlgo and Jainam formats
+Handles order-specific data conversions between MarvelQuant and Jainam formats
 """
 import json
 from typing import Any, Dict, List, Optional, Tuple
@@ -159,7 +159,7 @@ def calculate_order_statistics(order_data: Optional[List[Dict[str, Any]]]) -> Di
 
 
 def transform_order_data(orders: Optional[List[Dict[str, Any]]]) -> List[Dict[str, Any]]:
-    """Convert mapped orders into the final OpenAlgo order schema."""
+    """Convert mapped orders into the final MarvelQuant order schema."""
     if orders is None:
         return []
     if isinstance(orders, dict):
@@ -234,10 +234,10 @@ def _extract_market_token(credentials: Dict[str, Any]) -> Optional[str]:
 
 def transform_order_request(order_data):
     """
-    Transform OpenAlgo order request to Jainam format
+    Transform MarvelQuant order request to Jainam format
 
     Args:
-        order_data: OpenAlgo order data
+        order_data: MarvelQuant order data
 
     Returns:
         Jainam order data
@@ -249,26 +249,26 @@ def transform_order_request(order_data):
 
 def transform_order_response(jainam_response):
     """
-    Transform Jainam order response to OpenAlgo format
+    Transform Jainam order response to MarvelQuant format
 
     Args:
         jainam_response: Jainam API response
 
     Returns:
-        OpenAlgo order response
+        MarvelQuant order response
     """
     from broker.jainam_prop.mapping.transform_data import transform_response
     return transform_response(jainam_response)
 
 def transform_order_status(jainam_order_status):
     """
-    Transform Jainam order status to OpenAlgo format
+    Transform Jainam order status to MarvelQuant format
 
     Args:
         jainam_order_status: Order status from Jainam
 
     Returns:
-        Order status in OpenAlgo format
+        Order status in MarvelQuant format
     """
     # Status mapping
     status_mapping = {
@@ -296,7 +296,7 @@ def transform_order_status(jainam_order_status):
     }
 
     try:
-        openalgo_status = {
+        marvelquant_status = {
             'orderid': str(jainam_order_status.get('AppOrderID', '')),
             'status': status_mapping.get(jainam_order_status.get('OrderStatus', ''), 'unknown'),
             'symbol': jainam_order_status.get('TradingSymbol', ''),
@@ -313,7 +313,7 @@ def transform_order_status(jainam_order_status):
             'exchange_order_id': str(jainam_order_status.get('ExchangeOrderID', ''))
         }
 
-        return openalgo_status
+        return marvelquant_status
 
     except Exception as e:
         return {
@@ -323,19 +323,19 @@ def transform_order_status(jainam_order_status):
 
 def transform_trade_book(jainam_trades):
     """
-    Transform Jainam trade book to OpenAlgo format
+    Transform Jainam trade book to MarvelQuant format
 
     Args:
         jainam_trades: Trade data from Jainam
 
     Returns:
-        Trade data in OpenAlgo format
+        Trade data in MarvelQuant format
     """
     try:
-        openalgo_trades = []
+        marvelquant_trades = []
 
         for trade in jainam_trades:
-            openalgo_trade = {
+            marvelquant_trade = {
                 'orderid': str(trade.get('AppOrderID', '')),
                 'trade_id': str(trade.get('TradeID', '')),
                 'symbol': trade.get('TradingSymbol', ''),
@@ -347,11 +347,11 @@ def transform_trade_book(jainam_trades):
                 'timestamp': trade.get('TradeTime', ''),
                 'exchange_trade_id': str(trade.get('ExchangeTradeID', ''))
             }
-            openalgo_trades.append(openalgo_trade)
+            marvelquant_trades.append(marvelquant_trade)
 
         return {
             'status': 'success',
-            'trades': openalgo_trades
+            'trades': marvelquant_trades
         }
 
     except Exception as e:
@@ -422,13 +422,13 @@ def validate_order_data(order_data):
 
 def get_order_history_transform(jainam_history):
     """
-    Transform Jainam order history to OpenAlgo format
+    Transform Jainam order history to MarvelQuant format
 
     Args:
         jainam_history: Order history from Jainam
 
     Returns:
-        Order history in OpenAlgo format
+        Order history in MarvelQuant format
     """
     try:
         # Similar to order status transformation but for historical data
@@ -493,13 +493,13 @@ def map_trade_data(trade_data):
 
 def transform_tradebook_data(tradebook_data):
     """
-    Transform trade book data to OpenAlgo standard format
+    Transform trade book data to MarvelQuant standard format
 
     Args:
         tradebook_data: Mapped trade data
 
     Returns:
-        List of transformed trades in OpenAlgo format
+        List of transformed trades in MarvelQuant format
     """
     transformed_data = []
 
@@ -557,7 +557,7 @@ def map_position_data(position_data):
     """
     get_symbol = _get_symbol_lookup()
 
-    # Exchange mapping from Jainam format to OpenAlgo format
+    # Exchange mapping from Jainam format to MarvelQuant format
     exchange_mapping = {
         "NSECM": "NSE",
         "BSECM": "BSE",
@@ -721,13 +721,13 @@ def map_portfolio_data(portfolio_data, auth_token: Optional[Any] = None):
     - auth_token: Optional authentication payload used when we need to fetch market quotes.
 
     Returns:
-    - A dictionary with 'holdings' and 'totalholding' keys structured for the OpenAlgo system.
+    - A dictionary with 'holdings' and 'totalholding' keys structured for the MarvelQuant system.
     """
     get_symbol = _get_symbol_lookup()
 
     logger.info("Mapping portfolio data")
 
-    # Exchange mapping from Jainam format to OpenAlgo format
+    # Exchange mapping from Jainam format to MarvelQuant format
     exchange_mapping = {
         "NSECM": "NSE",
         "BSECM": "BSE",

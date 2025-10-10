@@ -3,14 +3,14 @@ from utils.logging import get_logger
 logger = get_logger(__name__)
 
 def transform_data(data, token_id):
-    """Transform OpenAlgo order data to DefinedGe Securities format"""
+    """Transform MarvelQuant order data to DefinedGe Securities format"""
     from database.token_db import get_br_symbol
     
     try:
         # Get broker symbol format
         symbol = get_br_symbol(data["symbol"], data["exchange"])
         
-        # Map OpenAlgo fields to DefinedGe fields based on API docs
+        # Map MarvelQuant fields to DefinedGe fields based on API docs
         transformed_data = {
             "tradingsymbol": symbol,
             "exchange": map_exchange(data['exchange']),
@@ -119,7 +119,7 @@ def transform_modify_order_data(data, token_id):
         return data
 
 def map_exchange(exchange):
-    """Map OpenAlgo exchange to DefinedGe exchange"""
+    """Map MarvelQuant exchange to DefinedGe exchange"""
     exchange_mapping = {
         'NSE': 'NSE',
         'BSE': 'BSE',
@@ -131,7 +131,7 @@ def map_exchange(exchange):
     return exchange_mapping.get(exchange, exchange)
 
 def reverse_map_exchange(exchange):
-    """Map DefinedGe exchange to OpenAlgo exchange"""
+    """Map DefinedGe exchange to MarvelQuant exchange"""
     reverse_mapping = {
         'NSE': 'NSE',
         'BSE': 'BSE',
@@ -143,7 +143,7 @@ def reverse_map_exchange(exchange):
     return reverse_mapping.get(exchange, exchange)
 
 def map_product_type(product):
-    """Map OpenAlgo product type to DefinedGe product type"""
+    """Map MarvelQuant product type to DefinedGe product type"""
     product_mapping = {
         'MIS': 'INTRADAY',
         'CNC': 'NORMAL',
@@ -154,7 +154,7 @@ def map_product_type(product):
     return product_mapping.get(product, 'NORMAL')
 
 def reverse_map_product_type(product):
-    """Map DefinedGe product type to OpenAlgo product type"""
+    """Map DefinedGe product type to MarvelQuant product type"""
     reverse_mapping = {
         'INTRADAY': 'MIS',
         'NORMAL': 'CNC',  # For NSE/BSE cash segment
@@ -165,7 +165,7 @@ def reverse_map_product_type(product):
     return reverse_mapping.get(product, 'CNC')
 
 def map_price_type(pricetype):
-    """Map OpenAlgo price type to DefinedGe price type"""
+    """Map MarvelQuant price type to DefinedGe price type"""
     price_mapping = {
         'MARKET': 'MARKET',
         'LIMIT': 'LIMIT',
@@ -175,7 +175,7 @@ def map_price_type(pricetype):
     return price_mapping.get(pricetype, 'LIMIT')
 
 def map_definedge_price_type(pricetype):
-    """Map OpenAlgo price type to DefinedGe API price type (for modify order)"""
+    """Map MarvelQuant price type to DefinedGe API price type (for modify order)"""
     price_mapping = {
         'MARKET': 'MARKET',
         'LIMIT': 'LIMIT',
@@ -185,7 +185,7 @@ def map_definedge_price_type(pricetype):
     return price_mapping.get(pricetype, 'LIMIT')
 
 def map_product_type_for_modify(product):
-    """Map OpenAlgo product type to DefinedGe product type for modify order"""
+    """Map MarvelQuant product type to DefinedGe product type for modify order"""
     product_mapping = {
         'MIS': 'INTRADAY',
         'CNC': 'CNC',  # DefinedGe modify API expects CNC for equity
@@ -194,7 +194,7 @@ def map_product_type_for_modify(product):
     return product_mapping.get(product, 'CNC')
 
 def reverse_map_price_type(pricetype):
-    """Map DefinedGe price type to OpenAlgo price type"""
+    """Map DefinedGe price type to MarvelQuant price type"""
     reverse_mapping = {
         'MARKET': 'MARKET',
         'LIMIT': 'LIMIT',
@@ -204,7 +204,7 @@ def reverse_map_price_type(pricetype):
     return reverse_mapping.get(pricetype, 'LIMIT')
 
 def map_order_status(status):
-    """Map DefinedGe order status to OpenAlgo status"""
+    """Map DefinedGe order status to MarvelQuant status"""
     status_mapping = {
         'COMPLETE': 'COMPLETE',
         'OPEN': 'OPEN',
@@ -216,7 +216,7 @@ def map_order_status(status):
     return status_mapping.get(status, status)
 
 def transform_order_data(order):
-    """Transform DefinedGe order data to OpenAlgo format"""
+    """Transform DefinedGe order data to MarvelQuant format"""
     try:
         transformed_order = {
             'symbol': order.get('tradingsymbol', ''),
@@ -241,7 +241,7 @@ def transform_order_data(order):
         return order
 
 def transform_position_data(position):
-    """Transform DefinedGe position data to OpenAlgo format"""
+    """Transform DefinedGe position data to MarvelQuant format"""
     try:
         transformed_position = {
             'symbol': position.get('tradingsymbol', ''),
@@ -261,7 +261,7 @@ def transform_position_data(position):
         return position
 
 def transform_holding_data(holding):
-    """Transform DefinedGe holding data to OpenAlgo format"""
+    """Transform DefinedGe holding data to MarvelQuant format"""
     try:
         # DefinedGe holdings have multiple trading symbols for different exchanges
         trading_symbols = holding.get('tradingsymbol', [])

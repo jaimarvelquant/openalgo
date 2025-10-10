@@ -99,7 +99,7 @@ def ensure_directories():
         else:
             # Try alternative paths in /tmp if main paths fail
             import tempfile
-            temp_base = Path(tempfile.gettempdir()) / 'openalgo'
+            temp_base = Path(tempfile.gettempdir()) / 'marvelquant'
             STRATEGIES_DIR = temp_base / 'strategies' / 'scripts'
             LOGS_DIR = temp_base / 'log' / 'strategies'
             STRATEGIES_DIR.mkdir(parents=True, exist_ok=True)

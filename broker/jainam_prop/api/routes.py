@@ -22,8 +22,12 @@ JAINAM_ROUTES = {
     "interactive.prefix": "interactive",
     
     # Authentication
-    "user.login": "/interactive/user/session",
-    "user.logout": "/interactive/user/session",
+    # CRITICAL FIX: Endpoint is /user/session NOT /interactive/user/session
+    # Reference: Hostlookup_B.pdf shows endpoint as "/user/session"
+    # But we need to check if base URL includes /interactive or not
+    # For now, trying /user/session (without /interactive prefix)
+    "user.login": "/user/session",
+    "user.logout": "/user/session",
     "user.profile": "/interactive/user/profile",
     "user.balance": "/interactive/user/balance",
     

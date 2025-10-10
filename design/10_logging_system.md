@@ -2,7 +2,7 @@
 
 ## Overview
 
-OpenAlgo implements a sophisticated centralized logging system that provides colored console output, sensitive data protection, and comprehensive monitoring capabilities across all application components.
+MarvelQuant implements a sophisticated centralized logging system that provides colored console output, sensitive data protection, and comprehensive monitoring capabilities across all application components.
 
 ## Architecture Components
 
@@ -170,9 +170,9 @@ TimedRotatingFileHandler(
 
 ```
 logs/
-├── openalgo_2024-01-15.log      # Current day log
-├── openalgo_2024-01-14.log      # Previous day log
-├── openalgo_2024-01-13.log      # Older logs
+├── marvelquant_2024-01-15.log      # Current day log
+├── marvelquant_2024-01-14.log      # Previous day log
+├── marvelquant_2024-01-13.log      # Older logs
 └── ...                          # Automatic cleanup after retention period
 ```
 
@@ -192,7 +192,7 @@ Automatic cleanup removes logs older than the retention period:
 from utils.logging import get_logger, log_startup_banner, highlight_url
 
 logger = get_logger(__name__)
-log_startup_banner(logger, "OpenAlgo API Server", "http://localhost:5000")
+log_startup_banner(logger, "MarvelQuant API Server", "http://localhost:5000")
 ```
 
 ### Module Usage

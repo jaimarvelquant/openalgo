@@ -186,7 +186,7 @@ def get_holdings(
     Supports both API-based authentication and direct internal calls.
     
     Args:
-        api_key: OpenAlgo API key (for API-based calls)
+        api_key: MarvelQuant API key (for API-based calls)
         auth_token: Direct broker authentication token (for internal calls)
         broker: Direct broker name (for internal calls)
         
@@ -204,7 +204,7 @@ def get_holdings(
         if AUTH_TOKEN is None or broker_name is None:
             return False, {
                 'status': 'error',
-                'message': 'Invalid openalgo apikey'
+                'message': 'Invalid marvelquant apikey'
             }, 403
         broker_auth = build_broker_auth_payload(AUTH_TOKEN, FEED_TOKEN)
         if broker_auth is None:

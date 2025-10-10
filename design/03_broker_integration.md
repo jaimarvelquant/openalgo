@@ -1,8 +1,8 @@
-# OpenAlgo Broker Integration Layer
+# MarvelQuant Broker Integration Layer
 
 ## Executive Summary
 
-The broker integration layer is the cornerstone of OpenAlgo's broker-agnostic architecture, providing a unified interface to interact with 25+ Indian stock brokers. Through a sophisticated adapter pattern, it abstracts broker-specific APIs, authentication mechanisms, and data formats into a consistent interface.
+The broker integration layer is the cornerstone of MarvelQuant's broker-agnostic architecture, providing a unified interface to interact with 25+ Indian stock brokers. Through a sophisticated adapter pattern, it abstracts broker-specific APIs, authentication mechanisms, and data formats into a consistent interface.
 
 ## Architecture Overview
 
@@ -10,7 +10,7 @@ The broker integration layer is the cornerstone of OpenAlgo's broker-agnostic ar
 
 ```mermaid
 graph TB
-    subgraph "OpenAlgo Core"
+    subgraph "MarvelQuant Core"
         ServiceLayer[Service Layer]
         UnifiedInterface[Unified Broker Interface]
     end
@@ -154,22 +154,22 @@ broker/
 ```mermaid
 sequenceDiagram
     participant User
-    participant OpenAlgo
+    participant MarvelQuant
     participant BrokerAdapter
     participant BrokerAuth
     participant BrokerAPI
 
-    User->>OpenAlgo: Initiate Login
-    OpenAlgo->>BrokerAdapter: Request Login URL
+    User->>MarvelQuant: Initiate Login
+    MarvelQuant->>BrokerAdapter: Request Login URL
     BrokerAdapter->>BrokerAuth: Generate Auth URL
     BrokerAuth-->>User: Redirect to Broker Login
     User->>BrokerAuth: Enter Credentials + TOTP
-    BrokerAuth-->>OpenAlgo: Callback with Request Token
-    OpenAlgo->>BrokerAdapter: Exchange Token
+    BrokerAuth-->>MarvelQuant: Callback with Request Token
+    MarvelQuant->>BrokerAdapter: Exchange Token
     BrokerAdapter->>BrokerAPI: Get Access Token
     BrokerAPI-->>BrokerAdapter: Access Token + Refresh Token
-    BrokerAdapter-->>OpenAlgo: Store Encrypted Tokens
-    OpenAlgo-->>User: Login Successful
+    BrokerAdapter-->>MarvelQuant: Store Encrypted Tokens
+    MarvelQuant-->>User: Login Successful
 ```
 
 ### API Key Authentication (Fyers, Alice Blue)
@@ -288,7 +288,7 @@ class ZerodhaAdapter(BaseBrokerAdapter):
         self.kite.set_access_token(auth_token)
 
     def place_order(self, params: Dict) -> Dict:
-        # Transform OpenAlgo params to Kite format
+        # Transform MarvelQuant params to Kite format
         kite_params = self._transform_order_params(params)
 
         try:
@@ -316,7 +316,7 @@ class ZerodhaAdapter(BaseBrokerAdapter):
             }
 
     def _transform_order_params(self, params: Dict) -> Dict:
-        """Transform OpenAlgo params to Kite format"""
+        """Transform MarvelQuant params to Kite format"""
         return {
             "variety": "regular",
             "exchange": params["exchange"],
@@ -337,21 +337,21 @@ class ZerodhaAdapter(BaseBrokerAdapter):
 ```python
 # broker/zerodha/mapping/symbol_mapping.py
 class SymbolMapper:
-    def to_broker_format(self, openalgo_symbol: str) -> str:
+    def to_broker_format(self, marvelquant_symbol: str) -> str:
         """
-        Convert OpenAlgo symbol format to broker format
-        OpenAlgo: SBIN-EQ
+        Convert MarvelQuant symbol format to broker format
+        MarvelQuant: SBIN-EQ
         Zerodha: SBIN
         """
-        if "-EQ" in openalgo_symbol:
-            return openalgo_symbol.replace("-EQ", "")
-        return openalgo_symbol
+        if "-EQ" in marvelquant_symbol:
+            return marvelquant_symbol.replace("-EQ", "")
+        return marvelquant_symbol
 
-    def to_openalgo_format(self, broker_symbol: str, exchange: str) -> str:
+    def to_marvelquant_format(self, broker_symbol: str, exchange: str) -> str:
         """
-        Convert broker symbol to OpenAlgo format
+        Convert broker symbol to MarvelQuant format
         Zerodha: SBIN
-        OpenAlgo: SBIN-EQ
+        MarvelQuant: SBIN-EQ
         """
         if exchange in ["NSE", "BSE"]:
             return f"{broker_symbol}-EQ"
@@ -364,9 +364,9 @@ class SymbolMapper:
 # broker/zerodha/mapping/transform_data.py
 class ResponseTransformer:
     def transform_position(self, broker_position: Dict) -> Dict:
-        """Transform broker position to OpenAlgo format"""
+        """Transform broker position to MarvelQuant format"""
         return {
-            "symbol": self.symbol_mapper.to_openalgo_format(
+            "symbol": self.symbol_mapper.to_marvelquant_format(
                 broker_position["tradingsymbol"],
                 broker_position["exchange"]
             ),
@@ -382,10 +382,10 @@ class ResponseTransformer:
         }
 
     def transform_order(self, broker_order: Dict) -> Dict:
-        """Transform broker order to OpenAlgo format"""
+        """Transform broker order to MarvelQuant format"""
         return {
             "order_id": broker_order["order_id"],
-            "symbol": self.symbol_mapper.to_openalgo_format(
+            "symbol": self.symbol_mapper.to_marvelquant_format(
                 broker_order["tradingsymbol"],
                 broker_order["exchange"]
             ),
@@ -423,8 +423,8 @@ class MasterContractManager:
 
     def process_contracts(self, df: pd.DataFrame) -> pd.DataFrame:
         """Process and standardize instrument data"""
-        # Add OpenAlgo specific columns
-        df['openalgo_symbol'] = df.apply(self._create_symbol, axis=1)
+        # Add MarvelQuant specific columns
+        df['marvelquant_symbol'] = df.apply(self._create_symbol, axis=1)
         df['token'] = df['instrument_token']
 
         # Filter active instruments
@@ -447,7 +447,7 @@ class MasterContractManager:
 
         # Create indexes for fast lookup
         with self.engine.connect() as conn:
-            conn.execute("CREATE INDEX idx_symbol ON master_contracts(openalgo_symbol)")
+            conn.execute("CREATE INDEX idx_symbol ON master_contracts(marvelquant_symbol)")
             conn.execute("CREATE INDEX idx_token ON master_contracts(token)")
 ```
 
@@ -476,11 +476,11 @@ class ZerodhaWebSocketClient:
     def on_ticks(self, ws, ticks):
         """Process incoming tick data"""
         for tick in ticks:
-            openalgo_tick = self._transform_tick(tick)
-            self._broadcast_to_subscribers(openalgo_tick)
+            marvelquant_tick = self._transform_tick(tick)
+            self._broadcast_to_subscribers(marvelquant_tick)
 
     def _transform_tick(self, tick: Dict) -> Dict:
-        """Transform broker tick to OpenAlgo format"""
+        """Transform broker tick to MarvelQuant format"""
         return {
             "symbol": self._get_symbol_from_token(tick["instrument_token"]),
             "ltp": tick["last_price"],
@@ -633,7 +633,7 @@ class BrokerConnectionManager:
             ),
             timeout=self.config["timeout"],
             headers={
-                "User-Agent": f"OpenAlgo/1.0 ({broker})"
+                "User-Agent": f"MarvelQuant/1.0 ({broker})"
             }
         )
 

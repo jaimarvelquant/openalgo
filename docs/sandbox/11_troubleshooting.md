@@ -2,7 +2,7 @@
 
 ## Overview
 
-This guide covers common issues, errors, and solutions for OpenAlgo Sandbox Mode.
+This guide covers common issues, errors, and solutions for MarvelQuant Sandbox Mode.
 
 ## Table of Contents
 
@@ -46,12 +46,12 @@ python upgrade/migrate_sandbox.py
 3. **Check Logs**:
 ```bash
 # Check application logs
-tail -f log/openalgo.log | grep -i sandbox
+tail -f log/marvelquant.log | grep -i sandbox
 ```
 
 4. **Restart Application**:
 ```bash
-# Stop and restart OpenAlgo
+# Stop and restart MarvelQuant
 # Analyzer state persists in database
 ```
 
@@ -160,7 +160,7 @@ print(f"Checking orders every {interval} seconds")
 4. **Check Logs**:
 ```bash
 # Look for execution errors
-grep "execution_engine" log/openalgo.log
+grep "execution_engine" log/marvelquant.log
 ```
 
 ### Issue: LIMIT Orders Not Executing
@@ -546,7 +546,7 @@ print(response.json())
 4. **Check Logs**:
 ```bash
 # Look for square-off execution logs
-grep "square.off\|squareoff" log/openalgo.log
+grep "square.off\|squareoff" log/marvelquant.log
 ```
 
 ### Issue: MIS Orders Rejected After Square-Off
@@ -670,7 +670,7 @@ requests.post("http://127.0.0.1:5000/api/v1/analyzer", json={
 3. **Check Application Logs**:
 ```bash
 # Look for thread start messages
-grep -i "thread\|scheduler" log/openalgo.log
+grep -i "thread\|scheduler" log/marvelquant.log
 ```
 
 ---
@@ -694,7 +694,7 @@ lsof db/sandbox.db  # Linux/Mac
 
 2. **Restart Application**:
 ```bash
-# Stop OpenAlgo completely
+# Stop MarvelQuant completely
 # Wait 5 seconds
 # Start again
 ```
@@ -856,10 +856,10 @@ for fund in funds:
 
 ```bash
 # Watch execution engine logs
-tail -f log/openalgo.log | grep "execution_engine"
+tail -f log/marvelquant.log | grep "execution_engine"
 
 # Watch square-off logs
-tail -f log/openalgo.log | grep "square.off"
+tail -f log/marvelquant.log | grep "square.off"
 ```
 
 ---
@@ -868,8 +868,8 @@ tail -f log/openalgo.log | grep "square.off"
 
 If issues persist:
 
-1. **Check Logs**: `log/openalgo.log`
-2. **GitHub Issues**: Report at [OpenAlgo Repository](https://github.com/marketcalls/openalgo/issues)
+1. **Check Logs**: `log/marvelquant.log`
+2. **GitHub Issues**: Report at [MarvelQuant Repository](https://github.com/marketcalls/marvelquant/issues)
 3. **Documentation**: Review [Sandbox Documentation](README.md)
 4. **Community**: Ask in community forums
 

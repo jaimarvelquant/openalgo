@@ -2,7 +2,7 @@
 
 ## Executive Summary
 
-OpenAlgo Sandbox Mode (API Analyzer) provides a complete simulated trading environment where users can test strategies, validate trading logic, and practice order execution using real-time market data without risking real capital. This document outlines the design, architecture, and implementation of the Sandbox Mode system.
+MarvelQuant Sandbox Mode (API Analyzer) provides a complete simulated trading environment where users can test strategies, validate trading logic, and practice order execution using real-time market data without risking real capital. This document outlines the design, architecture, and implementation of the Sandbox Mode system.
 
 ## Problem Statement
 
@@ -150,7 +150,7 @@ def toggle_analyzer_mode(
 
     Args:
         analyzer_data: {'mode': True/False}
-        api_key: OpenAlgo API key
+        api_key: MarvelQuant API key
 
     Returns:
         (success, response, status_code)
@@ -718,7 +718,7 @@ When square-off time updated:
 **Usage**:
 ```bash
 # Apply migration
-cd openalgo
+cd marvelquant
 uv run upgrade/migrate_sandbox.py
 
 # Or using Python directly

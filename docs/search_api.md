@@ -18,7 +18,7 @@ POST /api/v1/search
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| apikey | string | Yes | Your OpenAlgo API key |
+| apikey | string | Yes | Your MarvelQuant API key |
 | query | string | Yes | Search query (symbol name, partial name, or option chain) |
 | exchange | string | No | Exchange filter (NSE, BSE, NFO, MCX, etc.) |
 

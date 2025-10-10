@@ -1,5 +1,5 @@
 """
-OpenAlgo WebSocket LTP Example - 1800 Symbols Test
+MarvelQuant WebSocket LTP Example - 1800 Symbols Test
 Tests LTP data streaming for 1800+ symbols from CSV file including exchange info
 """
 
@@ -71,7 +71,7 @@ def load_symbols(limit=1800):
 
 
 def main():
-    print("OpenAlgo WebSocket LTP Example - 1800 Symbols Test")
+    print("MarvelQuant WebSocket LTP Example - 1800 Symbols Test")
     print("=" * 60)
     
     # Initialize the API client

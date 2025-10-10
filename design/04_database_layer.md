@@ -1,8 +1,8 @@
-# OpenAlgo Database Layer Design
+# MarvelQuant Database Layer Design
 
 ## Executive Summary
 
-The database layer provides comprehensive data persistence for the OpenAlgo trading platform, managing everything from user authentication and broker credentials to trading history, strategy configurations, and Telegram bot data. Built on SQLAlchemy ORM, it offers database-agnostic support with optimized connection pooling and secure data handling.
+The database layer provides comprehensive data persistence for the MarvelQuant trading platform, managing everything from user authentication and broker credentials to trading history, strategy configurations, and Telegram bot data. Built on SQLAlchemy ORM, it offers database-agnostic support with optimized connection pooling and secure data handling.
 
 ## Architecture Overview
 
@@ -338,12 +338,12 @@ class Token(Base):
     option_type = Column(String(2))  # CE/PE
     lot_size = Column(Integer)
     tick_size = Column(Numeric(5, 2))
-    openalgo_symbol = Column(String(100), nullable=False)
+    marvelquant_symbol = Column(String(100), nullable=False)
 
     __table_args__ = (
         Index('idx_token_broker', 'broker'),
         Index('idx_token_symbol', 'symbol'),
-        Index('idx_token_openalgo', 'openalgo_symbol'),
+        Index('idx_token_marvelquant', 'marvelquant_symbol'),
         UniqueConstraint('broker', 'exchange', 'token'),
     )
 ```
@@ -468,7 +468,7 @@ class ChartInkWebhook(Base):
 
 ```python
 # Environment Variables
-DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///openalgo.db')
+DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///marvelquant.db')
 
 # Connection Pool Configuration
 DB_POOL_SIZE = int(os.getenv('DB_POOL_SIZE', '50'))
@@ -770,8 +770,8 @@ def backup_database():
     if 'sqlite' in DATABASE_URL:
         # SQLite backup
         import shutil
-        backup_path = f"backups/openalgo_{datetime.now():%Y%m%d_%H%M%S}.db"
-        shutil.copy2('openalgo.db', backup_path)
+        backup_path = f"backups/marvelquant_{datetime.now():%Y%m%d_%H%M%S}.db"
+        shutil.copy2('marvelquant.db', backup_path)
     else:
         # PostgreSQL/MySQL backup
         os.system(f"pg_dump {DATABASE_URL} > backup.sql")
@@ -784,7 +784,7 @@ def restore_database(backup_path: str):
     """Restore database from backup"""
     if 'sqlite' in DATABASE_URL:
         import shutil
-        shutil.copy2(backup_path, 'openalgo.db')
+        shutil.copy2(backup_path, 'marvelquant.db')
     else:
         os.system(f"psql {DATABASE_URL} < {backup_path}")
 ```
@@ -801,4 +801,4 @@ def restore_database(backup_path: str):
 
 ## Conclusion
 
-The OpenAlgo database layer provides a robust, secure, and scalable foundation for the trading platform. With comprehensive models covering all aspects from user management to trading operations, encrypted storage for sensitive data, and optimized performance through connection pooling and indexing, it ensures reliable data persistence and retrieval for algorithmic trading operations.
+The MarvelQuant database layer provides a robust, secure, and scalable foundation for the trading platform. With comprehensive models covering all aspects from user management to trading operations, encrypted storage for sensitive data, and optimized performance through connection pooling and indexing, it ensures reliable data persistence and retrieval for algorithmic trading operations.

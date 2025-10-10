@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 """
-WebSocket Client Test Script for OpenAlgo
+WebSocket Client Test Script for MarvelQuant
 
-This script demonstrates how to connect to the OpenAlgo WebSocket server
+This script demonstrates how to connect to the MarvelQuant WebSocket server
 and subscribe to different types of market data (LTP, Quote, Depth).
 """
 
@@ -13,7 +13,7 @@ import sys
 
 # Configuration
 WS_URL = "ws://localhost:8765"  # Update if your server is on a different host/port
-API_KEY = "918d504f250e6f7d6b533b245a46009d3f3b8cad8e6314c8b45ae8a35b972d8a"  # Your OpenAlgo API key
+API_KEY = "918d504f250e6f7d6b533b245a46009d3f3b8cad8e6314c8b45ae8a35b972d8a"  # Your MarvelQuant API key
 
 # Test symbols
 RELIANCE_NSE = {"exchange": "MCX", "symbol": "GOLDPETAL30MAY25FUT"}
@@ -199,7 +199,7 @@ async def run_all_tests():
 
 def main():
     """Main function to run the WebSocket tests"""
-    print("OpenAlgo WebSocket Client Test")
+    print("MarvelQuant WebSocket Client Test")
     print(f"Connecting to: {WS_URL}")
     print(f"API Key: {API_KEY[:8]}...{API_KEY[-8:]}")
     

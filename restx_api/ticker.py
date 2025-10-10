@@ -166,13 +166,13 @@ class Ticker(Resource):
             AUTH_TOKEN, broker = get_auth_token_broker(api_key)
             if AUTH_TOKEN is None:
                 if response_format == 'txt':
-                    response = TextResponse('Invalid openalgo apikey\n')
+                    response = TextResponse('Invalid marvelquant apikey\n')
                     response.content_type = 'text/plain'
                     response.json = {'request_id': f"ticker_{symbol}_{history_data['interval']}"}
                     return response, 403
                 return make_response(jsonify({
                     'status': 'error',
-                    'message': 'Invalid openalgo apikey'
+                    'message': 'Invalid marvelquant apikey'
                 }), 403)
 
             broker_module = import_broker_module(broker)

@@ -1,7 +1,7 @@
 import logging
 
 class DefinedgeExchangeMapper:
-    """Maps OpenAlgo exchange codes to DefinEdge-specific exchange types"""
+    """Maps MarvelQuant exchange codes to DefinEdge-specific exchange types"""
     
     # Exchange mapping for DefinEdge broker (as per API docs)
     EXCHANGE_MAP = {
@@ -18,10 +18,10 @@ class DefinedgeExchangeMapper:
     @staticmethod
     def get_exchange_code(exchange):
         """
-        Convert OpenAlgo exchange code to DefinEdge exchange code
+        Convert MarvelQuant exchange code to DefinEdge exchange code
         
         Args:
-            exchange (str): OpenAlgo exchange code
+            exchange (str): MarvelQuant exchange code
             
         Returns:
             str: DefinEdge exchange code

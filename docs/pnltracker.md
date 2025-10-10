@@ -2,7 +2,7 @@
 
 ## Overview
 
-The PnL Tracker is a real-time profit and loss monitoring feature in OpenAlgo that provides visual insights into intraday trading performance. It displays MTM (Mark-to-Market) PnL curves and drawdown analysis using interactive charts powered by TradingView Lightweight Charts.
+The PnL Tracker is a real-time profit and loss monitoring feature in MarvelQuant that provides visual insights into intraday trading performance. It displays MTM (Mark-to-Market) PnL curves and drawdown analysis using interactive charts powered by TradingView Lightweight Charts.
 
 ## Features
 
@@ -230,7 +230,7 @@ tickMarkFormatter: (time, tickMarkType, locale) => {
 ## Usage
 
 ### Accessing PnL Tracker
-1. Login to OpenAlgo
+1. Login to MarvelQuant
 2. Click profile menu in navbar
 3. Select "PnL Tracker" (below "Logs")
 4. View real-time PnL metrics and charts
@@ -311,5 +311,5 @@ logger.info(f"PnL series length: {len(pnl_series)}")
 For issues or questions about the PnL Tracker:
 1. Check this documentation
 2. Review logs in `/logs` directory
-3. Join OpenAlgo Discord server
+3. Join MarvelQuant Discord server
 4. Report issues on GitHub

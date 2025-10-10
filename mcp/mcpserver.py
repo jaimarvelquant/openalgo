@@ -12,11 +12,11 @@ if len(sys.argv) < 3:
 api_key = sys.argv[1]
 host = sys.argv[2]
 
-# Initialize OpenAlgo client with provided arguments
+# Initialize MarvelQuant client with provided arguments
 client = api(api_key=api_key, host=host)
 
 # Create MCP server
-mcp = FastMCP("openalgo")
+mcp = FastMCP("marvelquant")
 
 # ORDER MANAGEMENT TOOLS
 
@@ -551,11 +551,11 @@ def get_available_intervals() -> str:
 # UTILITY TOOLS
 
 @mcp.tool()
-def get_openalgo_version() -> str:
-    """Get the OpenAlgo library version."""
+def get_marvelquant_version() -> str:
+    """Get the MarvelQuant library version."""
     try:
         import openalgo
-        return f"OpenAlgo version: {openalgo.__version__}"
+        return f"MarvelQuant version: {marvelquant.__version__}"
     except Exception as e:
         return f"Error getting version: {str(e)}"
 

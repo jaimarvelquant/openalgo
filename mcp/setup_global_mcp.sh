@@ -63,9 +63,9 @@ playwright install
 
 print_status "Playwright browsers installed globally"
 
-# Get API key from user for OpenAlgo
+# Get API key from user for MarvelQuant
 echo
-print_info "Please enter your OpenAlgo API key (or press Enter to skip OpenAlgo setup):"
+print_info "Please enter your MarvelQuant API key (or press Enter to skip MarvelQuant setup):"
 read -s API_KEY
 
 # Create configuration files
@@ -99,7 +99,7 @@ if [ -n "$API_KEY" ]; then
     cat > "$CODEX_CONFIG_FILE" << EOF
 {
   "mcpServers": {
-    "openalgo": {
+    "marvelquant": {
       "command": "$PROJECT_DIR/.venv/bin/python3",
       "args": [
         "$PROJECT_DIR/mcp/mcpserver.py",
@@ -136,7 +136,7 @@ if [ -n "$API_KEY" ]; then
     cat > "$CLAUDE_CONFIG_FILE" << EOF
 {
   "mcpServers": {
-    "openalgo": {
+    "marvelquant": {
       "command": "$PROJECT_DIR/.venv/bin/python3",
       "args": [
         "$PROJECT_DIR/mcp/mcpserver.py",
@@ -239,7 +239,7 @@ print_info "  Claude: $CLAUDE_CONFIG_FILE"
 echo
 print_info "Available MCP servers:"
 if [ -n "$API_KEY" ]; then
-    print_info "  - openalgo: Trading and market data functionality"
+    print_info "  - marvelquant: Trading and market data functionality"
 fi
 print_info "  - playwright: Browser automation capabilities (GLOBAL)"
 echo

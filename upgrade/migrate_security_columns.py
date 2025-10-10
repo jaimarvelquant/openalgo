@@ -30,13 +30,13 @@ def migrate_settings_table():
     """Add missing security columns to the settings table if they don't exist"""
 
     # Get database URL from environment
-    DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///db/openalgo.db')
+    DATABASE_URL = os.getenv('DATABASE_URL', 'sqlite:///db/marvelquant.db')
 
     # Adjust path for SQLite if relative (since we're in upgrade folder)
     if DATABASE_URL.startswith('sqlite:///') and not DATABASE_URL.startswith('sqlite:////'):
         # Extract the relative path
         db_path = DATABASE_URL.replace('sqlite:///', '')
-        # Make it relative to parent directory (openalgo root)
+        # Make it relative to parent directory (marvelquant root)
         parent_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         full_db_path = os.path.join(parent_dir, db_path)
         DATABASE_URL = f'sqlite:///{full_db_path}'
@@ -107,7 +107,7 @@ def migrate_settings_table():
 def main():
     """Main function to run the migration"""
     logger.info("=" * 60)
-    logger.info("OpenAlgo Security Columns Migration Script")
+    logger.info("MarvelQuant Security Columns Migration Script")
     logger.info("=" * 60)
     logger.info("This script adds missing security columns to the settings table")
     logger.info("to fix the 'no such column: settings.security_404_threshold' error")
@@ -119,7 +119,7 @@ def main():
     if success:
         logger.info("Migration process completed!")
         logger.info("\n📌 Next Steps:")
-        logger.info("   1. Restart your OpenAlgo application")
+        logger.info("   1. Restart your MarvelQuant application")
         logger.info("   2. The /security endpoint should now work properly")
         logger.info("   3. You can access security settings at: http://127.0.0.1:5000/security")
         return 0

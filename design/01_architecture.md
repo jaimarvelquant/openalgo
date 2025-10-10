@@ -1,12 +1,12 @@
-# OpenAlgo System Architecture
+# MarvelQuant System Architecture
 
 ## Executive Summary
 
-OpenAlgo is a sophisticated, broker-agnostic algorithmic trading platform built with Python Flask that provides a unified API interface for 25+ Indian stock brokers. The platform enables algorithmic trading strategies through REST APIs, WebSocket connections, and an intuitive web interface.
+MarvelQuant is a sophisticated, broker-agnostic algorithmic trading platform built with Python Flask that provides a unified API interface for 25+ Indian stock brokers. The platform enables algorithmic trading strategies through REST APIs, WebSocket connections, and an intuitive web interface.
 
 ## Architectural Style
 
-OpenAlgo employs a **Modular Monolithic Architecture** with a **RESTful API** interface, combining the benefits of monolithic simplicity with modular organization through Flask Blueprints and service layers.
+MarvelQuant employs a **Modular Monolithic Architecture** with a **RESTful API** interface, combining the benefits of monolithic simplicity with modular organization through Flask Blueprints and service layers.
 
 ### Key Architectural Principles
 *   **Broker Abstraction:** Unified interface abstracting broker-specific implementations
@@ -65,7 +65,7 @@ OpenAlgo employs a **Modular Monolithic Architecture** with a **RESTful API** in
 ## Directory Structure
 
 ```
-openalgo/
+marvelquant/
 ├── app.py                     # Main Flask application entry point
 ├── blueprints/                # Flask blueprints for modular routing
 │   ├── auth.py               # Authentication and user management
@@ -131,7 +131,7 @@ graph TD
         WSClient[WebSocket Client]
     end
 
-    subgraph "OpenAlgo Application - Flask"
+    subgraph "MarvelQuant Application - Flask"
         direction TB
         APILayer[API Layer - Flask-RESTX - Blueprints]
         Auth[Auth & Session Mgmt]

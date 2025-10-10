@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This document provides an overview of two major features in OpenAlgo:
+This document provides an overview of two major features in MarvelQuant:
 1. **Sandbox Mode (API Analyzer)** - Simulated trading environment
 2. **Telegram Bot Integration** - Mobile trading interface
 
@@ -226,13 +226,13 @@ print(f"Margin Blocked: ₹{response['margin_blocked']}")
 
 ### What is Telegram Bot?
 
-The Telegram Bot provides a secure, mobile-friendly interface for traders to monitor and interact with their OpenAlgo accounts through Telegram messaging app.
+The Telegram Bot provides a secure, mobile-friendly interface for traders to monitor and interact with their MarvelQuant accounts through Telegram messaging app.
 
 ### Key Features
 
 #### 1. Account Management
 - `/start` - Initialize bot
-- `/link` - Link OpenAlgo account
+- `/link` - Link MarvelQuant account
 - `/unlink` - Remove account
 - `/status` - Check connection
 
@@ -316,7 +316,7 @@ The Telegram Bot provides a secure, mobile-friendly interface for traders to mon
 - Use `/newbot` command
 - Save bot token
 
-#### 2. Configure OpenAlgo
+#### 2. Configure MarvelQuant
 - Navigate to `/telegram` in web UI
 - Enter bot token
 - Click "Save Configuration"
@@ -325,7 +325,7 @@ The Telegram Bot provides a secure, mobile-friendly interface for traders to mon
 #### 3. Link Account
 In Telegram, message your bot:
 ```
-/link YOUR_API_KEY http://your-openalgo-host:5000
+/link YOUR_API_KEY http://your-marvelquant-host:5000
 ```
 
 #### 4. Start Using
@@ -351,7 +351,7 @@ In Telegram, message your bot:
 Telegram bot works seamlessly with Sandbox Mode:
 
 1. **Enable Sandbox Mode** via web UI or API
-2. **Link Telegram** account with OpenAlgo API key
+2. **Link Telegram** account with MarvelQuant API key
 3. **View Sandbox Data** through Telegram:
    - `/positions` shows sandbox positions
    - `/funds` shows sandbox funds (₹1 Crore)
@@ -617,7 +617,7 @@ grep "Square-off" logs/sandbox.log
 
 ## Conclusion
 
-Sandbox Mode and Telegram Bot are powerful features that enhance the OpenAlgo platform:
+Sandbox Mode and Telegram Bot are powerful features that enhance the MarvelQuant platform:
 
 **Sandbox Mode** provides:
 - Safe strategy testing

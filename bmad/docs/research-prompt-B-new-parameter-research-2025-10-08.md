@@ -17,7 +17,7 @@ Identify and research new parameters that should be added to the backtester syst
 
 ### Project Overview
 
-We are integrating a Python-based algorithmic trading backtester with OpenAlgo (a Flask-based multi-broker trading platform) to enable live trading execution. While the current `Util.py` module contains 100+ parameters, there are significant gaps when compared to:
+We are integrating a Python-based algorithmic trading backtester with MarvelQuant (a Flask-based multi-broker trading platform) to enable live trading execution. While the current `Util.py` module contains 100+ parameters, there are significant gaps when compared to:
 
 1. **Column Mappings**: Parameters defined in Excel column mappings but not fully implemented in code
 2. **Input Sheet Definitions**: Parameters present in historical input sheets but lacking backend logic
@@ -625,7 +625,7 @@ For EACH of the top 10 priority parameters:
 - **Data Processing**: pandas, numpy
 - **File Handling**: openpyxl (Excel), JSON (configuration)
 - **Validation**: JSON Schema, pydantic, custom Python validation
-- **Integration**: OpenAlgo API for live trading (multi-broker support)
+- **Integration**: MarvelQuant API for live trading (multi-broker support)
 - **Database**: SQLite 3.x
 - **Real-time**: Server-Sent Events (SSE) for live updates
 

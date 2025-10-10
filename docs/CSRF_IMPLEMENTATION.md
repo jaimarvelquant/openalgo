@@ -1,7 +1,7 @@
 # CSRF Implementation Documentation
 
 ## Overview
-OpenAlgo now implements comprehensive CSRF (Cross-Site Request Forgery) protection using Flask-WTF to secure all form submissions and state-changing operations.
+MarvelQuant now implements comprehensive CSRF (Cross-Site Request Forgery) protection using Flask-WTF to secure all form submissions and state-changing operations.
 
 ## Implementation Details
 

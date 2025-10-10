@@ -1,10 +1,10 @@
-# OpenAlgo Sandbox Mode Documentation
+# MarvelQuant Sandbox Mode Documentation
 
 ## Overview
 
-OpenAlgo is an **open-source application** that provides a Sandbox Mode (also known as **API Analyzer Mode**) - a sophisticated simulated trading environment that makes it **easier for traders and developers** to test strategies, validate algorithms, and practice trading with realistic market data without risking real capital.
+MarvelQuant is an **open-source application** that provides a Sandbox Mode (also known as **API Analyzer Mode**) - a sophisticated simulated trading environment that makes it **easier for traders and developers** to test strategies, validate algorithms, and practice trading with realistic market data without risking real capital.
 
-> **⚖️ Regulatory Note**: OpenAlgo Sandbox is **NOT** a virtual/paper trading platform as prohibited by SEBI. It is an **open-source, self-hosted personal test environment** that runs with your own broker APIs for strategy validation. See [Regulatory Compliance](12_regulatory_compliance.md) for detailed clarification.
+> **⚖️ Regulatory Note**: MarvelQuant Sandbox is **NOT** a virtual/paper trading platform as prohibited by SEBI. It is an **open-source, self-hosted personal test environment** that runs with your own broker APIs for strategy validation. See [Regulatory Compliance](12_regulatory_compliance.md) for detailed clarification.
 
 ## Key Features
 
@@ -61,14 +61,14 @@ Complete API endpoints and usage examples.
 Common issues and solutions.
 
 ### 12. [Regulatory Compliance](12_regulatory_compliance.md)
-Why OpenAlgo Sandbox is NOT virtual/paper trading - SEBI compliance clarification.
+Why MarvelQuant Sandbox is NOT virtual/paper trading - SEBI compliance clarification.
 
 ## Quick Start
 
 ### Enable Sandbox Mode
 
 Via Web UI:
-1. Log in to OpenAlgo
+1. Log in to MarvelQuant
 2. Navigate to Settings
 3. Toggle "API Analyzer Mode" to ON
 
@@ -217,7 +217,7 @@ Access sandbox settings at: `http://127.0.0.1:5000/sandbox`
 
 ```
 ┌────────────────────────────────────────────────┐
-│            OpenAlgo Application                 │
+│            MarvelQuant Application                 │
 │                                                 │
 │  ┌──────────┐        ┌──────────────┐         │
 │  │ Analyzer │───────>│   Sandbox    │         │
@@ -291,7 +291,7 @@ Access sandbox settings at: `http://127.0.0.1:5000/sandbox`
 
 ## License
 
-OpenAlgo Sandbox Mode is part of OpenAlgo and follows the same license terms.
+MarvelQuant Sandbox Mode is part of MarvelQuant and follows the same license terms.
 
 ---
 

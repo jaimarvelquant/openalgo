@@ -4,9 +4,9 @@ Zebu-specific mapping utilities for the WebSocket adapter
 from typing import Dict, Set, Optional
 
 class ZebuExchangeMapper:
-    """Maps between OpenAlgo exchange names and Zebu exchange codes"""
+    """Maps between MarvelQuant exchange names and Zebu exchange codes"""
 
-    # OpenAlgo to Zebu exchange mapping (same as Flattrade/Noren)
+    # MarvelQuant to Zebu exchange mapping (same as Flattrade/Noren)
     EXCHANGE_MAP = {
         'NSE': 'NSE',
         'BSE': 'BSE',
@@ -23,12 +23,12 @@ class ZebuExchangeMapper:
 
     @classmethod
     def to_zebu_exchange(cls, oa_exchange: str) -> Optional[str]:
-        """Convert OpenAlgo exchange to Zebu exchange format"""
+        """Convert MarvelQuant exchange to Zebu exchange format"""
         return cls.EXCHANGE_MAP.get(oa_exchange.upper())
 
     @classmethod
     def to_oa_exchange(cls, zebu_exchange: str) -> Optional[str]:
-        """Convert Zebu exchange to OpenAlgo exchange format"""
+        """Convert Zebu exchange to MarvelQuant exchange format"""
         return cls.ZEBU_TO_OPENALGO.get(zebu_exchange.upper())
 
 

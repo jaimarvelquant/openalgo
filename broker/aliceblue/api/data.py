@@ -184,7 +184,7 @@ class BrokerData:
         logger.info(f"Original symbol_list: {symbol_list}")
         
         # Special case for Bruno API format with single symbol
-        # Special case for OpenAlgo standard format: direct quote request via Bruno
+        # Special case for MarvelQuant standard format: direct quote request via Bruno
         if isinstance(symbol_list, dict):
             try:
                 # Extract symbol and exchange
@@ -279,7 +279,7 @@ class BrokerData:
                             logger.debug(f"Quote retrieval result: {quote is not None}")
                             
                             if quote:
-                                # Format the response according to OpenAlgo standard format
+                                # Format the response according to MarvelQuant standard format
                                 quote_item = {
                                     'symbol': symbol,
                                     'exchange': exchange,
@@ -704,7 +704,7 @@ class BrokerData:
             timeout (int): Timeout in seconds
             
         Returns:
-            Dict with market depth data in the OpenAlgo standard format
+            Dict with market depth data in the MarvelQuant standard format
         """
         return self.get_market_depth(symbol_list, timeout)
         
@@ -717,7 +717,7 @@ class BrokerData:
             timeout (int): Timeout in seconds
             
         Returns:
-            Dict with market depth data in the OpenAlgo standard format
+            Dict with market depth data in the MarvelQuant standard format
         """
         logger.info(f"Getting market depth for: {symbol_list}")
         
@@ -823,7 +823,7 @@ class BrokerData:
                         depth = websocket.get_market_depth(exchange, token)
                         
                         if depth:
-                            # Create a normalized depth structure in the OpenAlgo format
+                            # Create a normalized depth structure in the MarvelQuant format
                             item = {
                                 'symbol': symbol,
                                 'exchange': exchange,

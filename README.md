@@ -1,25 +1,25 @@
-# OpenAlgo - Take Control of Your Algo Platform
+# MarvelQuant - Take Control of Your Algo Platform
 
 <div align="center">
 
-[![PyPI Downloads](https://static.pepy.tech/badge/openalgo)](https://pepy.tech/projects/openalgo)
-[![PyPI Downloads](https://static.pepy.tech/badge/openalgo/month)](https://pepy.tech/projects/openalgo)
-[![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/openalgoHQ)](https://twitter.com/openalgoHQ)
-[![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCw7eVneIEyiTApy4RtxrJsQ)](https://youtube.com/@openalgoHQ)
+[![PyPI Downloads](https://static.pepy.tech/badge/marvelquant)](https://pepy.tech/projects/marvelquant)
+[![PyPI Downloads](https://static.pepy.tech/badge/marvelquant/month)](https://pepy.tech/projects/marvelquant)
+[![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/marvelquantHQ)](https://twitter.com/marvelquantHQ)
+[![YouTube Channel Subscribers](https://img.shields.io/youtube/channel/subscribers/UCw7eVneIEyiTApy4RtxrJsQ)](https://youtube.com/@marvelquantHQ)
 [![Discord](https://img.shields.io/discord/1219847221055455263)](https://discord.com/invite/UPh7QPsNhP)
 
 </div>
 
-![OpenAlgo - Your Personal Algo Trading Platform](static/images/image.png)
+![MarvelQuant - Your Personal Algo Trading Platform](static/images/image.png)
 
-OpenAlgo is an open-source, Flask-based Python application designed to bridge the gap between traders and major trading platforms such as Amibroker, Tradingview, Python, Chartink, MetaTrader, Excel, and Google Spreadsheets. With a focus on simplifying algotrading, OpenAlgo facilitates easy integration, automation, and execution of trading strategies, providing a user-friendly interface to enhance trading performance.
+MarvelQuant is an open-source, Flask-based Python application designed to bridge the gap between traders and major trading platforms such as Amibroker, Tradingview, Python, Chartink, MetaTrader, Excel, and Google Spreadsheets. With a focus on simplifying algotrading, MarvelQuant facilitates easy integration, automation, and execution of trading strategies, providing a user-friendly interface to enhance trading performance.
 
 ## Installation Guide
 
-For detailed installation instructions, please refer to [INSTALL.md](https://docs.openalgo.in/getting-started)
+For detailed installation instructions, please refer to [INSTALL.md](https://docs.marvelquant.com/getting-started)
 
-## What is OpenAlgo?
-[![What is OpenAlgo](https://img.youtube.com/vi/kAS3jTb3OkI/0.jpg)](https://www.youtube.com/watch?v=kAS3jTb3OkI "Watch the OpenAlgo Tutorial Video")
+## What is MarvelQuant?
+[![What is MarvelQuant](https://img.youtube.com/vi/kAS3jTb3OkI/0.jpg)](https://www.youtube.com/watch?v=kAS3jTb3OkI "Watch the MarvelQuant Tutorial Video")
 
 ## Supported Brokers
 
@@ -57,7 +57,7 @@ For detailed installation instructions, please refer to [INSTALL.md](https://doc
   - Broker adapters publish to ZMQ, proxy server subscribes and routes to clients
 - **Broker-Specific Adapters**: Each broker has a dedicated adapter implementing the base WebSocket interface
   - Handles broker-specific WebSocket protocols and data formats
-  - Transforms broker data to unified OpenAlgo format
+  - Transforms broker data to unified MarvelQuant format
   - Supports multiple subscription modes: LTP (Last Traded Price), Quote, and Market Depth
 - **Real-Time Market Data**: Live streaming of market data with support for:
   - LTP updates
@@ -66,7 +66,7 @@ For detailed installation instructions, please refer to [INSTALL.md](https://doc
   - Auto-reconnection and connection management
 
 ### Unified API Layer (`/api/v1/`)
-OpenAlgo provides a RESTful API with standardized endpoints across all supported brokers:
+MarvelQuant provides a RESTful API with standardized endpoints across all supported brokers:
 
 #### Order Management APIs
 - **`/api/v1/placeorder`**: Place regular orders with standard parameters
@@ -107,7 +107,7 @@ Each broker integration follows a standardized structure:
 - **Order API** (`order_api.py`): Place, modify, cancel orders and manage positions
 - **Data API** (`data.py`): Fetch quotes, historical data, and market information
 - **Funds API** (`funds.py`): Get account balance and margin details
-- **Symbol Mapping** (`transform_data.py`): Convert between OpenAlgo and broker formats
+- **Symbol Mapping** (`transform_data.py`): Convert between MarvelQuant and broker formats
 - **WebSocket Streaming** (`broker_adapter.py`): Real-time data streaming
 
 - **ChartInk Platform Integration**: 
@@ -170,10 +170,10 @@ Each broker integration follows a standardized structure:
 
 - **Customizable Strategies**: Easily adapt and tailor your trading strategies to meet your specific needs, with extensive options for customization and automation.
 
-- **Secure and Reliable**: With a focus on security and reliability, OpenAlgo provides a dependable platform for your algotrading activities, safeguarding your data and trades.
+- **Secure and Reliable**: With a focus on security and reliability, MarvelQuant provides a dependable platform for your algotrading activities, safeguarding your data and trades.
 
 ### Rate Limiting Controls
-OpenAlgo implements comprehensive rate limiting to protect against abuse and ensure fair usage:
+MarvelQuant implements comprehensive rate limiting to protect against abuse and ensure fair usage:
 
 - **Configurable Rate Limits**: All rate limits are environment variable controlled
   - `LOGIN_RATE_LIMIT_MIN`: Login attempts per minute (default: 5 per minute)
@@ -233,10 +233,10 @@ The API Analyzer is a comprehensive testing and validation tool that provides:
 
 The analyzer supports all major operations: Place Order, Smart Orders, Modifications, Cancellations, and Position Management. See [Analyzer.md](docs/Analyzer.md) for detailed documentation.
 
-### OpenAlgo FOSS Universe
-OpenAlgo is part of a larger ecosystem of open-source trading tools. The Mini FOSS Universe includes:
+### MarvelQuant FOSS Universe
+MarvelQuant is part of a larger ecosystem of open-source trading tools. The Mini FOSS Universe includes:
 
-- **OpenAlgo Core**: Python Flask + Tailwind + DaisyUI (this repository)
+- **MarvelQuant Core**: Python Flask + Tailwind + DaisyUI (this repository)
 - **Historify**: Full Stack Stock Market Data Management Platform
 - **Python Library**: Native Python integration for algo trading
 - **Node.js Library**: JavaScript/TypeScript support for trading applications
@@ -247,10 +247,10 @@ OpenAlgo is part of a larger ecosystem of open-source trading tools. The Mini FO
 - **Web Portal**: Modern UI built with NextJS + ShadcnUI
 - **Documentation**: Comprehensive guides on Gitbook
 
-Built for traders, by traders - making algo trading more accessible, powerful, and open for everyone. Visit [docs.openalgo.in/mini-foss-universe](https://docs.openalgo.in/mini-foss-universe) for more details.
+Built for traders, by traders - making algo trading more accessible, powerful, and open for everyone. Visit [docs.marvelquant.com/mini-foss-universe](https://docs.marvelquant.com/mini-foss-universe) for more details.
 
 ### Local MCP (Model Context Protocol) Integration
-OpenAlgo includes native MCP server capabilities, enabling AI assistants to execute trades and manage portfolios directly:
+MarvelQuant includes native MCP server capabilities, enabling AI assistants to execute trades and manage portfolios directly:
 
 #### Key Features
 - **AI-Powered Trading**: Connect AI assistants like Claude Desktop, Cursor, or Windsurf to execute trades
@@ -260,7 +260,7 @@ OpenAlgo includes native MCP server capabilities, enabling AI assistants to exec
   - Position Management: Close positions, track P&L
   - Market Data: Real-time quotes, market depth, historical data
 - **Multi-Platform Support**: Works with any MCP-compatible AI client
-- **Local & Secure**: Runs locally with your OpenAlgo instance
+- **Local & Secure**: Runs locally with your MarvelQuant instance
 
 #### Available MCP Tools
 - **Order Operations**: `place_order`, `place_smart_order`, `place_basket_order`, `modify_order`, `cancel_order`
@@ -270,7 +270,7 @@ OpenAlgo includes native MCP server capabilities, enabling AI assistants to exec
 - **Instrument Search**: `search_instruments`, `get_symbol_info`, `get_expiry_dates`
 
 #### Quick Setup
-1. Start your OpenAlgo server
+1. Start your MarvelQuant server
 2. Generate an API key from Settings → API Keys
 3. Configure your AI assistant with the MCP server path and API key
 4. Start trading with natural language commands like "Buy 100 shares of RELIANCE"
@@ -279,22 +279,22 @@ For detailed MCP setup instructions, see [mcp/README.md](mcp/README.md)
 
 ## Documentation
 
-For detailed documentation on OpenAlgo, including setup guides, API references, and usage examples, refer to [https://docs.openalgo.in](https://docs.openalgo.in)
+For detailed documentation on MarvelQuant, including setup guides, API references, and usage examples, refer to [https://docs.marvelquant.com](https://docs.marvelquant.com)
 
 ### Minimum Hardware Requirements
 
-To run OpenAlgo we recommend:
+To run MarvelQuant we recommend:
 - 2GB RAM or 0.5GB RAM with 2GB of Swap Memory
 - 1GB disk space
 - 1vCPU
 
 ## Contributing
 
-We welcome contributions to OpenAlgo! If you're interested in improving the application or adding new features, please feel free to fork the repository, make your changes, and submit a pull request.
+We welcome contributions to MarvelQuant! If you're interested in improving the application or adding new features, please feel free to fork the repository, make your changes, and submit a pull request.
 
 ## License
 
-OpenAlgo is released under the AGPL V3.0 License. See the `LICENSE` file for more details.
+MarvelQuant is released under the AGPL V3.0 License. See the `LICENSE` file for more details.
 
 ## Repo Activity
 
@@ -324,4 +324,4 @@ AND ALL AFFILIATES ASSUME NO RESPONSIBILITY FOR YOUR TRADING RESULTS.
 
 ## Support
 
-For any questions not covered by the documentation or for further information about OpenAlgo, join our [Discord server](https://discord.com/invite/UPh7QPsNhP).
+For any questions not covered by the documentation or for further information about MarvelQuant, join our [Discord server](https://discord.com/invite/UPh7QPsNhP).

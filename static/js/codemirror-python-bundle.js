@@ -1,5 +1,5 @@
 /*!
- * CodeMirror Python Editor Bundle for OpenAlgo
+ * CodeMirror Python Editor Bundle for MarvelQuant
  * Includes: basic-setup, python language support, dark theme
  * Built without external CDN dependencies
  */

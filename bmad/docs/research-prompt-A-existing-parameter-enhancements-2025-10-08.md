@@ -17,7 +17,7 @@ Conduct comprehensive research on industry best practices and enhancement opport
 
 ### Project Overview
 
-We are integrating a Python-based algorithmic trading backtester with OpenAlgo (a Flask-based multi-broker trading platform) to enable live trading execution. The backtester contains an extensive parameter system implemented in `btrun/Util.py` (3,761 lines) that controls:
+We are integrating a Python-based algorithmic trading backtester with MarvelQuant (a Flask-based multi-broker trading platform) to enable live trading execution. The backtester contains an extensive parameter system implemented in `btrun/Util.py` (3,761 lines) that controls:
 
 - **Strategy Execution**: Entry/exit logic, timing, combinations
 - **Risk Management**: Stop-loss, take-profit, trailing stops
@@ -66,7 +66,7 @@ The `Util.py` module contains numerous parameter categories including:
 
 ### Integration Goals
 
-1. **Live Trading Readiness**: Parameters must support real-time execution via OpenAlgo API
+1. **Live Trading Readiness**: Parameters must support real-time execution via MarvelQuant API
 2. **Excel/JSON Dual Format**: Parameters must map cleanly between Excel input sheets and JSON schemas
 3. **Validation and Safety**: Enhanced validation to prevent configuration errors in live trading
 4. **Industry Alignment**: Parameters should match or exceed industry standards from platforms like QuantConnect, TradeStation, Interactive Brokers
@@ -425,7 +425,7 @@ The `Util.py` module contains numerous parameter categories including:
 - **Data Processing**: pandas, numpy
 - **File Handling**: openpyxl (Excel), JSON (configuration)
 - **Validation**: JSON Schema, custom Python validation
-- **Integration**: OpenAlgo API for live trading
+- **Integration**: MarvelQuant API for live trading
 - **Database**: SQLite 3.x
 
 **DO NOT SUGGEST**: Technologies outside this stack (e.g., PostgreSQL, Redis, React, Vue)

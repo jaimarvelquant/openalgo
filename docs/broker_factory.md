@@ -1,6 +1,6 @@
 # Broker Factory Implementation
 
-This document describes the broker factory design that allows OpenAlgo to work with any of the 20+ supported brokers while maintaining a single common interface for the WebSocket proxy system. OpenAlgo allows one user to connect to one broker at a time, and the broker factory design ensures a consistent implementation across all supported brokers.
+This document describes the broker factory design that allows MarvelQuant to work with any of the 20+ supported brokers while maintaining a single common interface for the WebSocket proxy system. MarvelQuant allows one user to connect to one broker at a time, and the broker factory design ensures a consistent implementation across all supported brokers.
 
 ## 1. Broker Factory
 
@@ -172,7 +172,7 @@ class AngelWebSocketAdapter(BaseBrokerWebSocketAdapter):
                                               f"Invalid depth level {depth_level}. Must be 5, 20, or 30")
         
         # Map symbol to token using SymToken from database
-        # Note: This uses the symbol module described in openalgo.database.symbol
+        # Note: This uses the symbol module described in marvelquant.database.symbol
         token_info = SymbolMapper.get_token_from_symbol(symbol, exchange)
         if not token_info:
             return self._create_error_response("SYMBOL_NOT_FOUND", 
@@ -586,4 +586,4 @@ def initialize_broker_registry():
     # Register more adapters here
 ```
 
-This broker factory design allows OpenAlgo to support all 20+ brokers while maintaining a clean, common interface for the WebSocket proxy system.
+This broker factory design allows MarvelQuant to support all 20+ brokers while maintaining a clean, common interface for the WebSocket proxy system.

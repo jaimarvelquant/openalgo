@@ -1,8 +1,8 @@
 # API Analyzer
 
-OpenAlgo API Analyzer Documentation
+MarvelQuant API Analyzer Documentation
 
-The **OpenAlgo API Analyzer** is a versatile tool designed to assist both traders and developers in testing, validating, and monitoring their trading integrations seamlessly and in real-time.
+The **MarvelQuant API Analyzer** is a versatile tool designed to assist both traders and developers in testing, validating, and monitoring their trading integrations seamlessly and in real-time.
 
 ## For Traders
 
@@ -166,7 +166,7 @@ Real-time monitoring through:
 
 ### Enabling API Analyzer Mode
 
-1. Navigate to OpenAlgo Settings
+1. Navigate to MarvelQuant Settings
 2. Toggle the "API Analyzer Mode" switch to ON
 3. The interface will switch to Garden theme to indicate analyzer mode is active
 4. All API calls will now be processed in test mode without live execution
@@ -180,7 +180,7 @@ Real-time monitoring through:
 
 ### Switching Back to Live Mode
 
-1. Navigate to OpenAlgo Settings
+1. Navigate to MarvelQuant Settings
 2. Toggle the "API Analyzer Mode" switch to OFF
 3. The interface will revert to default theme
 4. All subsequent API calls will execute live orders
@@ -189,15 +189,15 @@ Real-time monitoring through:
 
 For technical support or feature requests:
 
-- **GitHub Issues** - Report bugs and request features at [OpenAlgo Repository](https://github.com/marketcalls/openalgo)
+- **GitHub Issues** - Report bugs and request features at [MarvelQuant Repository](https://github.com/marketcalls/marvelquant)
 - **Community Support** - Join discussions and get help from the community
-- **Documentation** - Access comprehensive guides at [docs.openalgo.in](https://docs.openalgo.in)
+- **Documentation** - Access comprehensive guides at [docs.marvelquant.com](https://docs.marvelquant.com)
 
 ## Additional Resources
 
 - **[Sandbox Mode Documentation](sandbox/README.md)** - Comprehensive guide to sandbox features
-- **[API Reference](https://docs.openalgo.in/api-reference)** - Complete API endpoint documentation
-- **[Getting Started Guide](https://docs.openalgo.in/getting-started)** - Quick start instructions
+- **[API Reference](https://docs.marvelquant.com/api-reference)** - Complete API endpoint documentation
+- **[Getting Started Guide](https://docs.marvelquant.com/getting-started)** - Quick start instructions
 
 ---
 

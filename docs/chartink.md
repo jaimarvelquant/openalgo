@@ -1,6 +1,6 @@
 # Chartink Integration
 
-OpenAlgo supports integration with Chartink for automated trading based on scanner alerts. This integration allows you to:
+MarvelQuant supports integration with Chartink for automated trading based on scanner alerts. This integration allows you to:
 - Create and manage trading strategies
 - Configure symbols with quantities and product types
 - Handle intraday and positional strategies
@@ -10,7 +10,7 @@ OpenAlgo supports integration with Chartink for automated trading based on scann
 ## Order Processing System
 
 ### Queue Management
-OpenAlgo uses a dual-queue system to handle orders efficiently:
+MarvelQuant uses a dual-queue system to handle orders efficiently:
 
 1. Regular Order Queue (Entry Orders):
    - Handles BUY and SHORT orders
@@ -38,7 +38,7 @@ OpenAlgo uses a dual-queue system to handle orders efficiently:
 
 ## Setting Up a Strategy
 
-1. Go to the Chartink section in OpenAlgo
+1. Go to the Chartink section in MarvelQuant
 2. Click "New Strategy" button
 3. Fill in the strategy details:
    - Name: A unique name for your strategy (will be prefixed with 'chartink_')
@@ -107,7 +107,7 @@ After creating a strategy, you need to configure the symbols to trade:
 4. Find the "Webhook url(optional)" field
 5. Copy and paste your strategy's webhook URL:
    ```
-   https://your-openalgo-domain/chartink/webhook/<webhook-id>
+   https://your-marvelquant-domain/chartink/webhook/<webhook-id>
    ```
 6. Configure other alert settings as needed
 7. Click "Save alert" button
@@ -115,7 +115,7 @@ After creating a strategy, you need to configure the symbols to trade:
 ## How It Works
 
 1. When your scanner conditions are met, Chartink sends an alert to your webhook URL
-2. OpenAlgo receives the alert and:
+2. MarvelQuant receives the alert and:
    - Validates the webhook ID
    - Checks if strategy is active
    - Validates the alert name for action keyword
@@ -241,7 +241,7 @@ For intraday strategies:
 
 ## Error Handling
 
-OpenAlgo handles various error scenarios:
+MarvelQuant handles various error scenarios:
 - Invalid webhook IDs
 - Missing action keywords in alert names
 - Inactive strategies

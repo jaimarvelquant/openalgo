@@ -324,19 +324,19 @@ def send_test_message():
         # Get all telegram users
         all_users = get_all_telegram_users()
 
-        # Try to find user by openalgo_username
+        # Try to find user by marvelquant_username
         telegram_user = None
         for user in all_users:
-            if user.get('openalgo_username') == username:
+            if user.get('marvelquant_username') == username:
                 telegram_user = user
                 break
 
         # If no linked user found, try to send to the first available user (for admin testing)
         if not telegram_user and all_users:
             telegram_user = all_users[0]  # Use first available user for testing
-            message = f"🔔 Test Message from OpenAlgo (Admin: {username})\n\nYour Telegram integration is working correctly!"
+            message = f"🔔 Test Message from MarvelQuant (Admin: {username})\n\nYour Telegram integration is working correctly!"
         elif telegram_user:
-            message = "🔔 Test Message from OpenAlgo\n\nYour Telegram integration is working correctly!"
+            message = "🔔 Test Message from MarvelQuant\n\nYour Telegram integration is working correctly!"
         else:
             return jsonify({
                 'status': 'error',

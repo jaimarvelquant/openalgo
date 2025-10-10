@@ -468,7 +468,7 @@ class BrokerData:
             pd.DataFrame: Historical data with columns [timestamp, open, high, low, close, volume, oi]
         """
         try:
-            # Map OpenAlgo intervals to Indmoney intervals
+            # Map MarvelQuant intervals to Indmoney intervals
             interval_map = {
                 '1m': '1minute',
                 '2m': '2minute', 
@@ -540,7 +540,7 @@ class BrokerData:
                     candles_data = response.get('data', [])
                     logger.info(f"Received {len(candles_data)} candles for chunk")
                     
-                    # Transform Indmoney candle format to OpenAlgo format
+                    # Transform Indmoney candle format to MarvelQuant format
                     chunk_candles = []
                     for candle in candles_data:
                         try:

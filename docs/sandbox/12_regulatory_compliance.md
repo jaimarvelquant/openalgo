@@ -1,14 +1,14 @@
-# Regulatory Compliance - Why OpenAlgo Sandbox is NOT Virtual Trading
+# Regulatory Compliance - Why MarvelQuant Sandbox is NOT Virtual Trading
 
 ## Important Distinction
 
-OpenAlgo Sandbox Mode is **NOT** a "virtual trading" or "paper trading" platform as warned against by SEBI (Securities and Exchange Board of India). This document clarifies the fundamental differences and regulatory compliance aspects.
+MarvelQuant Sandbox Mode is **NOT** a "virtual trading" or "paper trading" platform as warned against by SEBI (Securities and Exchange Board of India). This document clarifies the fundamental differences and regulatory compliance aspects.
 
 ---
 
 ## 1. Open-Source, Single-User Tool
 
-OpenAlgo is an **open-source application** designed as a **personal automation tool**. Each installation runs for a single trader, under their own account, on their own system or server.
+MarvelQuant is an **open-source application** designed as a **personal automation tool**. Each installation runs for a single trader, under their own account, on their own system or server.
 
 **Key Points:**
 - ✅ **Open-source software** - transparent, community-driven development
@@ -22,7 +22,7 @@ OpenAlgo is an **open-source application** designed as a **personal automation t
 
 ## 2. Broker-Integrated, Not Parallel Exchange
 
-OpenAlgo connects **only through SEBI-registered brokers' APIs**.
+MarvelQuant connects **only through SEBI-registered brokers' APIs**.
 
 **How It Works:**
 - ✅ Traders authenticate with their **own broker API keys**
@@ -31,7 +31,7 @@ OpenAlgo connects **only through SEBI-registered brokers' APIs**.
 - ✅ Real trading requires active broker connection and live mode
 
 **Compliance Assurance:**
-This ensures OpenAlgo is **not an unlicensed marketplace or a "shadow exchange"**. It operates as a client-side testing layer on top of legitimate, regulated broker infrastructure.
+This ensures MarvelQuant is **not an unlicensed marketplace or a "shadow exchange"**. It operates as a client-side testing layer on top of legitimate, regulated broker infrastructure.
 
 ---
 
@@ -45,7 +45,7 @@ SEBI's warnings on "virtual trading" refer to **unregulated platforms** that:
 - ❌ Mislead users into believing they are participating in **exchange-like activity**
 - ❌ Create parallel markets without regulatory oversight
 
-### OpenAlgo Sandbox is Different
+### MarvelQuant Sandbox is Different
 
 ✅ **Developer/Test Environment**
 - Purpose: Validating trading strategies **before** going live
@@ -89,7 +89,7 @@ This approach is **consistent with SEBI's goals** of:
 
 ## 5. Best Practices for Algorithmic Trading
 
-OpenAlgo Sandbox embodies industry best practices for algorithmic trading development:
+MarvelQuant Sandbox embodies industry best practices for algorithmic trading development:
 
 ### Safe Strategy Development
 - ✅ Test algorithms in a **controlled environment** before live deployment
@@ -113,7 +113,7 @@ OpenAlgo Sandbox embodies industry best practices for algorithmic trading develo
 
 ## 6. Technical Safeguards
 
-OpenAlgo implements multiple layers to ensure compliance:
+MarvelQuant implements multiple layers to ensure compliance:
 
 ### Clear Mode Separation
 ```python
@@ -143,7 +143,7 @@ OpenAlgo implements multiple layers to ensure compliance:
 
 ## ✅ Conclusion
 
-**OpenAlgo Sandbox is NOT a "virtual trading" or "paper trading" platform** in the sense that SEBI prohibits.
+**MarvelQuant Sandbox is NOT a "virtual trading" or "paper trading" platform** in the sense that SEBI prohibits.
 
 ### What It IS:
 ✅ An **open-source application** that empowers individual traders
@@ -158,7 +158,7 @@ OpenAlgo implements multiple layers to ensure compliance:
 ✅ **Testing framework** for individual traders to validate strategies safely
 
 ### Key Differentiators:
-| Virtual Trading (Prohibited) | OpenAlgo Sandbox (Compliant) |
+| Virtual Trading (Prohibited) | MarvelQuant Sandbox (Compliant) |
 |------------------------------|------------------------------|
 | Commercial/closed platform | Open-source, transparent codebase |
 | Public contests & competitions | Single-user testing environment |
@@ -169,7 +169,7 @@ OpenAlgo implements multiple layers to ensure compliance:
 
 ---
 
-**OpenAlgo** is an **open-source application** that makes it **easier for individual traders** to develop, test, and refine their algorithmic strategies in a **safe sandbox environment**. By providing transparent, self-hosted tools for strategy validation, it contributes to a more stable, informed, and disciplined trading ecosystem in India.
+**MarvelQuant** is an **open-source application** that makes it **easier for individual traders** to develop, test, and refine their algorithmic strategies in a **safe sandbox environment**. By providing transparent, self-hosted tools for strategy validation, it contributes to a more stable, informed, and disciplined trading ecosystem in India.
 
 ---
 

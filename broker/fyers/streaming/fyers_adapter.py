@@ -1,5 +1,5 @@
 """
-Fyers WebSocket Adapter for OpenAlgo
+Fyers WebSocket Adapter for MarvelQuant
 Handles WebSocket streaming for all exchanges: NSE, NFO, BSE, BFO, MCX
 Uses HSM binary protocol for real-time data
 """
@@ -16,8 +16,8 @@ from .fyers_mapping import FyersDataMapper
 
 class FyersAdapter:
     """
-    Fyers WebSocket adapter for OpenAlgo streaming service
-    Follows OpenAlgo adapter pattern similar to Angel, Zerodha etc.
+    Fyers WebSocket adapter for MarvelQuant streaming service
+    Follows MarvelQuant adapter pattern similar to Angel, Zerodha etc.
     """
     
     def __init__(self, access_token: str, userid: str):
@@ -199,10 +199,10 @@ class FyersAdapter:
                     self.logger.warning("No valid symbols to subscribe")
                     return False
                 
-                self.logger.debug(f"Converting {len(valid_symbols)} OpenAlgo symbols to HSM format using database lookup...")
+                self.logger.debug(f"Converting {len(valid_symbols)} MarvelQuant symbols to HSM format using database lookup...")
                 
-                # Convert OpenAlgo symbols directly to HSM tokens using database lookup
-                hsm_tokens, token_mappings, invalid_symbols = self.token_converter.convert_openalgo_symbols_to_hsm(
+                # Convert MarvelQuant symbols directly to HSM tokens using database lookup
+                hsm_tokens, token_mappings, invalid_symbols = self.token_converter.convert_marvelquant_symbols_to_hsm(
                     valid_symbols, data_type
                 )
                 
@@ -221,7 +221,7 @@ class FyersAdapter:
                 self.logger.debug(f"Valid Symbols: {valid_symbol_list}")
                 
                 # Primary mapping strategy: Map by order (most reliable)
-                # Since convert_openalgo_symbols_to_hsm processes symbols in order
+                # Since convert_marvelquant_symbols_to_hsm processes symbols in order
                 for i, hsm_token in enumerate(hsm_tokens):
                     if i < len(valid_symbols):
                         symbol_info = valid_symbols[i]
@@ -328,7 +328,7 @@ class FyersAdapter:
             fyers_type = fyers_data.get("type", "sf")
             update_type = fyers_data.get("update_type", "snapshot")
             
-            # Map to OpenAlgo format first to get symbol info
+            # Map to MarvelQuant format first to get symbol info
             mapped_data = self.data_mapper.map_fyers_data(fyers_data, "Quote")
             if not mapped_data:
                 return
@@ -340,7 +340,7 @@ class FyersAdapter:
             
             # Find matching subscription using HSM token or original symbol
             callback = None
-            openalgo_data_type = "Quote"  # Default
+            marvelquant_data_type = "Quote"  # Default
             matched_subscription = None
             
             # Try to match using HSM token first (most reliable)
@@ -444,25 +444,25 @@ class FyersAdapter:
             
             if fyers_type == "dp":
                 callback = self.subscription_callbacks.get(f"DepthUpdate_{full_symbol}")
-                openalgo_data_type = "Depth"
+                marvelquant_data_type = "Depth"
             elif fyers_type == "if":
                 # Check if we have depth subscription for this symbol
                 depth_callback = self.subscription_callbacks.get(f"DepthUpdate_{full_symbol}")
                 if depth_callback:
                     callback = depth_callback
-                    openalgo_data_type = "Depth"
+                    marvelquant_data_type = "Depth"
                 else:
                     callback = self.subscription_callbacks.get(f"SymbolUpdate_{full_symbol}")
-                    openalgo_data_type = "Quote"
+                    marvelquant_data_type = "Quote"
             else:
                 callback = self.subscription_callbacks.get(f"SymbolUpdate_{full_symbol}")
-                openalgo_data_type = "Quote"
+                marvelquant_data_type = "Quote"
             
             if not callback:
                 return
             
             # Re-map data with correct type if needed
-            if openalgo_data_type == "Depth":
+            if marvelquant_data_type == "Depth":
                 mapped_data = self.data_mapper.map_fyers_data(fyers_data, "Depth")
                 if not mapped_data:
                     return
@@ -494,7 +494,7 @@ class FyersAdapter:
             }
             
             # Debug logging
-            if openalgo_data_type == "Depth":
+            if marvelquant_data_type == "Depth":
                 depth = mapped_data.get('depth', {})
                 buy_levels = depth.get('buy', [])
                 sell_levels = depth.get('sell', [])

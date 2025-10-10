@@ -373,7 +373,7 @@ def map_portfolio_data(portfolio_data):
     - portfolio_data: A dictionary containing the portfolio/holdings information from IbullssecuritiesXTS API.
     
     Returns:
-    - A dictionary with 'holdings' and 'totalholding' keys structured for the OpenAlgoXTS system.
+    - A dictionary with 'holdings' and 'totalholding' keys structured for the MarvelQuantXTS system.
     """
     # Check if response is valid and contains result data
     if not portfolio_data or portfolio_data.get('type') != 'success' or 'result' not in portfolio_data:

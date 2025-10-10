@@ -60,7 +60,7 @@ ZMQ_PORT=5555
 ## Testing
 After making these changes:
 
-1. Start OpenAlgo: `python app.py`
+1. Start MarvelQuant: `python app.py`
 2. Press Ctrl+C to stop
 3. Restart immediately: `python app.py`
 4. Should start without "port in use" errors

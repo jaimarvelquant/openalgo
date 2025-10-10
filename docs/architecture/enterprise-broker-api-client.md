@@ -7,7 +7,7 @@
 
 ## Overview
 
-This document describes the enterprise-grade broker API client architecture implemented to solve the Jainam Holdings API HTTP 500 blocker and provide a robust, resilient foundation for all broker integrations in the OpenAlgo platform.
+This document describes the enterprise-grade broker API client architecture implemented to solve the Jainam Holdings API HTTP 500 blocker and provide a robust, resilient foundation for all broker integrations in the MarvelQuant platform.
 
 ## Problem Statement
 
@@ -439,7 +439,7 @@ All requests include correlation IDs:
 
 ## Conclusion
 
-The enterprise-grade broker API client provides a robust, resilient foundation for all broker integrations in OpenAlgo. It solves the immediate Jainam Holdings API blocker while establishing patterns that will improve reliability across all current and future broker integrations.
+The enterprise-grade broker API client provides a robust, resilient foundation for all broker integrations in MarvelQuant. It solves the immediate Jainam Holdings API blocker while establishing patterns that will improve reliability across all current and future broker integrations.
 
 **Key Achievements:**
 - ✅ Solved Jainam HTTP 500 blocker (Story 1.2-4 Action Item #1)

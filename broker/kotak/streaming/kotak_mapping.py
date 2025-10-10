@@ -1,6 +1,6 @@
 """
 Mapping utilities for Kotak broker integration.
-Provides exchange, product, and order type mappings between OpenAlgo and Kotak formats.
+Provides exchange, product, and order type mappings between MarvelQuant and Kotak formats.
 """
 
 # Exchange code mappings
@@ -73,38 +73,38 @@ OPENALGO_TO_KOTAK_ORDER_TYPE = {
 
 KOTAK_TO_OPENALGO_ORDER_TYPE = {v: k for k, v in OPENALGO_TO_KOTAK_ORDER_TYPE.items()}
 
-def get_kotak_exchange(openalgo_exchange: str) -> str:
+def get_kotak_exchange(marvelquant_exchange: str) -> str:
     """
-    Convert OpenAlgo exchange code to Kotak exchange code.
+    Convert MarvelQuant exchange code to Kotak exchange code.
     """
-    return OPENALGO_TO_KOTAK_EXCHANGE.get(openalgo_exchange, openalgo_exchange)
+    return OPENALGO_TO_KOTAK_EXCHANGE.get(marvelquant_exchange, marvelquant_exchange)
 
-def get_openalgo_exchange(kotak_exchange: str) -> str:
+def get_marvelquant_exchange(kotak_exchange: str) -> str:
     """
-    Convert Kotak exchange code to OpenAlgo exchange code.
+    Convert Kotak exchange code to MarvelQuant exchange code.
     """
     return KOTAK_TO_OPENALGO_EXCHANGE.get(kotak_exchange, kotak_exchange)
 
-def get_kotak_product(openalgo_product: str) -> str:
+def get_kotak_product(marvelquant_product: str) -> str:
     """
-    Convert OpenAlgo product type to Kotak product type.
+    Convert MarvelQuant product type to Kotak product type.
     """
-    return OPENALGO_TO_KOTAK_PRODUCT.get(openalgo_product, openalgo_product)
+    return OPENALGO_TO_KOTAK_PRODUCT.get(marvelquant_product, marvelquant_product)
 
-def get_openalgo_product(kotak_product: str) -> str:
+def get_marvelquant_product(kotak_product: str) -> str:
     """
-    Convert Kotak product type to OpenAlgo product type.
+    Convert Kotak product type to MarvelQuant product type.
     """
     return KOTAK_TO_OPENALGO_PRODUCT.get(kotak_product, kotak_product)
 
-def get_kotak_order_type(openalgo_order_type: str) -> str:
+def get_kotak_order_type(marvelquant_order_type: str) -> str:
     """
-    Convert OpenAlgo order type to Kotak order type.
+    Convert MarvelQuant order type to Kotak order type.
     """
-    return OPENALGO_TO_KOTAK_ORDER_TYPE.get(openalgo_order_type, openalgo_order_type)
+    return OPENALGO_TO_KOTAK_ORDER_TYPE.get(marvelquant_order_type, marvelquant_order_type)
 
-def get_openalgo_order_type(kotak_order_type: str) -> str:
+def get_marvelquant_order_type(kotak_order_type: str) -> str:
     """
-    Convert Kotak order type to OpenAlgo order type.
+    Convert Kotak order type to MarvelQuant order type.
     """
     return KOTAK_TO_OPENALGO_ORDER_TYPE.get(kotak_order_type, kotak_order_type)

@@ -1,0 +1,1586 @@
+# Deep Research Prompt: Backtester → OpenAlgo Integration (Technology Stack CONSTRAINED)
+
+**Generated**: 2025-10-08  
+**Target Platforms**: ChatGPT Deep Research / Gemini Deep Research / Grok DeepSearch  
+**Research Type**: Technical Implementation within Fixed Technology Stack  
+**Estimated Research Time**: 60-90 minutes  
+**Stack Constraint**: Flask 2.x + Tailwind CSS 4.1.14 + DaisyUI 5.1.27 + Vanilla JavaScript + SQLite
+
+---
+
+## 🚨 CRITICAL CONSTRAINT: FIXED TECHNOLOGY STACK
+
+**YOU MUST WORK WITHIN THESE CONSTRAINTS - DO NOT SUGGEST ALTERNATIVES:**
+
+- **Backend**: Flask 2.x with Blueprints (Python 3.8+)
+- **Frontend CSS**: Tailwind CSS 4.1.14 (utility-first framework)
+- **UI Components**: DaisyUI 5.1.27 (component library built on Tailwind)
+- **Frontend JavaScript**: Vanilla JavaScript ES6+ (NO React, Vue, Angular, Svelte, or any framework)
+- **Database**: SQLite 3.x
+- **Real-time Updates**: Server-Sent Events (SSE) preferred over WebSockets for simplicity
+- **Template Engine**: Jinja2 (Flask's default)
+
+**Research Focus**: "How to implement best practices WITHIN this stack" NOT "What stack should we use"
+
+All recommendations, patterns, examples, and code snippets MUST be compatible with this exact technology stack.
+
+---
+
+## 🎯 Research Objective
+
+Conduct comprehensive research on **implementing a production-grade backtester-to-live-trading integration with OpenAlgo**, focusing exclusively on solutions that work within the existing Flask + Tailwind CSS + DaisyUI + Vanilla JavaScript technology stack.
+
+### Context
+
+OpenAlgo is an open-source multi-broker trading platform (supporting 23+ brokers) built with Flask, Tailwind CSS, DaisyUI, and Vanilla JavaScript. I need to integrate a Python-based backtesting system with OpenAlgo for live trading execution, including:
+
+- **Deployment Pipeline**: Excel configuration → JSON validation → Backtest → Live deployment via OpenAlgo API
+- **Portfolio Control UI**: Real-time monitoring and control interface for Portfolio → Strategy → Leg hierarchy
+- **Multi-Broker Market Data**: Aggregation from 4 brokers (Zerodha, Upstox, AngelOne, Fyers) with automatic failover
+- **Risk Management**: Portfolio-level Stop Loss, Target, and Trailing Stop enforcement
+- **Real-time Updates**: P&L updates every 1-5 seconds using Server-Sent Events (SSE)
+
+### Existing Architecture (Already Decided)
+
+The following architectural decisions have been made and documented:
+
+1. **Integration Point**: Portfolio Manager (`app/pm`) with `is_live` parameter
+2. **Configuration Format**: Dual-format (Excel for editing, JSON for deployment with automated sync)
+3. **Order Execution**: OpenAlgo API as single unified interface (no direct broker APIs)
+4. **Market Data**: Multi-broker with performance-based selection and <1 second failover
+5. **UI Technology**: Tailwind CSS + DaisyUI + Vanilla JS + Flask + SSE (FIXED - cannot change)
+6. **Implementation Phases**: Phase 1 (API-first), Phase 2 (UI layer), Phase 3 (Advanced features)
+
+**Documentation Already Analyzed**:
+- 13 files in `/Users/maruth/projects/docs/bmad/live_integration/` covering architecture, roadmap, risks, testing
+- UI/UX research documents: `portfolio-control-ui-ux-research-and-phasing.md`, `portfolio-control-ui-phase2-and-mcp-n8n.md`
+
+### Research Goal
+
+Provide **immediately implementable technical specifications** for building this integration using Flask, Tailwind CSS 4.1.14, DaisyUI 5.1.27, and Vanilla JavaScript. Focus on proven patterns, real-world examples, and specific implementation guidance.
+
+---
+
+## 📐 Research Scope
+
+### Temporal Scope
+- **Primary**: Current best practices (2024-2025) for Flask, Tailwind CSS, DaisyUI, Vanilla JS
+- **Context**: Evolution of server-side rendered trading UIs (2022-2025)
+- **Avoid**: Deprecated patterns (jQuery-heavy approaches, outdated Flask extensions)
+
+### Geographic Scope
+- **Global**: Best practices from leading trading platforms
+- **India-Specific**: NSE/BSE market context, SEBI compliance requirements
+- **Reference**: US (SEC), Europe (MiFID II) for comparative standards
+
+### Technology Scope
+
+**INCLUDE (Must work with our stack):**
+- Flask Blueprint patterns for trading system APIs
+- Tailwind CSS utility patterns for financial dashboards
+- DaisyUI component usage for trading UIs (collapse, badge, modal, table, stat, alert)
+- Vanilla JavaScript patterns for real-time DOM updates (no virtual DOM frameworks)
+- Server-Sent Events (SSE) implementation in Flask + Vanilla JS
+- SQLite optimization for trading data
+- Jinja2 template patterns for hierarchical data
+
+**EXCLUDE (Incompatible with our stack):**
+- React, Vue, Angular, Svelte component patterns
+- State management libraries (Redux, Vuex, MobX)
+- Build tools requiring npm/webpack (we use PostCSS only for Tailwind)
+- NoSQL databases (we're using SQLite)
+- GraphQL (we're using REST)
+- WebSocket libraries if SSE is simpler for our use case
+
+### Thematic Focus
+
+**PRIORITY 1: OpenAlgo Ecosystem Integration**
+- How to extend MarvelQuant's existing Flask Blueprint architecture
+- Leveraging MarvelQuant's multi-broker API abstraction layer
+- Reusing MarvelQuant's existing UI components and patterns
+- MarvelQuant's authentication and API key management
+- How other developers have extended OpenAlgo
+
+**PRIORITY 2: DaisyUI + Vanilla JS UI Patterns**
+- DaisyUI collapse/accordion for Portfolio → Strategy → Leg hierarchy
+- Real-time P&L updates with Vanilla JavaScript (no React state)
+- Responsive design with Tailwind breakpoints (sm:, md:, lg:, xl:)
+- DOM manipulation patterns for efficient updates
+- Event handling in Vanilla JS for trading controls
+
+**PRIORITY 3: Flask + SSE Real-Time Architecture**
+- SSE implementation in Flask for P&L streaming
+- Vanilla JS EventSource API patterns
+- Connection monitoring and auto-reconnection
+- Performance optimization for 50-100 concurrent positions
+
+**PRIORITY 4: Production Trading System Requirements**
+- Security: API key management, audit trails, encryption
+- Compliance: SEBI (India) regulations for algorithmic trading
+- Testing: Paper trading validation, load testing, disaster recovery
+- Error handling: Retry logic, partial failure handling, user notifications
+
+---
+
+## 🔍 Required Information Types
+
+### 1. OpenAlgo Ecosystem Integration (CRITICAL)
+
+**Research Questions:**
+- What is MarvelQuant's current Flask Blueprint structure? (Analyze GitHub: https://github.com/marketcalls/marvelquant)
+- How does OpenAlgo organize routes, templates, and static files?
+- What authentication mechanisms does OpenAlgo use for API endpoints?
+- How does MarvelQuant's multi-broker abstraction layer work?
+- What existing UI components and patterns can be reused?
+- Are there examples of developers extending OpenAlgo with custom blueprints?
+
+**Desired Outputs:**
+- MarvelQuant's file structure and Blueprint organization patterns
+- Authentication/authorization patterns used in OpenAlgo
+- Existing DaisyUI components in MarvelQuant's templates
+- Best practices for adding new blueprints without breaking existing functionality
+- Code examples of OpenAlgo API integration
+
+### 2. DaisyUI Component Patterns for Trading UIs
+
+**Research Questions:**
+- What DaisyUI components are best for hierarchical data visualization?
+- How to implement nested collapse/accordion components in DaisyUI 5.1.27?
+- What are DaisyUI patterns for status indicators (ACTIVE, DISABLED, CLOSED badges)?
+- How to use DaisyUI modal components for confirmation dialogs?
+- What DaisyUI table patterns work for position data?
+- How to implement DaisyUI stat components for P&L display?
+
+**Desired Outputs:**
+- Complete DaisyUI component examples for:
+  - Portfolio card with collapse (showing strategies)
+  - Strategy card with collapse (showing legs)
+  - Leg table with real-time P&L updates
+  - Action buttons (stop, disable, close, enable)
+  - Confirmation modals for destructive actions
+  - Status badges with color coding
+  - Loading states and spinners
+- Accessibility considerations for DaisyUI components
+- Mobile-responsive patterns using DaisyUI + Tailwind breakpoints
+
+### 3. Vanilla JavaScript Patterns for Real-Time Trading UIs
+
+**Research Questions:**
+- How to efficiently update DOM elements for 50-100 positions without virtual DOM?
+- What are best practices for organizing Vanilla JS code (modules, classes, functions)?
+- How to handle EventSource (SSE) connections in Vanilla JavaScript?
+- What patterns prevent memory leaks in long-running trading UIs?
+- How to implement client-side state management without Redux/Vuex?
+- What are efficient DOM query and update patterns?
+
+**Desired Outputs:**
+- Vanilla JS code structure for portfolio management UI
+- EventSource implementation with auto-reconnection
+- Efficient DOM update patterns (querySelector, getElementById, data attributes)
+- Event delegation patterns for dynamic content
+- Client-side state management using plain JavaScript objects
+- Performance optimization techniques (debouncing, throttling, requestAnimationFrame)
+- Error handling and user notification patterns
+
+### 4. Flask + SSE Implementation Patterns
+
+**Research Questions:**
+- How to implement Server-Sent Events in Flask 2.x?
+- What are best practices for SSE streaming routes in Flask?
+- How to handle SSE connection lifecycle (connect, disconnect, reconnect)?
+- What are performance considerations for multiple concurrent SSE connections?
+- How to structure SSE data payloads for trading updates?
+- What error handling is needed for SSE streams?
+
+**Desired Outputs:**
+- Complete Flask SSE endpoint implementation
+- SSE data format for portfolio updates (JSON structure)
+- Connection management and cleanup
+- Performance optimization for multiple clients
+- Error handling and graceful degradation
+- Alternative: When to use WebSockets instead of SSE (if ever)
+
+### 5. Hierarchical Data Visualization Patterns
+
+**Research Questions:**
+- How do trading platforms display Portfolio → Strategy → Leg hierarchies?
+- What are best practices for collapsible tree views without JavaScript frameworks?
+- How to implement expand/collapse all functionality?
+- What visual indicators show hierarchy levels?
+- How to handle deep nesting (4+ levels) on mobile devices?
+- What are keyboard navigation patterns for hierarchical data?
+
+**Desired Outputs:**
+- HTML structure for nested collapse components
+- CSS patterns for visual hierarchy (indentation, borders, colors)
+- JavaScript patterns for expand/collapse state management
+- Responsive design strategies (desktop: full tree, mobile: simplified view)
+- Accessibility: ARIA attributes, keyboard navigation
+- Performance: Lazy loading for large hierarchies
+
+### 6. Responsive Design Patterns with Tailwind CSS
+
+**Research Questions:**
+- What are Tailwind breakpoint strategies for trading dashboards?
+- How to adapt table layouts for mobile (card view vs table view)?
+- What information should be hidden/shown at different breakpoints?
+- How to implement touch-friendly controls for mobile trading?
+- What are Tailwind patterns for responsive typography in financial data?
+
+**Desired Outputs:**
+- Tailwind responsive class patterns for:
+  - Desktop (≥1024px): Full table with all columns
+  - Tablet (768-1023px): Card-based layout
+  - Mobile (<768px): Minimal essential info
+- Hidden/visible utility class usage (hidden lg:block, block lg:hidden)
+- Touch-friendly button sizing (btn-lg on mobile)
+- Responsive grid layouts (grid-cols-1 sm:grid-cols-2 lg:grid-cols-3)
+
+### 7. Flask Blueprint Architecture for Trading Systems
+
+**Research Questions:**
+- How to organize Flask Blueprints for portfolio management?
+- What are best practices for Blueprint registration and URL prefixes?
+- How to structure templates for Blueprint-based applications?
+- What are patterns for sharing code between Blueprints?
+- How to implement Blueprint-level authentication/authorization?
+
+**Desired Outputs:**
+- Flask Blueprint file structure for portfolio manager
+- Blueprint registration patterns in app factory
+- Template organization (base templates, Blueprint-specific templates)
+- Static file organization for Blueprints
+- Authentication decorator patterns
+- Error handling in Blueprints
+
+### 8. API Design Patterns for Portfolio Control (CRITICAL - AlgoBaba Style)
+
+**MANDATORY REQUIREMENT**: All API design recommendations MUST follow the "AlgoBaba style" as documented in:
+- **File**: `/Users/maruth/projects/docs/bmad/live_integration/12-api-design-decision-summary.md`
+- **Key Decision**: Name-based hierarchical RESTful API (NOT ID-based)
+- **Hierarchy**: Portfolio → Strategy → Leg (NOT AlgoBaba's Strategy → Portfolio → Leg)
+
+**YOU MUST ANALYZE THIS DOCUMENT FIRST** before providing any API design recommendations.
+
+**AlgoBaba Style Key Principles** (from the decision document):
+1. **Name-Based Identifiers**: Use human-readable names (e.g., `NIFTY_ATM_STRADDLE`) instead of IDs
+2. **Hierarchical Paths**: `/api/v1/portfolio/{portfolio_name}/strategy/{strategy_name}/leg/{leg_name}`
+3. **Case-Insensitive Input**: Accept any case, normalize to UPPER_SNAKE_CASE for storage
+4. **Self-Documenting URLs**: URLs show exactly what you're operating on
+5. **No ID Lookup Required**: Use names directly from Excel configuration
+
+**Approved API Endpoint Examples** (from decision document):
+```
+POST /api/v1/portfolio/NIFTY_ATM_STRADDLE/stop
+POST /api/v1/portfolio/NIFTY_ATM_STRADDLE/strategy/ATM_STRADDLE_1/disable
+POST /api/v1/portfolio/NIFTY_ATM_STRADDLE/strategy/ATM_STRADDLE_1/leg/CE_25000_BUY/close
+GET /api/v1/portfolio/NIFTY_ATM_STRADDLE
+GET /api/v1/portfolios
+GET /api/v1/portfolio/NIFTY_ATM_STRADDLE/stream
+```
+
+**Research Questions:**
+- How to implement name-based routing in Flask Blueprints?
+- What are case-insensitive URL parameter patterns in Flask?
+- How to validate and normalize names (UPPER_SNAKE_CASE) in Flask routes?
+- What database schema supports name-based primary keys with composite keys?
+- How to handle partial failures in hierarchical operations?
+- What error response formats align with AlgoBaba style?
+
+**Desired Outputs:**
+- Complete Flask Blueprint implementation for AlgoBaba-style endpoints
+- Name normalization and validation patterns (case-insensitive → UPPER_SNAKE_CASE)
+- Database schema with name-based primary keys (as shown in decision document)
+- Request/response JSON schemas following AlgoBaba conventions
+- Error response format with codes
+- Idempotency key patterns for name-based operations
+- Retry logic and exponential backoff
+- Migration strategy from ID-based to name-based (if applicable)
+
+**CRITICAL**: Do NOT suggest ID-based endpoints like `/api/v1/portfolio/{portfolio_id}/stop`. All recommendations must use name-based hierarchical paths as specified in the AlgoBaba style decision document.
+
+### 9. Real-Time P&L Calculation and Display
+
+**Research Questions:**
+- How frequently should P&L be updated? (1s, 5s, 10s intervals)
+- What are efficient P&L calculation patterns for 50-100 positions?
+- How to display P&L with color coding (green/red) and formatting?
+- What are patterns for aggregating P&L at portfolio/strategy/leg levels?
+- How to handle stale data and connection loss?
+
+**Desired Outputs:**
+- P&L calculation logic (entry price, LTP, quantity, P&L)
+- SSE payload structure for P&L updates
+- Vanilla JS patterns for updating P&L display
+- Color coding patterns (Tailwind: text-success, text-error)
+- Currency formatting (₹ symbol, thousands separator)
+- Stale data indicators (last update timestamp, connection status)
+
+### 10. Configuration Management: Excel → JSON Workflow
+
+**Research Questions:**
+- How to implement Excel to JSON conversion in Python?
+- What JSON schema validation libraries work well with Flask?
+- How to implement file watchers for automatic conversion?
+- What are Git workflow patterns for JSON configuration files?
+- How to handle validation errors and user feedback?
+
+**Desired Outputs:**
+- Python code for Excel → JSON conversion (using pandas, openpyxl)
+- JSON schema definition for strategy configuration
+- File watcher implementation (watchdog library)
+- Validation error reporting patterns
+- Git commit message patterns for config changes
+- Rollback strategies for bad configurations
+
+### 11. Configuration Versioning for Live vs Backtest Modes (CRITICAL)
+
+**Context**: The system must maintain separate configurations for live trading and backtesting, with safeguards to prevent accidental deployment of backtest configs to live trading.
+
+**Research Questions:**
+- How to maintain separate Excel/JSON configurations for live trading vs backtesting?
+- What version control strategies work best for configuration files (semantic versioning, Git tagging)?
+- How to prevent accidental deployment of backtest configs to live trading?
+- What configuration validation ensures correct mode (live/backtest) is being used?
+- How to manage multiple configuration versions simultaneously (e.g., live v1.2.3, backtest v2.0.1)?
+- What naming conventions distinguish live vs backtest configurations?
+- How to track configuration changes and audit trail for compliance?
+
+**Desired Outputs:**
+
+1. **Configuration Versioning Strategy** (2-3 pages)
+   - Semantic versioning scheme for configurations (MAJOR.MINOR.PATCH)
+   - Naming conventions: `portfolio_name_v1.2.3_live.xlsx` vs `portfolio_name_v2.0.1_backtest.xlsx`
+   - Git tagging strategy for configuration releases
+   - Branch strategy (e.g., `config/live`, `config/backtest`)
+   - Configuration metadata (version, mode, created_date, author, description)
+
+2. **Mode Validation and Safety Mechanisms** (2-3 pages)
+   - Configuration file structure with explicit `mode` field (live/backtest)
+   - Validation rules to prevent live deployment of backtest configs
+   - Pre-deployment checklist and approval workflow
+   - Configuration diff tools to compare live vs backtest versions
+   - Automated tests to validate configuration integrity
+   - Rollback procedures for bad configurations
+
+3. **Multi-Version Management** (1-2 pages)
+   - How to maintain multiple live configurations simultaneously (different portfolios)
+   - How to test new configurations in backtest before promoting to live
+   - Configuration promotion workflow: backtest → paper trading → live
+   - Configuration archival and retention policies
+   - Configuration documentation and change log requirements
+
+4. **Implementation Patterns** (1-2 pages)
+   - Python code for configuration version validation
+   - JSON schema with version and mode fields
+   - Git hooks to enforce versioning rules
+   - Configuration deployment scripts with safety checks
+   - Audit trail logging for configuration changes
+
+**Safety Requirements**:
+- ✅ Configuration files MUST have explicit `mode: "live"` or `mode: "backtest"` field
+- ✅ Live deployment MUST validate `mode: "live"` before execution
+- ✅ Backtest configs with `mode: "backtest"` MUST be rejected by live trading system
+- ✅ Configuration changes MUST be logged with timestamp, author, and reason
+- ✅ Live configuration changes MUST require approval (manual or automated workflow)
+- ✅ Configuration versions MUST be immutable once deployed (create new version for changes)
+
+**Example Configuration Metadata**:
+```json
+{
+  "config_version": "1.2.3",
+  "mode": "live",
+  "portfolio_name": "NIFTY_ATM_STRADDLE",
+  "created_date": "2025-10-08T10:30:00Z",
+  "author": "trader@example.com",
+  "description": "Increased position size from 50 to 75 lots",
+  "parent_version": "1.2.2",
+  "approved_by": "risk_manager@example.com",
+  "approved_date": "2025-10-08T11:00:00Z"
+}
+```
+
+**CRITICAL**: Configuration versioning is essential for production safety. Provide comprehensive strategies to prevent accidental deployment of backtest configurations to live trading, which could result in significant financial losses.
+
+---
+
+## 📊 Desired Output Structure
+
+### Executive Summary (2-3 pages)
+
+**Required Content:**
+- Confirmation that all recommendations work within Flask + Tailwind + DaisyUI + Vanilla JS stack
+- Key implementation patterns identified
+- Critical decision points with trade-offs
+- Risk areas and mitigation strategies
+- Estimated implementation complexity (person-weeks)
+
+### Section 1: OpenAlgo Ecosystem Integration (6-8 pages)
+
+**1.1 OpenAlgo Architecture Analysis**
+- Current Flask Blueprint structure
+- Existing UI components and patterns
+- Authentication and API key management
+- Multi-broker API abstraction layer
+
+**1.2 Integration Patterns**
+- How to add portfolio management Blueprint
+- Template organization and inheritance
+- Static file organization
+- Authentication integration
+
+**1.3 Code Examples**
+- Blueprint registration
+- Route definitions
+- Template examples using existing OpenAlgo patterns
+- API integration examples
+
+### Section 2: DaisyUI + Vanilla JS UI Implementation (8-10 pages)
+
+**2.1 DaisyUI Component Patterns**
+- Collapse/accordion for hierarchy (Portfolio → Strategy → Leg)
+- Badge components for status indicators
+- Modal components for confirmations
+- Table components for leg data
+- Stat components for P&L display
+- Button components for actions
+- Alert components for notifications
+- Loading components for async operations
+
+**2.2 Vanilla JavaScript Patterns**
+- Code organization (modules, classes, or functions?)
+- EventSource (SSE) implementation
+- DOM update patterns for real-time data
+- Event handling and delegation
+- State management without frameworks
+- Error handling and user notifications
+
+**2.3 Responsive Design with Tailwind**
+- Breakpoint strategies (sm:, md:, lg:, xl:)
+- Desktop layout (full table)
+- Tablet layout (card-based)
+- Mobile layout (minimal essential info)
+- Touch-friendly controls
+
+**2.4 Complete UI Examples**
+- Portfolio list page (HTML + Tailwind + DaisyUI)
+- Portfolio detail page with hierarchy
+- Real-time P&L update JavaScript
+- Confirmation modal for stop/disable/close actions
+
+### Section 3: Flask + SSE Real-Time Architecture (5-7 pages)
+
+**3.1 Server-Sent Events in Flask**
+- SSE endpoint implementation
+- Response streaming with stream_with_context
+- Connection lifecycle management
+- Performance considerations for multiple clients
+
+**3.2 Vanilla JS EventSource Patterns**
+- EventSource API usage
+- Message parsing and DOM updates
+- Auto-reconnection strategies
+- Error handling and fallback
+
+**3.3 Data Payload Design**
+- JSON structure for portfolio updates
+- Update frequency recommendations
+- Data compression strategies
+- Handling large payloads (100+ positions)
+
+**3.4 Alternative: WebSockets**
+- When to use WebSockets instead of SSE
+- Flask-SocketIO patterns (if needed)
+- Trade-offs: SSE vs WebSockets for this use case
+
+### Section 4: API Design and Implementation - AlgoBaba Style (5-7 pages)
+
+**CRITICAL**: This section MUST follow the AlgoBaba style as documented in `/Users/maruth/projects/docs/bmad/live_integration/12-api-design-decision-summary.md`
+
+**4.1 AlgoBaba Style API Patterns**
+- Name-based hierarchical endpoint design (NOT ID-based)
+- Complete endpoint specifications following AlgoBaba conventions
+- Request/response schemas with name-based identifiers
+- HTTP status codes and error responses
+- Idempotency patterns for name-based operations
+- Case-insensitive input handling with UPPER_SNAKE_CASE normalization
+
+**4.2 Flask Blueprint Implementation for AlgoBaba Style**
+- Route definitions with name-based parameters
+- Name normalization and validation (case-insensitive → UPPER_SNAKE_CASE)
+- Request validation for hierarchical operations
+- Business logic organization
+- Response formatting following AlgoBaba conventions
+
+**4.3 Database Schema for Name-Based API**
+- Name-based primary keys (as shown in decision document)
+- Composite keys for hierarchical relationships
+- Case-insensitive uniqueness enforcement
+- Migration strategy from ID-based to name-based (if applicable)
+
+**4.4 Error Handling**
+- Error response format aligned with AlgoBaba style
+- Partial failure handling in hierarchical operations
+- Retry logic and exponential backoff
+- User-friendly error messages with name-based context
+
+**4.5 Authentication and Authorization**
+- API key validation
+- Role-based access control (if needed)
+- Audit trail logging with name-based identifiers
+
+### Section 5: Industry Best Practices (4-6 pages)
+
+**5.1 Trading Platform UI/UX Standards**
+- Hierarchical data visualization
+- Real-time data display
+- Critical action confirmations
+- Status indicators and color coding
+- Accessibility requirements
+
+**5.2 Security Requirements**
+- API key management and rotation
+- Data encryption (in transit and at rest)
+- Audit trail requirements
+- Session management
+
+**5.3 Compliance (SEBI/SEC)**
+- Algorithmic trading regulations in India (SEBI)
+- Audit trail and logging requirements
+- Risk disclosure requirements
+- Order tracking and reporting
+
+**5.4 Testing Strategies**
+- Unit testing Flask endpoints
+- Integration testing with OpenAlgo API
+- Paper trading validation (duration, criteria)
+- Load testing for real-time updates
+- Disaster recovery testing
+
+### Section 6: Implementation Recommendations (4-6 pages)
+
+**6.1 File Structure**
+- Complete directory structure for portfolio manager Blueprint
+- Template organization
+- Static file organization (JS, CSS)
+- Database schema (SQLite)
+
+**6.2 Phased Implementation Plan**
+- Phase 1: API endpoints (2 weeks)
+- Phase 2: UI layer (2 weeks)
+- Phase 3: Advanced features (2 weeks)
+- Effort estimates and dependencies
+
+**6.3 Critical Risks**
+- Technology stack limitations
+- Performance bottlenecks
+- Security vulnerabilities
+- Compliance gaps
+
+**6.4 Success Metrics**
+- Technical KPIs (latency, uptime, update frequency)
+- User experience KPIs (deployment time, error rate)
+- Business KPIs (adoption rate, manual intervention rate)
+
+### Section 7: Backtester Codebase Integration (4-6 pages)
+
+**7.1 Codebase Structure Summary**
+- High-level architecture diagram (described in text)
+- Key modules and their responsibilities
+- Data flow from configuration → execution → results
+
+**7.2 Integration Point Specifications**
+- Exact locations where OpenAlgo API calls should be inserted
+- Required modifications to `run_portfolio()` function
+- Data structure transformations needed
+- Code examples showing before/after for key integration points
+
+**7.3 Parameter Documentation (from btrun/util.py)**
+- Complete parameter reference guide with all parameters from btrun/util.py
+- Parameter types, defaults, valid ranges, descriptions
+- Parameters applicable to live trading vs backtest-only
+- Parameter validation and error handling recommendations
+
+**7.4 Configuration Migration Plan**
+- Excel to JSON mapping specification
+- Field-by-field transformation rules
+- Validation logic to implement
+- Example Excel → JSON conversion
+
+**7.5 Data Loading Adaptation (from Story 7.9)**
+- Current Parquet-based data loading architecture
+- Recommendations for adapting to real-time API data
+- Data structure mapping: Parquet → OpenAlgo API → Strategy
+- Caching strategies for live market data
+- Real-time data synchronization patterns
+
+**7.6 Compatibility Assessment**
+- Risk analysis: What could break in backtest mode?
+- Recommended testing approach to ensure backward compatibility
+- Suggested feature flags or configuration switches
+
+### Section 8: Configuration Versioning and Safety (3-4 pages)
+
+**8.1 Configuration Versioning Strategy**
+- Semantic versioning scheme for configurations
+- Naming conventions for live vs backtest configs
+- Git tagging and branch strategy
+- Configuration metadata structure
+
+**8.2 Mode Validation and Safety Mechanisms**
+- Configuration file structure with explicit mode field
+- Validation rules to prevent live deployment of backtest configs
+- Pre-deployment checklist and approval workflow
+- Configuration diff tools and automated tests
+
+**8.3 Multi-Version Management**
+- Managing multiple live configurations simultaneously
+- Configuration promotion workflow: backtest → paper → live
+- Configuration archival and retention policies
+- Audit trail and change log requirements
+
+**8.4 Implementation Patterns**
+- Python code for configuration version validation
+- JSON schema with version and mode fields
+- Git hooks and deployment scripts with safety checks
+- Audit trail logging for configuration changes
+
+---
+
+## 🎯 Critical Research Questions
+
+**YOU MUST ANSWER THESE QUESTIONS:**
+
+1. **What are the exact DaisyUI 5.1.27 component patterns for displaying Portfolio → Strategy → Leg hierarchies?**
+   - Provide complete HTML examples with Tailwind classes
+   - Show nested collapse components
+   - Include responsive design patterns
+
+2. **How can Vanilla JavaScript efficiently handle real-time P&L updates for 50-100 positions without performance issues?**
+   - Provide specific DOM update patterns
+   - Show how to avoid memory leaks
+   - Include performance optimization techniques
+
+3. **What are proven SSE implementation patterns in Flask 2.x for financial data streaming?**
+   - Provide complete Flask endpoint code
+   - Show connection management
+   - Include error handling
+
+4. **How do trading platforms implement "stop portfolio," "disable strategy," and "close leg" controls in their UIs?**
+   - Show confirmation dialog patterns
+   - Provide UX best practices
+   - Include accessibility considerations
+
+5. **What responsive design patterns work best for hierarchical trading data on mobile devices using Tailwind CSS?**
+   - Show breakpoint strategies
+   - Provide mobile-optimized layouts
+   - Include touch-friendly controls
+
+6. **How should configuration validation be implemented in the Excel → JSON workflow?**
+   - Provide JSON schema examples
+   - Show validation error handling
+   - Include user feedback patterns
+
+7. **What are the critical security and compliance requirements for live trading systems in India (SEBI)?**
+   - List specific SEBI regulations
+   - Show audit trail requirements
+   - Include risk disclosure patterns
+
+8. **What testing duration and criteria are recommended for paper trading validation before live deployment?**
+   - Provide industry standards
+   - Show validation criteria
+   - Include acceptance testing patterns
+
+9. **How should the AlgoBaba-style name-based API be implemented in Flask with case-insensitive routing?**
+   - Provide complete Flask Blueprint code for name-based endpoints
+   - Show name normalization patterns (case-insensitive → UPPER_SNAKE_CASE)
+   - Include database schema with name-based primary keys
+   - Demonstrate hierarchical routing (portfolio/strategy/leg)
+
+10. **What are all the parameters in btrun/util.py and how should they be integrated into live trading?**
+   - Provide complete parameter reference guide extracted from btrun/util.py
+   - Document parameter types, defaults, valid ranges, and descriptions
+   - Identify which parameters apply to live trading vs backtest-only
+   - Show parameter validation and error handling patterns
+
+11. **How should data loading be adapted from Parquet files (Story 7.9) to real-time OpenAlgo API for live trading?**
+   - Analyze the HybridDataLoader architecture from Story 7.9
+   - Provide specific recommendations for adapting to real-time API data
+   - Show data structure mapping: Parquet schema → OpenAlgo API → Strategy input
+   - Include caching strategies and real-time synchronization patterns
+
+12. **How should configuration versioning prevent accidental deployment of backtest configs to live trading?**
+   - Provide comprehensive versioning strategy (semantic versioning, Git tagging)
+   - Show validation mechanisms to enforce mode (live/backtest) correctness
+   - Include configuration metadata structure with version, mode, approval fields
+   - Demonstrate safety checks and audit trail logging
+
+---
+
+## ✅ Validation and Quality Criteria
+
+### Source Credibility
+- Prioritize official documentation: Flask, Tailwind CSS, DaisyUI, OpenAlgo
+- Cross-reference patterns across multiple trading platforms
+- Verify that all code examples work with specified versions (Flask 2.x, Tailwind 4.1.14, DaisyUI 5.1.27)
+- Distinguish between proven practices and experimental approaches
+
+### Technology Stack Compatibility
+- **CRITICAL**: Every recommendation MUST work with Flask + Tailwind + DaisyUI + Vanilla JS
+- Reject any suggestions requiring React, Vue, Angular, or framework changes
+- Verify that code examples use only Vanilla JavaScript (no JSX, no Vue templates)
+- Confirm that CSS patterns use only Tailwind utility classes and DaisyUI components
+
+### Practical Applicability
+- Ensure recommendations are implementable by developers with Python/Flask skills
+- Provide complete, working code examples (not pseudocode)
+- Consider team skill levels (strong Python, moderate JavaScript)
+- Balance ideal solutions with pragmatic implementation paths
+
+### Conflicting Information
+- When multiple approaches exist, present comparison table with trade-offs
+- Identify scenarios where each approach is optimal
+- Highlight areas of industry consensus vs debate
+- Provide clear recommendations with rationale
+
+### Gaps and Limitations
+- Explicitly note areas where information is limited
+- Identify questions requiring follow-up research
+- Acknowledge limitations of the fixed technology stack
+- Suggest workarounds for stack limitations
+
+---
+
+## 🔗 Preferred Sources
+
+### OpenAlgo Specific
+- **OpenAlgo GitHub**: https://github.com/marketcalls/marvelquant (CRITICAL - analyze actual code)
+- OpenAlgo documentation (if available)
+- OpenAlgo community discussions and issues
+
+### Technology Documentation
+- **Flask 2.x**: https://flask.palletsprojects.com/
+- **Tailwind CSS 4.1.14**: https://tailwindcss.com/docs (version-specific)
+- **DaisyUI 5.1.27**: https://daisyui.com/components/ (version-specific)
+- **Server-Sent Events**: MDN Web Docs, Flask-SSE patterns
+- **Vanilla JavaScript**: MDN Web Docs (ES6+ patterns)
+
+### Trading Platform Examples
+- QuantConnect (LEAN engine - open source)
+- Interactive Brokers (TWS UI patterns)
+- TradeStation (platform documentation)
+- Alpaca (API documentation, UI examples)
+- TradingView (UI/UX patterns)
+
+### UI/UX Best Practices
+- Nielsen Norman Group (financial interface UX)
+- Material Design (data visualization patterns)
+- Tailwind UI (component examples)
+- DaisyUI showcase and examples
+
+### Compliance and Security
+- SEBI (Securities and Exchange Board of India) guidelines
+- SEC (US) regulations (for reference)
+- OWASP (security best practices)
+- FIX Protocol (if applicable)
+
+### Developer Resources
+- Stack Overflow (Flask + SSE, Vanilla JS patterns)
+- GitHub repositories (Flask trading systems, DaisyUI examples)
+- Dev.to / Medium articles (Flask real-time patterns, Tailwind trading UIs)
+
+---
+
+## 📝 Special Instructions
+
+### Persona and Perspective
+
+Act as a **senior full-stack developer and trading platform architect** with:
+- 10+ years building production trading systems
+- Deep expertise in Flask, Tailwind CSS, and Vanilla JavaScript
+- Experience extending existing platforms without major rewrites
+- Understanding of financial markets and trading workflows
+- Pragmatic approach: "best solution within our constraints"
+
+**Your mindset**: "I must work within the Flask + Tailwind + DaisyUI + Vanilla JS stack. I will find the BEST solutions within these boundaries, not suggest changing the stack."
+
+### Output Style
+
+- **Specific, not generic**: Provide exact DaisyUI component names, Tailwind class combinations, Flask patterns
+- **Code-heavy**: Include complete, working code examples (not pseudocode)
+- **Version-aware**: Ensure all examples work with Flask 2.x, Tailwind 4.1.14, DaisyUI 5.1.27
+- **Comparative**: When multiple patterns exist, show comparison tables with trade-offs
+- **Actionable**: Every section ends with clear "What to implement" guidance
+- **Evidence-based**: Cite sources, link to documentation, reference real platforms
+
+### Code Examples
+
+All code examples must:
+- Use Python 3.8+ syntax for Flask code
+- Use Vanilla JavaScript ES6+ (no JSX, no framework syntax)
+- Use Tailwind utility classes (no custom CSS unless necessary)
+- Use DaisyUI component classes (collapse, badge, modal, etc.)
+- Include comments explaining key patterns
+- Be complete and runnable (not snippets)
+
+### Citations
+
+- Include URLs for all referenced documentation
+- Link to specific GitHub repositories and files
+- Reference specific DaisyUI components by name and version
+- Cite regulatory documents with section numbers
+- Provide version numbers for all technologies
+
+### Recency
+
+- Prioritize 2024-2025 best practices
+- Note deprecated patterns to avoid (e.g., jQuery, old Flask extensions)
+- Highlight modern Vanilla JS patterns (ES6+, async/await, fetch API)
+- Use current Tailwind CSS features (v4.x)
+- Reference latest DaisyUI components (v5.x)
+
+---
+
+## 🚀 Follow-Up Research Topics
+
+If initial research reveals gaps, consider focused follow-up on:
+
+1. **DaisyUI Deep Dive**: "Advanced DaisyUI 5.1.27 patterns for financial dashboards"
+2. **Flask SSE Optimization**: "High-performance Server-Sent Events in Flask for 100+ concurrent connections"
+3. **Vanilla JS State Management**: "Client-side state management patterns in Vanilla JavaScript for trading UIs"
+4. **SEBI Compliance**: "Complete SEBI algorithmic trading compliance checklist for India"
+5. **Performance Optimization**: "Optimizing real-time DOM updates in Vanilla JavaScript for financial data"
+6. **Mobile Trading UIs**: "Touch-optimized trading interfaces with Tailwind CSS and DaisyUI"
+7. **SQLite Optimization**: "SQLite performance tuning for real-time trading data"
+
+---
+
+---
+
+## 🤖 Platform-Specific Usage Tips
+
+### For ChatGPT Deep Research (o3/o1) - RECOMMENDED
+
+**Why ChatGPT Deep Research is Best for This Task:**
+- Excellent at analyzing GitHub repositories (can examine OpenAlgo codebase)
+- Strong at finding specific version documentation (Tailwind 4.1.14, DaisyUI 5.1.27)
+- Good at providing complete code examples
+- Can cross-reference multiple trading platforms
+
+**Optimization Tips:**
+1. **Emphasize the constraint**: Start with "CRITICAL: All solutions must work with Flask 2.x + Tailwind CSS 4.1.14 + DaisyUI 5.1.27 + Vanilla JavaScript. Do NOT suggest React, Vue, or any framework."
+2. **Request specific versions**: "Show DaisyUI 5.1.27 component examples" not just "DaisyUI examples"
+3. **Ask for OpenAlgo analysis**: "Analyze the OpenAlgo GitHub repository structure and existing patterns"
+4. **Request complete code**: "Provide complete, runnable code examples, not pseudocode"
+5. **Specify output format**: "Include comparison tables for different approaches"
+
+**Query Optimization:**
+- Use keywords: "Flask Blueprint," "DaisyUI collapse," "Vanilla JavaScript EventSource," "Tailwind responsive"
+- Request citations: "Include URLs to official documentation"
+- Ask for version-specific info: "Tailwind CSS 4.1.14 breakpoint patterns"
+
+**Expected Results:**
+- 20-30 pages of comprehensive research
+- Complete code examples for Flask + Vanilla JS + DaisyUI
+- Analysis of MarvelQuant's existing patterns
+- Specific implementation guidance
+
+**Query Limits**: 25-250 queries/month (Plus vs Pro)
+
+---
+
+### For Gemini Deep Research
+
+**Strengths for This Task:**
+- Good at analyzing documentation and finding patterns
+- Can handle complex multi-part research questions
+- Provides structured research plans you can refine
+
+**Optimization Tips:**
+1. **Review the research plan**: Gemini will generate a multi-point plan - ensure it focuses on Flask/Tailwind/DaisyUI, not React/Vue
+2. **Refine before execution**: If the plan suggests React patterns, modify it to focus on Vanilla JS
+3. **Use follow-ups**: After initial research, ask "Provide more DaisyUI 5.1.27 collapse component examples"
+4. **Request specific versions**: "Focus on Tailwind CSS 4.1.14 utility classes"
+
+**Best Practices:**
+- Start with the constraint: "Technology stack is FIXED: Flask + Tailwind + DaisyUI + Vanilla JS"
+- Let Gemini generate the plan, then refine it
+- Use follow-up questions to drill deeper into specific areas
+- Request code examples explicitly
+
+**Expected Results:**
+- Structured research with clear sections
+- Good coverage of industry best practices
+- May need follow-ups for complete code examples
+
+---
+
+### For Grok DeepSearch
+
+**Strengths for This Task:**
+- Fast research execution
+- Good at finding recent examples (2024-2025)
+- Can search X/Twitter for developer discussions
+
+**Optimization Tips:**
+1. **Specify date range**: "Focus on 2024-2025 best practices for Flask + Tailwind + DaisyUI"
+2. **Request specific output**: "Provide bullet lists with code examples and citations"
+3. **Use Think Mode**: Pair with Think Mode for reasoning about trade-offs
+4. **Follow-up strategy**: Use follow-ups to expand specific sections
+
+**Best Practices:**
+- Emphasize the constraint upfront
+- Request specific component examples (DaisyUI collapse, badge, modal)
+- Ask for Flask SSE implementation patterns
+- Verify technical claims against official docs
+
+**Query Limits**: Free (5/24hrs), Premium (30/2hrs)
+
+**Expected Results:**
+- Fast, focused research
+- Recent examples and patterns
+- May need verification of technical details
+
+---
+
+### For Claude Projects
+
+**Strengths for This Task:**
+- Excellent at working with uploaded documentation
+- Strong reasoning about constraints and trade-offs
+- Good at generating complete code examples
+
+**Optimization Tips:**
+1. **Upload context first**: Add your existing documentation to the Project
+2. **Use Chain of Thought**: Ask Claude to reason through implementation approaches
+3. **Request iterative refinement**: Start broad, then drill into specifics
+4. **Provide examples**: Show existing OpenAlgo patterns, ask for similar implementations
+
+**Best Practices:**
+- Create a dedicated Project for this research
+- Upload existing docs from `/Users/maruth/projects/docs/bmad/live_integration/`
+- Use this prompt as the initial query
+- Iterate with follow-up questions for specific areas
+
+**Expected Results:**
+- Deep analysis considering your existing architecture
+- Well-reasoned trade-offs
+- Complete, contextual code examples
+
+---
+
+## 📋 Research Execution Checklist
+
+### Before Running Research
+
+- [ ] **Constraint is clear**: Technology stack (Flask + Tailwind + DaisyUI + Vanilla JS) is explicitly stated
+- [ ] **Versions specified**: Flask 2.x, Tailwind CSS 4.1.14, DaisyUI 5.1.27, Vanilla JavaScript ES6+
+- [ ] **OpenAlgo context provided**: GitHub repository link, existing architecture decisions
+- [ ] **Scope is defined**: Focus on implementation within stack, not stack selection
+- [ ] **Output format specified**: Executive summary + 6 sections with code examples
+- [ ] **Key questions listed**: 8 critical questions that must be answered
+- [ ] **Sources identified**: OpenAlgo GitHub, Flask docs, Tailwind docs, DaisyUI docs, trading platforms
+
+### During Research (ChatGPT/Gemini/Grok)
+
+- [ ] **Review research plan**: If platform provides a plan, verify it focuses on our stack
+- [ ] **Monitor for framework suggestions**: If React/Vue mentioned, redirect to Vanilla JS
+- [ ] **Check version accuracy**: Ensure examples use correct versions (Tailwind 4.1.14, DaisyUI 5.1.27)
+- [ ] **Verify code examples**: Ensure they're complete and runnable, not pseudocode
+- [ ] **Note gaps**: Identify areas needing follow-up research
+
+### After Research Completion
+
+- [ ] **Verify technology stack compliance**: All recommendations work with Flask + Tailwind + DaisyUI + Vanilla JS
+- [ ] **Check code examples**: Test that examples use correct syntax and versions
+- [ ] **Validate against OpenAlgo**: Ensure patterns align with MarvelQuant's existing architecture
+- [ ] **Cross-reference sources**: Verify claims against official documentation
+- [ ] **Identify conflicting information**: Resolve discrepancies between sources
+- [ ] **Note confidence levels**: Distinguish proven practices from experimental approaches
+- [ ] **Extract actionable items**: Create implementation task list from recommendations
+- [ ] **Identify follow-up topics**: Note areas requiring deeper research
+- [ ] **Export/save results**: Save research before query limits reset
+
+---
+
+## 🎯 Expected Research Outcomes
+
+After completing this research, you should have:
+
+### 1. OpenAlgo Integration Blueprint
+- **File structure**: Complete directory layout for portfolio manager Blueprint
+- **Blueprint registration**: How to add new Blueprint to OpenAlgo
+- **Template patterns**: How to extend MarvelQuant's existing templates
+- **Authentication integration**: How to use MarvelQuant's API key system
+- **Code examples**: Working Flask Blueprint code compatible with OpenAlgo
+
+### 2. DaisyUI Component Library
+- **Collapse components**: Nested accordion for Portfolio → Strategy → Leg hierarchy
+- **Badge components**: Status indicators (ACTIVE, DISABLED, CLOSED)
+- **Modal components**: Confirmation dialogs for critical actions
+- **Table components**: Position data display with real-time updates
+- **Stat components**: P&L display with color coding
+- **Button components**: Action buttons (stop, disable, close, enable)
+- **Complete examples**: Full HTML pages with Tailwind + DaisyUI classes
+
+### 3. Vanilla JavaScript Patterns
+- **EventSource implementation**: SSE connection with auto-reconnection
+- **DOM update patterns**: Efficient updates for 50-100 positions
+- **State management**: Client-side state without frameworks
+- **Event handling**: Event delegation for dynamic content
+- **Performance optimization**: Debouncing, throttling, requestAnimationFrame
+- **Code organization**: Module patterns or class-based structure
+
+### 4. Flask + SSE Architecture
+- **SSE endpoint**: Complete Flask route for streaming portfolio updates
+- **Data payload**: JSON structure for real-time updates
+- **Connection management**: Lifecycle handling and cleanup
+- **Performance optimization**: Handling multiple concurrent connections
+- **Error handling**: Graceful degradation and fallback strategies
+
+### 5. Responsive Design Strategy
+- **Desktop layout**: Full table view with all columns (≥1024px)
+- **Tablet layout**: Card-based view (768-1023px)
+- **Mobile layout**: Minimal essential info (<768px)
+- **Tailwind patterns**: Breakpoint classes (sm:, md:, lg:, xl:)
+- **Touch optimization**: Button sizing and spacing for mobile
+
+### 6. API Design Specifications
+- **Endpoint definitions**: Complete REST API for portfolio control
+- **Request/response schemas**: JSON structures with validation
+- **Error handling**: Error codes, messages, retry logic
+- **Authentication**: API key validation patterns
+- **Idempotency**: Patterns for critical operations
+
+### 7. Security and Compliance
+- **SEBI requirements**: Specific regulations for algorithmic trading in India
+- **Audit trail**: Logging requirements and patterns
+- **API key management**: Storage, rotation, validation
+- **Data encryption**: In transit and at rest
+- **Risk disclosure**: Required disclosures for automated trading
+
+### 8. Testing Strategy
+- **Paper trading**: Duration (5+ days), validation criteria
+- **Unit testing**: Flask endpoint testing patterns
+- **Integration testing**: OpenAlgo API integration tests
+- **Load testing**: Real-time update performance tests
+- **Disaster recovery**: Failover and recovery testing
+
+### 9. Implementation Roadmap
+- **Phase 1 (2 weeks)**: API endpoints and backend logic
+- **Phase 2 (2 weeks)**: UI layer with DaisyUI components
+- **Phase 3 (2 weeks)**: Advanced features and optimization
+- **Effort estimates**: Person-weeks per phase
+- **Dependencies**: What must be completed before each phase
+
+### 10. Risk Mitigation
+- **Technology limitations**: Known constraints of the stack
+- **Performance bottlenecks**: Potential issues and solutions
+- **Security vulnerabilities**: Common risks and mitigations
+- **Compliance gaps**: Areas requiring legal review
+
+---
+
+## 💡 How to Use This Research
+
+### Step 1: Execute the Research (60-90 minutes)
+
+**For ChatGPT Deep Research (Recommended):**
+1. Copy this entire prompt
+2. Paste into ChatGPT (Plus or Pro account)
+3. Review the research plan it generates
+4. Verify it focuses on Flask + Tailwind + DaisyUI + Vanilla JS (not React/Vue)
+5. Wait for comprehensive results (60-90 minutes)
+6. Export/save the research immediately
+
+**For Gemini Deep Research:**
+1. Paste the prompt into Gemini Advanced
+2. Review the multi-point research plan
+3. Modify any points that suggest framework changes
+4. Execute the research
+5. Use follow-ups to drill deeper into specific areas
+
+**For Grok DeepSearch:**
+1. Paste the prompt into Grok
+2. Pair with Think Mode for deeper reasoning
+3. Use follow-up commands to expand sections
+4. Verify technical claims against official docs
+
+### Step 2: Validate the Results (2-3 hours)
+
+**Technology Stack Compliance:**
+- [ ] Verify ALL recommendations work with Flask 2.x + Tailwind 4.1.14 + DaisyUI 5.1.27 + Vanilla JS
+- [ ] Reject any React/Vue/Angular suggestions
+- [ ] Confirm code examples use correct syntax and versions
+- [ ] Test code snippets for syntax errors
+
+**OpenAlgo Compatibility:**
+- [ ] Cross-check against OpenAlgo GitHub repository
+- [ ] Verify Blueprint patterns match MarvelQuant's structure
+- [ ] Ensure authentication patterns align with OpenAlgo
+- [ ] Confirm UI patterns use MarvelQuant's existing components
+
+**Source Verification:**
+- [ ] Check citations against official documentation
+- [ ] Verify version-specific information (Tailwind 4.1.14, DaisyUI 5.1.27)
+- [ ] Cross-reference trading platform examples
+- [ ] Validate compliance requirements (SEBI regulations)
+
+### Step 3: Extract Actionable Insights (2-3 hours)
+
+**Create Implementation Artifacts:**
+1. **Architecture Decision Records (ADRs)**
+   - Document key technology choices with rationale
+   - Record trade-offs and alternatives considered
+   - Note constraints and assumptions
+
+2. **Component Library**
+   - Extract DaisyUI component examples
+   - Create reusable HTML templates
+   - Document Tailwind class patterns
+
+3. **Code Templates**
+   - Flask Blueprint boilerplate
+   - SSE endpoint template
+   - Vanilla JS EventSource template
+   - API endpoint templates
+
+4. **Implementation Task List**
+   - Break down into 2-week sprints
+   - Assign effort estimates
+   - Identify dependencies
+   - Prioritize critical path items
+
+5. **Testing Checklist**
+   - Unit test requirements
+   - Integration test scenarios
+   - Paper trading validation criteria
+   - Load testing parameters
+
+### Step 4: Follow-Up Research (if needed)
+
+**Identify Gaps:**
+- Areas where information was limited or unclear
+- Conflicting recommendations requiring resolution
+- Technical details needing deeper investigation
+- Compliance requirements needing legal review
+
+**Create Focused Follow-Up Prompts:**
+1. **DaisyUI Deep Dive**: "Provide 10 complete examples of DaisyUI 5.1.27 collapse components for hierarchical financial data"
+2. **Flask SSE Optimization**: "How to optimize Flask Server-Sent Events for 100+ concurrent connections with code examples"
+3. **Vanilla JS Performance**: "Advanced DOM update optimization patterns in Vanilla JavaScript for real-time trading data"
+4. **SEBI Compliance**: "Complete SEBI algorithmic trading compliance checklist for India with specific regulation references"
+5. **Mobile Optimization**: "Touch-optimized trading interface patterns using Tailwind CSS and DaisyUI for mobile devices"
+
+### Step 5: Implementation Planning (1-2 days)
+
+**Create Detailed Implementation Plan:**
+1. **Phase 1: API Layer (Week 1-2)**
+   - Flask Blueprint setup
+   - API endpoint implementation
+   - OpenAlgo integration
+   - Unit testing
+
+2. **Phase 2: UI Layer (Week 3-4)**
+   - DaisyUI component implementation
+   - Vanilla JS real-time updates
+   - Responsive design
+   - Integration testing
+
+3. **Phase 3: Advanced Features (Week 5-6)**
+   - Performance optimization
+   - Security hardening
+   - Compliance implementation
+   - Load testing
+
+**Resource Allocation:**
+- Assign developers to specific tasks
+- Identify skill gaps and training needs
+- Set up development environment
+- Establish code review process
+
+**Risk Management:**
+- Create mitigation plans for identified risks
+- Set up monitoring and alerting
+- Establish rollback procedures
+- Define acceptance criteria
+
+---
+
+## 🔍 Quality Assurance Checklist
+
+### Research Quality
+
+- [ ] **Comprehensive coverage**: All 8 critical questions answered
+- [ ] **Technology stack compliance**: 100% compatible with Flask + Tailwind + DaisyUI + Vanilla JS
+- [ ] **Version accuracy**: All examples use correct versions (Flask 2.x, Tailwind 4.1.14, DaisyUI 5.1.27)
+- [ ] **Code completeness**: Examples are complete and runnable, not pseudocode
+- [ ] **Source credibility**: All claims cited with URLs to official documentation
+- [ ] **Practical applicability**: Recommendations are implementable by Python/Flask developers
+- [ ] **OpenAlgo alignment**: Patterns match MarvelQuant's existing architecture
+
+### Implementation Readiness
+
+- [ ] **File structure defined**: Complete directory layout for portfolio manager
+- [ ] **Component library ready**: DaisyUI components identified and documented
+- [ ] **API specifications complete**: All endpoints defined with request/response schemas
+- [ ] **Real-time architecture designed**: SSE implementation pattern documented
+- [ ] **Responsive design planned**: Breakpoint strategies for desktop/tablet/mobile
+- [ ] **Security requirements identified**: Authentication, encryption, audit trail
+- [ ] **Compliance requirements documented**: SEBI regulations and requirements
+- [ ] **Testing strategy defined**: Unit, integration, paper trading, load testing
+
+### Risk Mitigation
+
+- [ ] **Technology limitations acknowledged**: Known constraints of the stack documented
+- [ ] **Performance bottlenecks identified**: Potential issues and solutions documented
+- [ ] **Security vulnerabilities assessed**: Common risks and mitigations documented
+- [ ] **Compliance gaps noted**: Areas requiring legal review identified
+- [ ] **Contingency plans created**: Fallback strategies for critical failures
+
+---
+
+## 📚 Additional Context for AI Research Platform
+
+### Existing Architecture Decisions (Already Made)
+
+**DO NOT RESEARCH THESE - THEY ARE FIXED:**
+
+1. **Integration Point**: Portfolio Manager (`app/pm`) with `is_live` parameter ✅
+2. **Configuration Format**: Excel for editing, JSON for deployment with automated sync ✅
+3. **Order Execution**: OpenAlgo API as single unified interface ✅
+4. **Market Data**: Multi-broker (Zerodha, Upstox, AngelOne, Fyers) with performance-based selection ✅
+5. **UI Technology**: Tailwind CSS + DaisyUI + Vanilla JS + Flask + SSE ✅
+6. **Database**: SQLite ✅
+7. **Implementation Phases**: Phase 1 (API), Phase 2 (UI), Phase 3 (Advanced) ✅
+
+**FOCUS YOUR RESEARCH ON:**
+- HOW to implement these decisions within the fixed technology stack
+- WHAT specific patterns, components, and code to use
+- WHICH DaisyUI components and Tailwind classes to apply
+- WHERE to find examples and best practices
+- WHEN to use specific patterns (trade-offs and scenarios)
+
+### Documentation Already Analyzed
+
+**DO NOT DUPLICATE THIS RESEARCH:**
+- Architecture overview and system design ✅
+- Multi-broker market data strategy ✅
+- Configuration management workflow ✅
+- Implementation roadmap and phasing ✅
+- Risk mitigation strategies ✅
+- Testing strategy ✅
+- Deployment strategy ✅
+
+**BUILD UPON THIS FOUNDATION:**
+- Provide specific implementation details
+- Show exact code examples
+- Identify DaisyUI components to use
+- Document Vanilla JS patterns
+- Specify Flask Blueprint structure
+
+---
+
+## 🔍 Backtester Codebase Analysis (REQUIRED)
+
+### Repository Information
+
+**GitHub Repository**: https://github.com/jaimarvelquant/backtester_ajay
+**Branch/Worktree**: `backtester-worktree-1` (LATEST VERSION - use this for analysis)
+**Local Development Path**: `/Users/maruth/projects/backtester-worktree-1`
+
+**Repository Access Status**:
+- ✅ **ChatGPT Deep Research**: Has direct access to this private repository (attached to ChatGPT)
+- ✅ **Latest Version**: `backtester-worktree-1` is the current production worktree
+- ℹ️ **Alternative**: Repository can be made public at https://github.com/jaimarvelquant/backtester if needed for other AI platforms
+
+**IMPORTANT**: You have direct access to this repository. Analyze the actual codebase, not just documentation.
+
+### Required Codebase Analysis
+
+**YOU MUST analyze the following components of the backtester codebase to provide context-aware recommendations:**
+
+#### 1. Portfolio Manager Module (`app/pm`)
+
+**File to Analyze**: `app/pm/__init__.py`
+
+**Specific Analysis Required**:
+- Locate and examine the `is_live` parameter (documented at line 61)
+- Analyze the `run_portfolio()` function signature, parameters, and execution flow
+- Identify how the Portfolio Manager currently handles backtest mode
+- Document the module's class structure, key methods, and dependencies
+- Determine integration points where OpenAlgo API calls should be inserted
+
+**Research Questions**:
+- What is the exact function signature of `run_portfolio()`?
+- How does the `is_live` parameter currently affect execution flow?
+- What data structures does Portfolio Manager expect as input?
+- What are the return values and side effects of portfolio execution?
+- How are strategies instantiated and managed within the Portfolio Manager?
+
+#### 2. Configuration Management System
+
+**Files to Analyze**:
+- Excel configuration file templates (identify location and structure)
+- Any Python modules that read/parse Excel configurations
+- Configuration validation logic (if exists)
+
+**Specific Analysis Required**:
+- Document the exact Excel file structure (sheets, columns, data types)
+- Identify which configuration parameters are required vs optional
+- Analyze how Excel data is currently loaded into Python data structures
+- Determine validation rules and constraints
+- Map configuration fields to strategy execution parameters
+
+**Research Questions**:
+- What is the complete schema of the Excel configuration files?
+- Which Python libraries are used to read Excel files (pandas, openpyxl, xlrd)?
+- How are configuration errors currently handled?
+- What naming conventions are used for portfolios, strategies, and legs?
+- Are there any configuration versioning or migration mechanisms?
+
+#### 3. Strategy Execution Logic
+
+**Files to Analyze**:
+- Strategy base classes and interfaces
+- Signal generation modules
+- Order placement/simulation logic in backtest mode
+- Position tracking and P&L calculation
+
+**Specific Analysis Required**:
+- Document the strategy lifecycle (initialization → signal generation → order execution → position management)
+- Identify the interface between strategies and the execution layer
+- Analyze how orders are currently simulated in backtest mode
+- Examine position tracking data structures
+- Review P&L calculation methodology
+
+**Research Questions**:
+- What is the base class or interface that all strategies must implement?
+- How are trading signals generated and communicated?
+- What order types are supported (market, limit, stop, etc.)?
+- How are positions tracked (data structure, update frequency)?
+- How is P&L calculated (realized vs unrealized, per-leg vs aggregated)?
+
+#### 4. Market Data Handling
+
+**Files to Analyze**:
+- Parquet file reading modules
+- Data structures for OHLC, options strikes, market data
+- Data preprocessing and transformation logic
+- Historical data access patterns
+
+**Specific Analysis Required**:
+- Document how Parquet files are loaded and accessed
+- Identify the schema of market data (columns, data types, indexing)
+- Analyze data preprocessing steps (resampling, cleaning, feature engineering)
+- Determine how real-time vs historical data is distinguished
+- Examine strike selection and options chain handling
+
+**Research Questions**:
+- What is the exact schema of the Parquet files (columns, data types)?
+- How is data indexed (by timestamp, symbol, strike)?
+- What data transformations occur before strategy consumption?
+- How are options strikes currently resolved (ATM, OTM+50, etc.)?
+- What is the interface that strategies use to access market data?
+
+#### 5. Parameter Documentation from btrun/util.py (CRITICAL)
+
+**File to Analyze**: `btrun/util.py` in the backtester repository
+
+**CRITICAL REQUIREMENT**: Extract and document ALL parameters implemented in `btrun/util.py`. This file contains the complete parameter system used by the backtester for strategy configuration and execution.
+
+**Specific Analysis Required**:
+- Extract every parameter defined in `btrun/util.py`
+- Document parameter names, types, default values, and valid ranges
+- Explain the purpose and effect of each parameter on strategy execution
+- Identify which parameters are required vs optional
+- Document parameter validation rules and constraints
+- Analyze parameter dependencies (e.g., parameter X requires parameter Y)
+- Identify parameters that will need special handling in live trading mode
+
+**Research Questions**:
+- What is the complete list of parameters in `btrun/util.py`?
+- What are the data types for each parameter (int, float, str, bool, list, dict)?
+- What are the default values for each parameter?
+- What are the valid ranges or allowed values for each parameter?
+- How does each parameter affect strategy behavior (entry, exit, position sizing, risk management)?
+- Which parameters are specific to backtesting and won't apply to live trading?
+- Which parameters need to be exposed in the Excel configuration for live trading?
+- How should parameter validation be implemented for live trading?
+
+**Expected Outputs**:
+
+1. **Complete Parameter Reference Guide** (3-5 pages)
+   - Table format with columns: Parameter Name, Type, Default, Valid Range, Description, Live Trading Applicable
+   - Grouped by category (e.g., Entry Parameters, Exit Parameters, Risk Management, Position Sizing, Timing, etc.)
+   - Examples showing how each parameter is used in strategy configuration
+
+2. **Parameter Integration Recommendations** (1-2 pages)
+   - Which parameters should be included in Excel configuration for live trading
+   - Which parameters should have different defaults for live vs backtest mode
+   - How to validate parameters before live deployment
+   - Error handling for invalid parameter values
+   - Parameter migration strategy from backtest to live
+
+3. **Developer Reference** (1 page)
+   - Quick reference table for development team
+   - Common parameter combinations and their effects
+   - Troubleshooting guide for parameter-related issues
+
+**CRITICAL**: This parameter documentation is essential for the development team to understand how to integrate the backtester's configuration system with the live trading system. Provide complete, accurate documentation of every parameter.
+
+#### 6. Data Loading Story Analysis (REQUIRED)
+
+**File to Analyze**: `/Users/maruth/projects/backtester-worktree-3/docs/stories/7.9.story.md`
+
+**Story Context**: This document describes the Parquet data loading optimization and incremental updates system implemented in the backtester. Understanding this is critical for adapting data loading for live trading.
+
+**Specific Analysis Required**:
+- Analyze the current Parquet-based data loading architecture
+- Understand the HybridDataLoader implementation and its modes (MySQL vs Parquet)
+- Document the incremental update pipeline and change detection mechanisms
+- Identify caching strategies (memory-mapped Arrow + LRU cache)
+- Examine telemetry and monitoring patterns
+- Understand the multi-user deployment architecture (NFS, GCS backup)
+
+**Research Questions**:
+- How does the HybridDataLoader currently load historical data from Parquet files?
+- What is the data flow: Parquet → PyArrow → DataFrame → Strategy?
+- How does the incremental update system work (ChangeDetector, MetadataCatalog, DeltaMerger)?
+- What caching mechanisms are in place and how do they work?
+- How should data loading be adapted for live trading (real-time API data vs historical Parquet)?
+- Which components of the data loading system can be reused for live trading?
+- What are the performance characteristics (load times, update frequencies)?
+
+**Expected Outputs**:
+
+1. **Data Loading Architecture Summary** (2-3 pages)
+   - Current Parquet-based data loading flow
+   - HybridDataLoader modes and configuration
+   - Incremental update pipeline components
+   - Caching architecture and invalidation strategies
+   - Telemetry and monitoring patterns
+
+2. **Live Trading Data Loading Recommendations** (2-3 pages)
+   - How to adapt data loading for real-time market data from OpenAlgo API
+   - Which components to reuse vs replace for live trading
+   - Data structure mapping: Parquet schema → OpenAlgo API response → Strategy input
+   - Caching strategies for live market data (if applicable)
+   - Real-time data update frequency and synchronization
+   - Fallback mechanisms if real-time data is unavailable
+
+3. **Implementation Guidance** (1-2 pages)
+   - Specific code changes needed in HybridDataLoader for live mode
+   - How to switch between historical (Parquet) and live (API) data sources
+   - Configuration parameters for live data loading
+   - Error handling for API failures and data quality issues
+   - Testing strategy for data loading in live mode
+
+**Key Insights to Extract**:
+- The story mentions `is_live` parameter integration with Portfolio Manager
+- Parquet data is partitioned by exchange/symbol/instrument/year/month/day
+- Incremental updates complete in <1 second for single trading day
+- Multi-tier caching with memory-mapped Arrow + LRU fallback
+- Telemetry tracks load times, bytes scanned, cache hit rates
+- NFS-based multi-user deployment with GCS backup
+
+**CRITICAL**: Understanding the data loading story is essential for designing how live trading will fetch real-time market data from OpenAlgo API instead of reading historical Parquet files. Provide specific recommendations for adapting this system.
+
+### Integration Analysis Requirements
+
+**Based on the codebase analysis above, provide specific recommendations for:**
+
+1. **Minimal Code Changes**: Identify the smallest set of changes needed to enable live trading via OpenAlgo
+2. **Backward Compatibility**: Ensure backtest mode continues to work unchanged
+3. **Code Reuse**: Identify which existing modules/functions can be reused vs need replacement
+4. **Data Structure Mapping**: Map backtester data structures to OpenAlgo API request/response formats
+5. **Error Handling**: Identify where additional error handling is needed for live trading
+6. **Testing Strategy**: Recommend how to test live trading integration without affecting backtest functionality
+
+### Instructions for AI Research Platform
+
+**If you can access the GitHub repository**:
+1. Clone or browse the repository at https://github.com/jaimarvelquant/backtester_ajay
+2. Analyze the four critical integration points listed above
+3. Extract code snippets showing current implementation patterns
+4. Provide specific line-by-line recommendations for modifications
+5. Identify potential breaking changes and suggest mitigation strategies
+
+**If you cannot access the GitHub repository**:
+1. Note that codebase analysis is limited to provided documentation
+2. Request that the user provide specific code snippets from the four critical areas
+3. Base recommendations on documented architecture and common Python/Flask patterns
+4. Clearly mark assumptions about codebase structure that should be verified
+
+### Expected Outputs from Codebase Analysis
+
+Include in your research report:
+
+1. **Codebase Structure Summary** (1-2 pages)
+   - High-level architecture diagram (described in text)
+   - Key modules and their responsibilities
+   - Data flow from configuration → execution → results
+
+2. **Integration Point Specifications** (2-3 pages)
+   - Exact locations where OpenAlgo API calls should be inserted
+   - Required modifications to `run_portfolio()` function
+   - Data structure transformations needed
+   - Code examples showing before/after for key integration points
+
+3. **Configuration Migration Plan** (1-2 pages)
+   - Excel to JSON mapping specification
+   - Field-by-field transformation rules
+   - Validation logic to implement
+   - Example Excel → JSON conversion
+
+4. **Compatibility Assessment** (1 page)
+   - Risk analysis: What could break in backtest mode?
+   - Recommended testing approach to ensure backward compatibility
+   - Suggested feature flags or configuration switches
+
+---
+
+## 🎯 Success Criteria for This Research
+
+**The research is successful if it provides:**
+
+1. ✅ **Immediately implementable solutions** - Developers can start coding from the research
+2. ✅ **Complete code examples** - Flask routes, Vanilla JS, DaisyUI components (not pseudocode)
+3. ✅ **Technology stack compliance** - 100% compatible with Flask + Tailwind + DaisyUI + Vanilla JS
+4. ✅ **OpenAlgo integration guidance** - Specific patterns for extending OpenAlgo
+5. ✅ **Version-specific information** - Tailwind 4.1.14, DaisyUI 5.1.27 examples
+6. ✅ **Real-world examples** - References to actual trading platforms using similar stacks
+7. ✅ **Security and compliance** - SEBI requirements and implementation patterns
+8. ✅ **Testing guidance** - Specific criteria for paper trading and load testing
+9. ✅ **Performance optimization** - Patterns for handling 50-100 real-time positions
+10. ✅ **Responsive design** - Tailwind breakpoint strategies for all device sizes
+
+**The research FAILS if it:**
+
+- ❌ Suggests React, Vue, Angular, or any framework requiring stack changes
+- ❌ Provides pseudocode instead of complete, runnable examples
+- ❌ Uses incorrect versions (e.g., Tailwind 3.x instead of 4.1.14)
+- ❌ Ignores MarvelQuant's existing architecture and patterns
+- ❌ Provides generic advice without specific implementation details
+- ❌ Lacks citations and sources for claims
+- ❌ Misses critical security or compliance requirements
+- ❌ Fails to answer the 8 critical research questions
+
+---
+
+**END OF RESEARCH PROMPT**
+
+---
+
+## 📄 Research Prompt Summary
+
+**Total Length**: 650+ lines
+**Estimated Research Time**: 60-90 minutes
+**Expected Output**: 25-35 pages of comprehensive, actionable research
+**Technology Stack**: Flask 2.x + Tailwind CSS 4.1.14 + DaisyUI 5.1.27 + Vanilla JavaScript + SQLite (FIXED)
+**Focus**: Implementation within constraints, not stack selection
+**Primary Platform**: ChatGPT Deep Research (recommended)
+**Alternative Platforms**: Gemini Deep Research, Grok DeepSearch, Claude Projects
+
+**Ready to execute!** Copy this entire prompt and paste it into your chosen AI research platform.
+

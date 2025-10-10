@@ -5,9 +5,9 @@
 
 ## Executive Summary
 
-**Is OpenAlgo tightly coupled with Indian exchanges?**
+**Is MarvelQuant tightly coupled with Indian exchanges?**
 
-**Yes, currently.** OpenAlgo's architecture is primarily designed around Indian stock market exchanges (NSE, BSE, MCX, NFO, etc.) and Indian brokers. However, the application is **modular enough** to support international brokers like Alpaca and Binance with proper adaptation.
+**Yes, currently.** MarvelQuant's architecture is primarily designed around Indian stock market exchanges (NSE, BSE, MCX, NFO, etc.) and Indian brokers. However, the application is **modular enough** to support international brokers like Alpaca and Binance with proper adaptation.
 
 **Key Challenges:**
 - **Symbol Format**: Indian format (e.g., `SBIN-EQ`) vs US/Crypto format (e.g., `AAPL`, `BTCUSDT`)
@@ -23,7 +23,7 @@
 
 ### 1. Broker Integration Pattern
 
-OpenAlgo follows a **standardized broker integration pattern** with 5 core components:
+MarvelQuant follows a **standardized broker integration pattern** with 5 core components:
 
 ```
 broker/
@@ -34,7 +34,7 @@ broker/
 │   │   ├── data.py              # Quotes, historical data, market info
 │   │   └── funds.py             # Account balance & margins
 │   ├── mapping/
-│   │   ├── transform_data.py    # OpenAlgo ↔ Broker format conversion
+│   │   ├── transform_data.py    # MarvelQuant ↔ Broker format conversion
 │   │   └── order_data.py        # Order-specific transformations
 │   ├── streaming/
 │   │   ├── {broker}_adapter.py  # WebSocket adapter
@@ -60,11 +60,11 @@ Dynamic Broker Import (importlib)
     ↓
 broker.{broker_name}.api.order_api.place_order_api()
     ↓
-Transform Data (OpenAlgo → Broker format)
+Transform Data (MarvelQuant → Broker format)
     ↓
 Broker API Call
     ↓
-Response Transform (Broker → OpenAlgo format)
+Response Transform (Broker → MarvelQuant format)
     ↓
 Return to Client
 ```
@@ -77,7 +77,7 @@ res, response_data, order_id = broker_module.place_order_api(order_data, auth_to
 
 ### 3. Symbol Mapping System
 
-OpenAlgo uses a **master contract database** per broker:
+MarvelQuant uses a **master contract database** per broker:
 
 - **Database Table**: `symbol` (stores broker-specific symbols)
 - **Fields**: `symbol`, `brsymbol`, `token`, `exchange`, `brexchange`, `lotsize`
@@ -86,7 +86,7 @@ OpenAlgo uses a **master contract database** per broker:
 
 **Example (Zerodha):**
 ```python
-# OpenAlgo symbol → Broker symbol
+# MarvelQuant symbol → Broker symbol
 get_br_symbol("SBIN-EQ", "NSE")  # Returns "SBIN" for Zerodha
 ```
 
@@ -163,7 +163,7 @@ def authenticate(api_key: str, secret_key: str, user_id: str, is_paper: bool = T
     Args:
         api_key: Alpaca API Key
         secret_key: Alpaca Secret Key
-        user_id: OpenAlgo user ID
+        user_id: MarvelQuant user ID
         is_paper: True for paper trading, False for live
 
     Returns:
@@ -206,7 +206,7 @@ def authenticate(api_key: str, secret_key: str, user_id: str, is_paper: bool = T
 
 ### Step 3: Implement Symbol Mapping (`transform_data.py`)
 
-**Key Challenge:** Convert OpenAlgo Indian-style format to Alpaca format
+**Key Challenge:** Convert MarvelQuant Indian-style format to Alpaca format
 
 ```python
 # broker/alpaca/mapping/transform_data.py
@@ -214,9 +214,9 @@ from database.token_db import get_br_symbol
 
 def transform_data(data):
     """
-    Transform OpenAlgo request to Alpaca format
+    Transform MarvelQuant request to Alpaca format
 
-    OpenAlgo Input:
+    MarvelQuant Input:
     {
         "symbol": "AAPL-EQ",  # Need to handle this
         "exchange": "NYSE",   # Map to Alpaca exchange
@@ -309,7 +309,7 @@ def place_order_api(data, auth_token):
     Place order with Alpaca
 
     Args:
-        data: OpenAlgo order data
+        data: MarvelQuant order data
         auth_token: Contains API key and secret (JSON string or dict)
 
     Returns:
@@ -449,7 +449,7 @@ class AlpacaWebSocketAdapter(BaseBrokerWebSocketAdapter):
 
         # Set up handlers
         async def trade_handler(data):
-            # Transform to OpenAlgo format and publish to ZMQ
+            # Transform to MarvelQuant format and publish to ZMQ
             self.on_data({
                 'symbol': data.symbol,
                 'ltp': data.price,
@@ -486,9 +486,9 @@ class AlpacaWebSocketAdapter(BaseBrokerWebSocketAdapter):
 
 def transform_data(data):
     """
-    Transform OpenAlgo to Binance format
+    Transform MarvelQuant to Binance format
 
-    OpenAlgo Input:
+    MarvelQuant Input:
     {
         "symbol": "BTC-USDT",  # Custom format
         "exchange": "SPOT",
@@ -605,7 +605,7 @@ BINANCE_TESTNET_URL = 'https://testnet.binance.vision/api'
 
 ### 2. Analyzer Mode
 
-Use OpenAlgo's built-in analyzer mode (no real orders placed):
+Use MarvelQuant's built-in analyzer mode (no real orders placed):
 
 ```bash
 # In .env
@@ -617,7 +617,7 @@ ANALYZER_MODE=true
 ```python
 # test/test_alpaca_integration.py
 def test_alpaca_order_transformation():
-    openalgo_data = {
+    marvelquant_data = {
         'symbol': 'AAPL-EQ',
         'exchange': 'NYSE',
         'action': 'BUY',
@@ -627,7 +627,7 @@ def test_alpaca_order_transformation():
         'price': 150.50
     }
 
-    transformed = transform_data(openalgo_data)
+    transformed = transform_data(marvelquant_data)
 
     assert transformed['symbol'] == 'AAPL'
     assert transformed['qty'] == 10
@@ -641,7 +641,7 @@ def test_alpaca_order_transformation():
 
 ### Challenge 1: Symbol Format Incompatibility
 
-**Problem**: OpenAlgo expects `SBIN-EQ`, Alpaca uses `AAPL`, Binance uses `BTCUSDT`
+**Problem**: MarvelQuant expects `SBIN-EQ`, Alpaca uses `AAPL`, Binance uses `BTCUSDT`
 
 **Solution**:
 1. **Accept flexible input**: Allow users to enter `AAPL` or `AAPL-EQ`
@@ -699,7 +699,7 @@ def validate_exchange(exchange, broker):
 ```python
 # In transform_data.py
 def map_product_type(product, broker):
-    """Map OpenAlgo product to broker-specific product"""
+    """Map MarvelQuant product to broker-specific product"""
     if broker == 'alpaca':
         mapping = {
             'CNC': 'day',
@@ -990,7 +990,7 @@ python-binance>=1.0.19
 
 ## Conclusion
 
-**Is OpenAlgo tightly coupled with Indian exchanges?**
+**Is MarvelQuant tightly coupled with Indian exchanges?**
 
 Yes, but the architecture is **extensible**. The main tight coupling points are:
 
@@ -1025,13 +1025,13 @@ Yes, absolutely! By:
 
 - **Alpaca API Docs**: https://docs.alpaca.markets/
 - **Binance API Docs**: https://binance-docs.github.io/apidocs/spot/en/
-- **OpenAlgo API Docs**: https://docs.openalgo.in/
-- **OpenAlgo Broker Factory**: `docs/broker_factory.md`
-- **OpenAlgo Architecture**: `docs/architecture-diagram.png`
+- **MarvelQuant API Docs**: https://docs.marvelquant.com/
+- **MarvelQuant Broker Factory**: `docs/broker_factory.md`
+- **MarvelQuant Architecture**: `docs/architecture-diagram.png`
 
 ---
 
 **Document Version**: 1.0
 **Last Updated**: 2025-10-05
-**Author**: OpenAlgo Development Team
+**Author**: MarvelQuant Development Team
 **License**: AGPL v3.0

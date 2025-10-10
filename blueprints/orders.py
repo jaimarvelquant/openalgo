@@ -146,8 +146,9 @@ def orderbook():
         if api_key:
             success, response, status_code = get_orderbook(api_key=api_key)
         else:
-            logger.error("No API key found for analyze mode")
-            return "API key required for analyze mode", 400
+            # Analyze mode enabled but no API key - fall back to live broker
+            logger.warning("Analyze mode enabled but no API key found for orderbook - falling back to live broker")
+            success, response, status_code = get_orderbook(auth_token=auth_token, broker=broker)
     else:
         # Use live broker
         success, response, status_code = get_orderbook(auth_token=auth_token, broker=broker)
@@ -187,8 +188,9 @@ def tradebook():
         if api_key:
             success, response, status_code = get_tradebook(api_key=api_key)
         else:
-            logger.error("No API key found for analyze mode")
-            return "API key required for analyze mode", 400
+            # Analyze mode enabled but no API key - fall back to live broker
+            logger.warning("Analyze mode enabled but no API key found for tradebook - falling back to live broker")
+            success, response, status_code = get_tradebook(auth_token=auth_token, broker=broker)
     else:
         # Use live broker
         success, response, status_code = get_tradebook(auth_token=auth_token, broker=broker)
@@ -226,8 +228,9 @@ def positions():
         if api_key:
             success, response, status_code = get_positionbook(api_key=api_key)
         else:
-            logger.error("No API key found for analyze mode")
-            return "API key required for analyze mode", 400
+            # Analyze mode enabled but no API key - fall back to live broker
+            logger.warning("Analyze mode enabled but no API key found for positionbook - falling back to live broker")
+            success, response, status_code = get_positionbook(auth_token=auth_token, broker=broker)
     else:
         # Use live broker
         success, response, status_code = get_positionbook(auth_token=auth_token, broker=broker)
@@ -265,8 +268,9 @@ def holdings():
         if api_key:
             success, response, status_code = get_holdings(api_key=api_key)
         else:
-            logger.error("No API key found for analyze mode")
-            return "API key required for analyze mode", 400
+            # Analyze mode enabled but no API key - fall back to live broker
+            logger.warning("Analyze mode enabled but no API key found for holdings - falling back to live broker")
+            success, response, status_code = get_holdings(auth_token=auth_token, broker=broker)
     else:
         # Use live broker
         success, response, status_code = get_holdings(auth_token=auth_token, broker=broker)

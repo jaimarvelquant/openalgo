@@ -40,7 +40,7 @@ bot_config_model = api.model('BotConfig', {
 user_link_model = api.model('UserLink', {
     'apikey': fields.String(required=True, description='API Key'),
     'telegram_id': fields.Integer(required=True, description='Telegram User ID'),
-    'username': fields.String(required=True, description='OpenAlgo Username')
+    'username': fields.String(required=True, description='MarvelQuant Username')
 })
 
 broadcast_model = api.model('Broadcast', {
@@ -51,7 +51,7 @@ broadcast_model = api.model('Broadcast', {
 
 notification_model = api.model('Notification', {
     'apikey': fields.String(required=True, description='API Key'),
-    'username': fields.String(required=True, description='OpenAlgo Username'),
+    'username': fields.String(required=True, description='MarvelQuant Username'),
     'message': fields.String(required=True, description='Notification message'),
     'priority': fields.Integer(description='Priority (1-10)', default=5)
 })

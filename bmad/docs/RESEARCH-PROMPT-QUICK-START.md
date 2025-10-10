@@ -1,19 +1,19 @@
 # Deep Research Prompt - Quick Start Guide
 
 **Generated**: 2025-10-08  
-**Research Prompt File**: `deep-research-prompt-openalgo-integration-CONSTRAINED-2025-10-08.md`  
+**Research Prompt File**: `deep-research-prompt-marvelquant-integration-CONSTRAINED-2025-10-08.md`  
 **Status**: Ready to Execute
 
 ---
 
 ## 🎯 What You Have
 
-A **comprehensive, 1,600+ line deep research prompt** specifically designed to gather actionable insights for integrating your backtesting system with OpenAlgo for live trading.
+A **comprehensive, 1,600+ line deep research prompt** specifically designed to gather actionable insights for integrating your backtesting system with MarvelQuant for live trading.
 
 ### Key Features
 
 ✅ **Technology Stack Constrained**: All research MUST work with Flask + Tailwind CSS 4.1.14 + DaisyUI 5.1.27 + Vanilla JavaScript
-✅ **OpenAlgo Ecosystem Focused**: Emphasizes extending OpenAlgo's existing architecture
+✅ **MarvelQuant Ecosystem Focused**: Emphasizes extending MarvelQuant's existing architecture
 ✅ **AlgoBaba-Style API Design**: Name-based hierarchical API (NOT ID-based) following production-proven patterns
 ✅ **Backtester Codebase Analysis**: Instructs AI to analyze your existing backtester repository
 ✅ **Parameter Documentation**: Complete extraction of all parameters from btrun/util.py
@@ -31,7 +31,7 @@ A **comprehensive, 1,600+ line deep research prompt** specifically designed to g
 ### Step 1: Choose Your Platform
 
 **Recommended: ChatGPT Deep Research**
-- Best for analyzing GitHub repositories (OpenAlgo)
+- Best for analyzing GitHub repositories (MarvelQuant)
 - Excellent at finding version-specific documentation
 - Strong at providing complete code examples
 - Query limits: 25-250/month (Plus vs Pro)
@@ -48,7 +48,7 @@ A **comprehensive, 1,600+ line deep research prompt** specifically designed to g
 
 ### Step 2: Copy the Prompt
 
-**File Location**: `/Users/maruth/projects/bmad/docs/deep-research-prompt-openalgo-integration-CONSTRAINED-2025-10-08.md`
+**File Location**: `/Users/maruth/projects/bmad/docs/deep-research-prompt-marvelquant-integration-CONSTRAINED-2025-10-08.md`
 
 **What to Copy**: The ENTIRE file (1,600+ lines)
 
@@ -92,11 +92,11 @@ A **comprehensive, 1,600+ line deep research prompt** specifically designed to g
 - Flask Blueprint implementation patterns
 - Complete endpoint specifications following AlgoBaba conventions
 
-### 3. OpenAlgo Integration Blueprint
+### 3. MarvelQuant Integration Blueprint
 - Complete file structure for portfolio manager Blueprint
 - Flask Blueprint registration patterns
 - Template organization and inheritance
-- Authentication integration with OpenAlgo
+- Authentication integration with MarvelQuant
 - Working code examples
 
 ### 4. DaisyUI Component Library
@@ -134,7 +134,7 @@ A **comprehensive, 1,600+ line deep research prompt** specifically designed to g
 ### 9. Testing Strategy
 - Paper trading validation (duration, criteria)
 - Unit testing patterns for Flask
-- Integration testing with OpenAlgo
+- Integration testing with MarvelQuant
 - Load testing for real-time updates
 
 ### 10. Implementation Roadmap
@@ -159,7 +159,7 @@ The research will provide definitive answers to:
 8. ✅ **What testing duration and criteria are recommended for paper trading validation?**
 9. ✅ **How should the AlgoBaba-style name-based API be implemented in Flask?**
 10. ✅ **What are all the parameters in btrun/util.py and how should they be integrated?**
-11. ✅ **How should data loading be adapted from Parquet files to real-time OpenAlgo API?**
+11. ✅ **How should data loading be adapted from Parquet files to real-time MarvelQuant API?**
 12. ✅ **How should configuration versioning prevent accidental live deployment of backtest configs?**
 
 ---
@@ -190,11 +190,11 @@ The research will provide definitive answers to:
 - [ ] Code examples use correct versions (Tailwind 4.1.14, DaisyUI 5.1.27)
 - [ ] Vanilla JavaScript syntax (no JSX, no framework syntax)
 
-**OpenAlgo Compatibility:**
-- [ ] Patterns match OpenAlgo's GitHub repository structure
-- [ ] Blueprint patterns align with OpenAlgo's architecture
-- [ ] Authentication patterns compatible with OpenAlgo
-- [ ] UI patterns use OpenAlgo's existing components
+**MarvelQuant Compatibility:**
+- [ ] Patterns match MarvelQuant's GitHub repository structure
+- [ ] Blueprint patterns align with MarvelQuant's architecture
+- [ ] Authentication patterns compatible with MarvelQuant
+- [ ] UI patterns use MarvelQuant's existing components
 
 **Source Verification:**
 - [ ] Citations link to official documentation
@@ -262,7 +262,7 @@ If gaps are identified, create focused follow-up prompts:
 ❌ **Don't accept React/Vue suggestions** - redirect to Vanilla JS  
 ❌ **Don't use outdated versions** - verify Tailwind 4.1.14, DaisyUI 5.1.27  
 ❌ **Don't skip validation** - test code examples for syntax errors  
-❌ **Don't ignore OpenAlgo patterns** - align with existing architecture
+❌ **Don't ignore MarvelQuant patterns** - align with existing architecture
 
 ---
 
@@ -285,7 +285,7 @@ If gaps are identified, create focused follow-up prompts:
 1. ✅ Immediately implementable solutions (developers can start coding)
 2. ✅ Complete code examples (Flask, Vanilla JS, DaisyUI - not pseudocode)
 3. ✅ 100% technology stack compliance (Flask + Tailwind + DaisyUI + Vanilla JS)
-4. ✅ OpenAlgo integration guidance (specific patterns for extending)
+4. ✅ MarvelQuant integration guidance (specific patterns for extending)
 5. ✅ Version-specific information (Tailwind 4.1.14, DaisyUI 5.1.27)
 6. ✅ Real-world examples (trading platforms using similar stacks)
 7. ✅ Security and compliance (SEBI requirements)
@@ -298,7 +298,7 @@ If gaps are identified, create focused follow-up prompts:
 - ❌ Suggests React, Vue, Angular, or framework changes
 - ❌ Provides pseudocode instead of complete examples
 - ❌ Uses incorrect versions (e.g., Tailwind 3.x)
-- ❌ Ignores OpenAlgo's existing architecture
+- ❌ Ignores MarvelQuant's existing architecture
 - ❌ Provides generic advice without specifics
 - ❌ Lacks citations and sources
 - ❌ Misses security or compliance requirements
@@ -309,7 +309,7 @@ If gaps are identified, create focused follow-up prompts:
 ## 📞 Next Steps
 
 1. **Review the full prompt** (5 min)
-   - Open: `deep-research-prompt-openalgo-integration-CONSTRAINED-2025-10-08.md`
+   - Open: `deep-research-prompt-marvelquant-integration-CONSTRAINED-2025-10-08.md`
    - Verify all sections align with your needs
 
 2. **Choose platform** (1 min)
@@ -323,7 +323,7 @@ If gaps are identified, create focused follow-up prompts:
 
 4. **Validate results** (2-3 hours)
    - Check technology stack compliance
-   - Verify OpenAlgo compatibility
+   - Verify MarvelQuant compatibility
    - Cross-reference sources
 
 5. **Extract insights** (2-3 hours)
@@ -340,7 +340,7 @@ If gaps are identified, create focused follow-up prompts:
 
 ## 📁 File Locations
 
-**Research Prompt**: `/Users/maruth/projects/bmad/docs/deep-research-prompt-openalgo-integration-CONSTRAINED-2025-10-08.md`  
+**Research Prompt**: `/Users/maruth/projects/bmad/docs/deep-research-prompt-marvelquant-integration-CONSTRAINED-2025-10-08.md`  
 **Quick Start Guide**: `/Users/maruth/projects/bmad/docs/RESEARCH-PROMPT-QUICK-START.md` (this file)  
 **Existing Documentation**: `/Users/maruth/projects/docs/bmad/live_integration/` (13 files)
 
@@ -348,5 +348,5 @@ If gaps are identified, create focused follow-up prompts:
 
 **Ready to execute! 🚀**
 
-Copy the research prompt and paste it into ChatGPT Deep Research (or your chosen platform) to receive comprehensive, actionable insights for your Backtester → OpenAlgo integration project.
+Copy the research prompt and paste it into ChatGPT Deep Research (or your chosen platform) to receive comprehensive, actionable insights for your Backtester → MarvelQuant integration project.
 

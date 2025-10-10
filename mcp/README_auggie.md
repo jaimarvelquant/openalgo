@@ -42,10 +42,10 @@ Create `~/.auggie/config.json`:
       "command": "npx",
       "args": ["@playwright/mcp@latest"]
     },
-    "openalgo": {
-      "command": "/Users/maruth/projects/openalgo/.venv/bin/python3",
+    "marvelquant": {
+      "command": "/Users/maruth/projects/marvelquant/.venv/bin/python3",
       "args": [
-        "/Users/maruth/projects/openalgo/mcp/mcpserver.py",
+        "/Users/maruth/projects/marvelquant/mcp/mcpserver.py",
         "75898c159b44ff462f6408b01991b520d522f56c82a255881d6f5b7da8264e8c",
         "http://127.0.0.1:5000"
       ]
@@ -185,16 +185,16 @@ auggie --mcp-config ~/.auggie/config.json "your instruction" --print --verbose
 - Consider using headless mode for production automation
 - Monitor browser resource usage
 
-## Integration with OpenAlgo
+## Integration with MarvelQuant
 
-The configuration includes both Playwright and OpenAlgo MCP servers, enabling:
+The configuration includes both Playwright and MarvelQuant MCP servers, enabling:
 
 - **Browser Automation**: Web scraping, form filling, screenshots
 - **Trading Operations**: Order placement, position management, market data
 
 Example combined workflow:
 ```bash
-auggie --mcp-config ~/.auggie/config.json "Navigate to a trading website, extract market data, and place an order using OpenAlgo" --print
+auggie --mcp-config ~/.auggie/config.json "Navigate to a trading website, extract market data, and place an order using MarvelQuant" --print
 ```
 
 ## Support
@@ -209,6 +209,6 @@ For issues with:
 
 1. Test basic browser automation
 2. Explore web scraping capabilities
-3. Integrate with OpenAlgo trading workflows
+3. Integrate with MarvelQuant trading workflows
 4. Build custom automation scripts
 5. Set up automated testing workflows

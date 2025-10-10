@@ -228,7 +228,7 @@ def process_5paisa_csv(path):
 
     filtered_df['TradingSymbol'] = filtered_df.apply(create_trading_symbol, axis=1)
 
-    # Create a new DataFrame in OpenAlgo format
+    # Create a new DataFrame in MarvelQuant format
     new_df = pd.DataFrame()
     new_df['symbol'] = filtered_df['TradingSymbol'] 
     new_df['brsymbol'] = filtered_df['Name'].str.upper().str.rstrip()

@@ -1,5 +1,5 @@
 /*!
- * Simple Python Editor for OpenAlgo
+ * Simple Python Editor for MarvelQuant
  * A lightweight code editor with syntax highlighting and line numbers
  */
 

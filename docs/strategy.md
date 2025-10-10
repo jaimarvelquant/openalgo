@@ -1,6 +1,6 @@
 # Strategy Module Documentation
 
-The Strategy Module is a core component of the OpenAlgo platform that enables users to create, manage, and execute automated trading strategies through webhooks. This document provides a comprehensive overview of the strategy module's features, architecture, and usage.
+The Strategy Module is a core component of the MarvelQuant platform that enables users to create, manage, and execute automated trading strategies through webhooks. This document provides a comprehensive overview of the strategy module's features, architecture, and usage.
 
 ## Overview
 
@@ -191,7 +191,7 @@ The webhook message format varies based on the trading mode of your strategy:
 1. **Alert Message Format for Long/Short Only Mode**:
 ```
 {
-    "symbol": "openalgo_symbol",
+    "symbol": "marvelquant_symbol",
     "action": "{{strategy.order.action}}"
 }
 ```
@@ -199,7 +199,7 @@ The webhook message format varies based on the trading mode of your strategy:
 2. **Alert Message Format for Both Modes**:
 ```
 {
-    "symbol": "openalgo_symbol",
+    "symbol": "marvelquant_symbol",
     "action": "{{strategy.order.action}}",
     "position_size": "{{strategy.position_size}}"
 }
@@ -276,7 +276,7 @@ def send_strategy_signal(host_url, webhook_id, symbol, action, position_size=Non
     Send a strategy signal via webhook
     
     Args:
-        host_url (str): Base URL of the OpenAlgo server
+        host_url (str): Base URL of the MarvelQuant server
         webhook_id (str): Strategy's webhook ID
         symbol (str): Trading symbol
         action (str): "BUY" or "SELL"

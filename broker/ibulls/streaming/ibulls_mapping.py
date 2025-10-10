@@ -1,10 +1,10 @@
 import logging
 
 class IbullsExchangeMapper:
-    """Maps between OpenAlgo exchange codes and Ibulls XTS specific exchange types"""
+    """Maps between MarvelQuant exchange codes and Ibulls XTS specific exchange types"""
     
     # Exchange type mapping for Ibulls XTS broker
-    # Format: {OpenAlgo_Exchange: iBulls_Exchange_Code}
+    # Format: {MarvelQuant_Exchange: iBulls_Exchange_Code}
     # Based on Ibulls API documentation:
     # "NSECM": 1, "NSEFO": 2, "NSECD": 3, "BSECM": 11, "BSEFO": 12, "MCXFO": 51
     EXCHANGE_TYPES = {
@@ -31,8 +31,8 @@ class IbullsExchangeMapper:
         'MCXFO': 51      # MCX F&O
     }
     
-    # Reverse mapping for converting iBulls exchange codes to OpenAlgo format
-    # Format: {iBulls_Exchange_Code: OpenAlgo_Exchange}
+    # Reverse mapping for converting iBulls exchange codes to MarvelQuant format
+    # Format: {iBulls_Exchange_Code: MarvelQuant_Exchange}
     REVERSE_EXCHANGE_TYPES = {
         1: 'NSE',       # NSECM
         2: 'NFO',       # NSEFO
@@ -45,7 +45,7 @@ class IbullsExchangeMapper:
     @staticmethod
     def get_exchange_type(exchange):
         """
-        Convert OpenAlgo exchange code to Ibulls XTS specific exchange type
+        Convert MarvelQuant exchange code to Ibulls XTS specific exchange type
         
         Args:
             exchange: Exchange code (e.g., 'NSE', 'BSE', 'NSEFO')
@@ -64,7 +64,7 @@ class IbullsExchangeMapper:
         # Mapping based on Ibulls API documentation:
         # "NSECM": 1, "NSEFO": 2, "NSECD": 3, "BSECM": 11, "BSEFO": 12, "MCXFO": 51
         all_exchange_mappings = {
-            # OpenAlgo standard codes
+            # MarvelQuant standard codes
             'NSE': 1,        # NSE Cash Market
             'NFO': 2,        # NSE F&O
             'CDS': 3,        # NSE Currency Derivatives
@@ -105,15 +105,15 @@ class IbullsExchangeMapper:
         return 1
     
     @staticmethod
-    def get_openalgo_exchange(ibulls_code):
+    def get_marvelquant_exchange(ibulls_code):
         """
-        Convert Ibulls XTS exchange code to OpenAlgo exchange code
+        Convert Ibulls XTS exchange code to MarvelQuant exchange code
         
         Args:
             ibulls_code (int): iBulls exchange code
             
         Returns:
-            str: OpenAlgo exchange code
+            str: MarvelQuant exchange code
         """
         return IbullsExchangeMapper.REVERSE_EXCHANGE_TYPES.get(ibulls_code, 'NSE')  # Default to NSE if not found
 

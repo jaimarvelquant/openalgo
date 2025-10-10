@@ -1,5 +1,5 @@
 """
-Internal WebSocket client wrapper for connecting to the OpenAlgo WebSocket server.
+Internal WebSocket client wrapper for connecting to the MarvelQuant WebSocket server.
 This client handles authentication and provides a simple interface for services.
 """
 
@@ -19,7 +19,7 @@ logger = get_logger(__name__)
 
 class WebSocketClient:
     """
-    Internal WebSocket client for connecting to OpenAlgo WebSocket server.
+    Internal WebSocket client for connecting to MarvelQuant WebSocket server.
     Handles authentication, subscriptions, and data routing.
     """
     

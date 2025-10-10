@@ -1,11 +1,11 @@
-#Mapping OpenAlgo API Request https://openalgo.in/docs
+#Mapping MarvelQuant API Request https://marvelquant.com/docs
 #Mapping Angel Broking Parameters https://smartapi.angelbroking.com/docs/Orders
 
 from database.token_db import get_br_symbol
 
 def transform_data(data, token):
     """
-    Transforms OpenAlgo order format to Tradejini API format.
+    Transforms MarvelQuant order format to Tradejini API format.
     """
     symbol = get_br_symbol(data["symbol"], data["exchange"])
     
@@ -35,10 +35,10 @@ def transform_data(data, token):
 
 def transform_modify_order_data(data, token):
     """
-    Transforms OpenAlgo modify order format to Tradejini API format.
+    Transforms MarvelQuant modify order format to Tradejini API format.
     
     Args:
-        data (dict): OpenAlgo modify order data
+        data (dict): MarvelQuant modify order data
         token (str): Broker symbol token
         
     Returns:
@@ -81,7 +81,7 @@ def transform_modify_order_data(data, token):
 
 def map_order_type(pricetype):
     """
-    Maps OpenAlgo order types to Tradejini order types.
+    Maps MarvelQuant order types to Tradejini order types.
     """
     order_type_mapping = {
         "MARKET": "market",
@@ -93,7 +93,7 @@ def map_order_type(pricetype):
 
 def map_product_type(product):
     """
-    Maps OpenAlgo product types to Tradejini product types.
+    Maps MarvelQuant product types to Tradejini product types.
     """
     product_type_mapping = {
         "CNC": "delivery",
@@ -104,7 +104,7 @@ def map_product_type(product):
 
 def map_validity(validity):
     """
-    Maps OpenAlgo validity types to Tradejini validity types.
+    Maps MarvelQuant validity types to Tradejini validity types.
     """
     validity_mapping = {
         "DAY": "day",
@@ -115,7 +115,7 @@ def map_validity(validity):
 
 def reverse_map_product_type(product):
     """
-    Maps Tradejini product types back to OpenAlgo product types.
+    Maps Tradejini product types back to MarvelQuant product types.
     """
     reverse_product_type_mapping = {
         "delivery": "CNC",

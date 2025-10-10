@@ -156,7 +156,7 @@ def get_analyzer_status(
     
     Args:
         analyzer_data: Analyzer data (currently just apikey)
-        api_key: OpenAlgo API key (for API-based calls)
+        api_key: MarvelQuant API key (for API-based calls)
         auth_token: Direct broker authentication token (for internal calls)
         broker: Direct broker name (for internal calls)
         
@@ -179,7 +179,7 @@ def get_analyzer_status(
         if AUTH_TOKEN is None:
             error_response = {
                 'status': 'error',
-                'message': 'Invalid openalgo apikey'
+                'message': 'Invalid marvelquant apikey'
             }
             # Skip logging for invalid API keys to prevent database flooding
             return False, error_response, 403
@@ -210,7 +210,7 @@ def toggle_analyzer_mode(
     
     Args:
         analyzer_data: Analyzer data containing mode
-        api_key: OpenAlgo API key (for API-based calls)
+        api_key: MarvelQuant API key (for API-based calls)
         auth_token: Direct broker authentication token (for internal calls)
         broker: Direct broker name (for internal calls)
         
@@ -233,7 +233,7 @@ def toggle_analyzer_mode(
         if AUTH_TOKEN is None:
             error_response = {
                 'status': 'error',
-                'message': 'Invalid openalgo apikey'
+                'message': 'Invalid marvelquant apikey'
             }
             # Skip logging for invalid API keys to prevent database flooding
             return False, error_response, 403

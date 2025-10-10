@@ -6,7 +6,7 @@ This guide will help you enable sandbox mode and place your first trade in under
 
 ## Prerequisites
 
-1. **OpenAlgo Installation**: Ensure OpenAlgo is installed and running
+1. **MarvelQuant Installation**: Ensure MarvelQuant is installed and running
 2. **Broker API Configured**: Valid broker API credentials for quotes
 3. **Database Initialized**: Run migrations if upgrading
 
@@ -14,7 +14,7 @@ This guide will help you enable sandbox mode and place your first trade in under
 
 ### Via Web UI
 
-1. Log in to OpenAlgo
+1. Log in to MarvelQuant
 2. Navigate to **Settings**
 3. Find **API Analyzer Mode** toggle
 4. Click to enable (toggle should turn green)

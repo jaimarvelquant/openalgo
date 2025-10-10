@@ -139,7 +139,8 @@ def broker_callback(broker,para=None):
         logger.debug('Jainam Prop broker - initiating direct login flow')
 
         # Direct login – auth_function already encapsulates credential handling
-        auth_token, feed_token, user_id, error_message = auth_function()
+        # Returns: (interactive_token, market_token, user_id, is_investor_client, error_message)
+        auth_token, feed_token, user_id, is_investor_client, error_message = auth_function()
         forward_url = 'broker.html'
 
 
@@ -578,15 +579,16 @@ def broker_callback(broker,para=None):
         if broker == 'dhan':
             auth_token = f'{auth_token}'
 
-        # For jainam_prop, store auth_token as JSON with user_id for API calls
+        # For jainam_prop, store auth_token as JSON with user_id and is_investor_client for API calls
         if broker == 'jainam_prop' and user_id:
             import json
             auth_token_json = json.dumps({
                 'token': auth_token,
                 'user_id': user_id,
-                'clientID': user_id  # Jainam API uses clientID parameter
+                'clientID': user_id,  # Jainam API uses clientID parameter
+                'isInvestorClient': is_investor_client  # PRO accounts need clientID in API calls
             })
-            logger.info(f"Jainam Prop: Storing auth token as JSON with user_id: {user_id}")
+            logger.info(f"Jainam Prop: Storing auth token as JSON with user_id: {user_id}, isInvestorClient: {is_investor_client}")
             # Store JSON version in database, but keep original in session
             return handle_auth_success(auth_token_json, session['user'], broker, feed_token=feed_token, user_id=user_id)
 

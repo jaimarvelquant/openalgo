@@ -254,7 +254,7 @@ class JainamWebSocketAdapter(BaseBrokerWebSocketAdapter):
 
     def _process_market_data(self, data, mode):
         """
-        Process incoming market data and publish to OpenAlgo format
+        Process incoming market data and publish to MarvelQuant format
 
         Arguments:
             data: Raw market data from Jainam
@@ -311,7 +311,7 @@ class JainamWebSocketAdapter(BaseBrokerWebSocketAdapter):
 
     def _format_market_data(self, instrument_data, mode):
         """
-        Format Jainam market data to OpenAlgo format
+        Format Jainam market data to MarvelQuant format
 
         Arguments:
             instrument_data: Raw instrument data from Jainam

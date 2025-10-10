@@ -1,6 +1,6 @@
 """
-Fyers WebSocket Adapter for OpenAlgo WebSocket Proxy
-Integrates with the OpenAlgo WebSocket proxy system
+Fyers WebSocket Adapter for MarvelQuant WebSocket Proxy
+Integrates with the MarvelQuant WebSocket proxy system
 """
 
 import json
@@ -33,7 +33,7 @@ from .fyers_adapter import FyersAdapter
 
 
 class FyersWebSocketAdapter(BaseBrokerWebSocketAdapter):
-    """Fyers-specific implementation of the WebSocket adapter for OpenAlgo proxy"""
+    """Fyers-specific implementation of the WebSocket adapter for MarvelQuant proxy"""
     
     def __init__(self):
         super().__init__()
@@ -220,7 +220,7 @@ class FyersWebSocketAdapter(BaseBrokerWebSocketAdapter):
                     }
             
             with self.lock:
-                # Convert to OpenAlgo format
+                # Convert to MarvelQuant format
                 symbol_info = [{"exchange": exchange, "symbol": symbol}]
                 
                 # Create a unique callback for this specific subscription
@@ -424,16 +424,16 @@ class FyersWebSocketAdapter(BaseBrokerWebSocketAdapter):
             # Fallback: assume stock/future, divide by 100
             return round(price_value / 100.0, 2)
 
-    def _map_fyers_to_openalgo(self, fyers_data: Dict[str, Any], mode: int) -> Optional[Dict[str, Any]]:
+    def _map_fyers_to_marvelquant(self, fyers_data: Dict[str, Any], mode: int) -> Optional[Dict[str, Any]]:
         """
-        Map Fyers data to OpenAlgo WebSocket format
+        Map Fyers data to MarvelQuant WebSocket format
         
         Args:
             fyers_data: Data from Fyers
             mode: Subscription mode
             
         Returns:
-            Mapped data in OpenAlgo format
+            Mapped data in MarvelQuant format
         """
         try:
             if not fyers_data:
@@ -447,8 +447,8 @@ class FyersWebSocketAdapter(BaseBrokerWebSocketAdapter):
                 exchange = fyers_data.get("exchange", "NSE")
                 symbol_name = symbol
             
-            # Base OpenAlgo format
-            openalgo_data = {
+            # Base MarvelQuant format
+            marvelquant_data = {
                 "symbol": symbol_name,
                 "exchange": exchange,
                 "token": fyers_data.get("token", ""),
@@ -459,7 +459,7 @@ class FyersWebSocketAdapter(BaseBrokerWebSocketAdapter):
             if mode == 1:  # LTP
                 raw_ltp = fyers_data.get("ltp", 0)
                 converted_ltp = self._convert_price_to_rupees(raw_ltp, fyers_data)
-                openalgo_data.update({
+                marvelquant_data.update({
                     "ltp": converted_ltp,
                     "data_type": "LTP"
                 })
@@ -486,13 +486,13 @@ class FyersWebSocketAdapter(BaseBrokerWebSocketAdapter):
                 # Return the already mapped data (no additional processing needed)
                 return fyers_data
             elif mode == 3:  # Depth
-                openalgo_data.update({
+                marvelquant_data.update({
                     "ltp": fyers_data.get("ltp", 0),
                     "depth": fyers_data.get("depth", {"buy": [], "sell": []}),
                     "data_type": "Depth"
                 })
             
-            return openalgo_data
+            return marvelquant_data
             
         except Exception as e:
             self.logger.error(f"Error mapping Fyers data: {e}")

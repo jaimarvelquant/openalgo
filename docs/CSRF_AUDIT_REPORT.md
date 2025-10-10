@@ -1,11 +1,11 @@
-# CSRF Audit Report - openalgo Project
+# CSRF Audit Report - marvelquant Project
 
 **Date:** 2025-05-30 (Updated: 2025-05-31)
 **Auditor:** Cascade AI (Google Gemini 2.5 Pro)
 
 ## 1. Executive Summary
 
-This report details the findings of a Cross-Site Request Forgery (CSRF) audit conducted on the `openalgo` project.
+This report details the findings of a Cross-Site Request Forgery (CSRF) audit conducted on the `marvelquant` project.
 The project utilizes Flask and Flask-WTF, which provides a strong foundation for CSRF protection.
 
 Overall, the CSRF protection mechanisms are well-implemented.
@@ -76,7 +76,7 @@ The audit focused on the following areas:
 
 ## 4. Conclusion
 
-The `openalgo` project has robust CSRF protection in place for most of its components. The use of Flask-WTF, API key authentication for APIs, and explicit API key authentication for WebSockets are effective measures. The previously identified issue with the logout functionality has been addressed by changing it to a POST request, which is now protected by CSRF tokens.
+The `marvelquant` project has robust CSRF protection in place for most of its components. The use of Flask-WTF, API key authentication for APIs, and explicit API key authentication for WebSockets are effective measures. The previously identified issue with the logout functionality has been addressed by changing it to a POST request, which is now protected by CSRF tokens.
 
 ---
 End of Report

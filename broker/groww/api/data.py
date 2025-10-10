@@ -137,9 +137,9 @@ class BrokerData:
             {'max_days': float('inf'), 'min_interval': '10080'} # >1080 days: 10080 min minimum
         ]
 
-    def _convert_openalgo_to_groww_derivative_symbol(self, symbol):
+    def _convert_marvelquant_to_groww_derivative_symbol(self, symbol):
         """
-        Convert OpenAlgo NFO/BFO symbol format to Groww format
+        Convert MarvelQuant NFO/BFO symbol format to Groww format
         
         Examples:
         - SBIN30SEP25FUT -> SBIN25SEPFUT
@@ -215,7 +215,7 @@ class BrokerData:
                 logger.debug(f"Found broker symbol in database: {trading_symbol}")
             else:
                 # If not in database, convert format
-                trading_symbol = self._convert_openalgo_to_groww_derivative_symbol(symbol)
+                trading_symbol = self._convert_marvelquant_to_groww_derivative_symbol(symbol)
                 logger.debug(f"Converted derivative symbol: {symbol} -> {trading_symbol}")
         else:
             # For equity, use broker symbol if available
@@ -821,7 +821,7 @@ class BrokerData:
                 }
                 
                 # Create the DataFrame with timestamp as a column (not an index)
-                # NOTE: For OpenAlgoXTS, return non-indexed DataFrame with timestamp as a column
+                # NOTE: For MarvelQuantXTS, return non-indexed DataFrame with timestamp as a column
                 # This matches the FivePaisa pattern that has been proven to work correctly
                 result_df = pd.DataFrame(data)
                 
@@ -866,7 +866,7 @@ class BrokerData:
 
     def get_intervals(self) -> Dict[str, Dict[str, List[str]]]:
         """
-        Get supported timeframes for Groww historical data in the OpenAlgo format.
+        Get supported timeframes for Groww historical data in the MarvelQuant format.
         
         Note that Groww has time-based constraints on minimum interval size:
         - 0-3 days: 1 min minimum
@@ -891,7 +891,7 @@ class BrokerData:
             "months": []  # Groww doesn't support month-level data
         }
         
-        # Return in the standard OpenAlgo format
+        # Return in the standard MarvelQuant format
         return {
             "status": "success",
             "data": intervals
@@ -979,7 +979,7 @@ class BrokerData:
             timeout (int): Timeout in seconds
             
         Returns:
-            Dict[str, Any]: Quote data in OpenAlgo format
+            Dict[str, Any]: Quote data in MarvelQuant format
         """
         logger.info(f"Getting quotes using direct API calls for: {symbol_list}")
         
@@ -1050,7 +1050,7 @@ class BrokerData:
                 # Get token for this symbol
                 token = get_token(symbol, exchange)
                 
-                # Map OpenAlgo exchange to Groww exchange format
+                # Map MarvelQuant exchange to Groww exchange format
                 if exchange == 'NSE':
                     groww_exchange = EXCHANGE_NSE
                     segment = SEGMENT_CASH
@@ -1155,13 +1155,13 @@ class BrokerData:
                                 
                             logger.info(f"Processed OHLC data: {ohlc}")
                             
-                            # Create quote_item in OpenAlgo format
+                            # Create quote_item in MarvelQuant format
                             # Print each field being extracted for debugging
                             logger.info(f"last_price: {response.get('last_price')}")
                             logger.info(f"ohlc: {ohlc}")
                             logger.info(f"volume: {response.get('volume')}")
                             
-                            # CRITICAL: Build the quote item directly with values extracted from the response, using field names that OpenAlgo understands
+                            # CRITICAL: Build the quote item directly with values extracted from the response, using field names that MarvelQuant understands
                             # The quote_item should use the frontend-compatible field names
                             last_price = safe_float(response.get('last_price'))
                             logger.info(f"EXTRACTED last_price = {last_price}")
@@ -1310,7 +1310,7 @@ class BrokerData:
                 "message": "No data retrieved"
             }
         
-        # Single symbol case - return in simpler format for OpenAlgo frontend
+        # Single symbol case - return in simpler format for MarvelQuant frontend
         if isinstance(symbol_list, (str, dict)) or len(symbol_list) == 1:
             logger.info(f"Returning data for single symbol")
     
@@ -1329,7 +1329,7 @@ class BrokerData:
             "data": quote_data
         }
     def _format_single_quote_response(self, quote_data):
-        """Helper method to convert from standard dict to the format expected by OpenAlgo frontend
+        """Helper method to convert from standard dict to the format expected by MarvelQuant frontend
         
         Returns only the data portion without status wrapper - status added by the caller
         """
@@ -1353,7 +1353,7 @@ class BrokerData:
             "oi": quote.get("oi", 0)  # Add Open Interest field
         }
 
-        logger.debug(f"Final OpenAlgo quote format (data only): {result}")
+        logger.debug(f"Final MarvelQuant quote format (data only): {result}")
         return result
 
     # Commented out alternate implementation
@@ -1370,9 +1370,9 @@ class BrokerData:
     #    quote = quote_data[0] if isinstance(quote_data, list) and len(quote_data) > 0 else {}
         
         logger.info(f"EXTRACTED QUOTE: {quote}")
-        logger.info(f"Formatting single quote response for OpenAlgo frontend: {quote}")
+        logger.info(f"Formatting single quote response for MarvelQuant frontend: {quote}")
         
-        # Based on the sample response, OpenAlgo expects exactly these fields
+        # Based on the sample response, MarvelQuant expects exactly these fields
         # Keep this extremely simple - just the required fields
         simple_data = {
             "ltp": 0,
@@ -1388,7 +1388,7 @@ class BrokerData:
         
         # Now grab values from our quote data, using the field that matches best
         
-        # LTP - preferred field name in OpenAlgo
+        # LTP - preferred field name in MarvelQuant
         if "ltp" in quote and quote["ltp"] is not None:
             simple_data["ltp"] = float(quote["ltp"])
         elif "last_price" in quote and quote["last_price"] is not None:
@@ -1435,14 +1435,14 @@ class BrokerData:
         for key, value in simple_data.items():
             logger.info(f"{{key}}: {value}")
         
-        # Return exact structure expected by OpenAlgo
+        # Return exact structure expected by MarvelQuant
         result = {
             "status": "success",
             "data": simple_data
         }
         
         logger.info(f"FINAL FORMATTED RESULT: {result}")
-        logger.info(f"Formatted result for OpenAlgo frontend: {result}")
+        logger.info(f"Formatted result for MarvelQuant frontend: {result}")
         
         return result
         
@@ -1456,7 +1456,7 @@ class BrokerData:
             timeout (int): Timeout in seconds
             
         Returns:
-            Dict[str, Any]: Market depth data in OpenAlgo format
+            Dict[str, Any]: Market depth data in MarvelQuant format
         """
         logger.info(f"Getting market depth using direct API calls for: {symbol_list}")
         
@@ -1496,7 +1496,7 @@ class BrokerData:
         # Get token for this symbol
         token = get_token(symbol, exchange)
         
-        # Map OpenAlgo exchange to Groww exchange format
+        # Map MarvelQuant exchange to Groww exchange format
         if exchange == 'NSE':
             groww_exchange = EXCHANGE_NSE
             segment = SEGMENT_CASH
@@ -1522,7 +1522,7 @@ class BrokerData:
                 logger.debug(f"Found broker symbol in database: {trading_symbol}")
             else:
                 # If not in database, convert format
-                trading_symbol = self._convert_openalgo_to_groww_derivative_symbol(symbol)
+                trading_symbol = self._convert_marvelquant_to_groww_derivative_symbol(symbol)
                 logger.debug(f"Converted derivative symbol: {symbol} -> {trading_symbol}")
         else:
             # For equity, use broker symbol if available
@@ -1561,7 +1561,7 @@ class BrokerData:
             payload = response['payload']
             logger.info(f"Extracted payload with keys: {list(payload.keys())[:10]}")
             
-            # Create a properly formatted response for OpenAlgo
+            # Create a properly formatted response for MarvelQuant
             depth_response = {}
             
             # Safely convert values to float/int, handling None values
@@ -1646,7 +1646,7 @@ class BrokerData:
             # Determine if this is a derivative instrument
             is_derivative = exchange in ['NFO', 'BFO'] or segment == SEGMENT_FNO
             
-            # Format the depth response according to OpenAlgo requirements
+            # Format the depth response according to MarvelQuant requirements
             depth_response = {
                 'bids': bids,
                 'asks': asks,
@@ -1678,6 +1678,6 @@ class BrokerData:
             timeout (int): Timeout in seconds
             
         Returns:
-            Dict[str, Any]: Market depth data in OpenAlgo format
+            Dict[str, Any]: Market depth data in MarvelQuant format
         """
         return self.get_depth(symbol_list, timeout)

@@ -1,5 +1,5 @@
 """
-Email Utility Functions for OpenAlgo
+Email Utility Functions for MarvelQuant
 
 This module provides email sending functionality for SMTP configuration testing
 and password reset notifications.
@@ -19,7 +19,7 @@ class EmailSendError(Exception):
     """Custom exception for email sending errors"""
     pass
 
-def send_test_email(recipient_email, sender_name="OpenAlgo Admin"):
+def send_test_email(recipient_email, sender_name="MarvelQuant Admin"):
     """
     Send a test email to verify SMTP configuration.
     
@@ -49,7 +49,7 @@ def send_test_email(recipient_email, sender_name="OpenAlgo Admin"):
             }
         
         # Create test email content
-        subject = "OpenAlgo SMTP Configuration Test"
+        subject = "MarvelQuant SMTP Configuration Test"
         
         # Create HTML email content
         html_content = f"""
@@ -57,7 +57,7 @@ def send_test_email(recipient_email, sender_name="OpenAlgo Admin"):
         <html>
         <head>
             <meta charset="utf-8">
-            <title>OpenAlgo SMTP Test</title>
+            <title>MarvelQuant SMTP Test</title>
             <style>
                 body {{ font-family: Arial, sans-serif; line-height: 1.6; color: #333; }}
                 .container {{ max-width: 600px; margin: 0 auto; padding: 20px; }}
@@ -76,7 +76,7 @@ def send_test_email(recipient_email, sender_name="OpenAlgo Admin"):
                 <div class="content">
                     <div class="success-badge">✅ Test Successful!</div>
                     
-                    <p>Congratulations! Your OpenAlgo SMTP configuration is working correctly.</p>
+                    <p>Congratulations! Your MarvelQuant SMTP configuration is working correctly.</p>
                     
                     <div class="info-box">
                         <h3>📋 Test Details:</h3>
@@ -104,7 +104,7 @@ def send_test_email(recipient_email, sender_name="OpenAlgo Admin"):
                     </ul>
                 </div>
                 <div class="footer">
-                    <p>This is an automated test email from OpenAlgo.<br>
+                    <p>This is an automated test email from MarvelQuant.<br>
                     If you didn't request this test, please contact your system administrator.</p>
                 </div>
             </div>
@@ -114,11 +114,11 @@ def send_test_email(recipient_email, sender_name="OpenAlgo Admin"):
         
         # Create plain text version
         text_content = f"""
-OpenAlgo SMTP Configuration Test
+MarvelQuant SMTP Configuration Test
 
 ✅ Test Successful!
 
-Congratulations! Your OpenAlgo SMTP configuration is working correctly.
+Congratulations! Your MarvelQuant SMTP configuration is working correctly.
 
 Test Details:
 - Test Date: {datetime.now().strftime('%Y-%m-%d %H:%M:%S UTC')}
@@ -138,7 +138,7 @@ Next Steps:
 - Keep your SMTP credentials secure
 
 ---
-This is an automated test email from OpenAlgo.
+This is an automated test email from MarvelQuant.
 If you didn't request this test, please contact your system administrator.
         """
         
@@ -188,7 +188,7 @@ def send_password_reset_email(recipient_email, reset_link, user_name="User"):
                 'message': 'SMTP not configured'
             }
         
-        subject = "OpenAlgo Password Reset Request"
+        subject = "MarvelQuant Password Reset Request"
         
         html_content = f"""
         <!DOCTYPE html>
@@ -219,7 +219,7 @@ def send_password_reset_email(recipient_email, reset_link, user_name="User"):
                 <div class="content">
                     <p>Hello {user_name},</p>
                     
-                    <p>We received a request to reset your OpenAlgo account password. If you made this request, click the button below to reset your password:</p>
+                    <p>We received a request to reset your MarvelQuant account password. If you made this request, click the button below to reset your password:</p>
                     
                     <div style="text-align: center;">
                         <a href="{reset_link}" class="reset-button" style="display: inline-block; background: #2563eb !important; color: #ffffff !important; padding: 12px 30px; text-decoration: none !important; border-radius: 6px; margin: 20px 0; font-weight: bold; border: none; mso-padding-alt: 0; text-align: center; -webkit-text-fill-color: #ffffff !important;"><!--[if mso]><i style="letter-spacing: 30px; mso-font-width: -100%; mso-text-raise: 30pt;">&nbsp;</i><![endif]--><span style="mso-text-raise: 15pt; color: #ffffff !important; -webkit-text-fill-color: #ffffff !important;">Reset My Password</span><!--[if mso]><i style="letter-spacing: 30px; mso-font-width: -100%;">&nbsp;</i><![endif]--></a>
@@ -240,7 +240,7 @@ def send_password_reset_email(recipient_email, reset_link, user_name="User"):
                     <p>If you didn't request this password reset, you can safely ignore this email. Your password will not be changed.</p>
                 </div>
                 <div class="footer">
-                    <p>This is an automated email from OpenAlgo.<br>
+                    <p>This is an automated email from MarvelQuant.<br>
                     For security reasons, please do not reply to this email.</p>
                 </div>
             </div>
@@ -249,11 +249,11 @@ def send_password_reset_email(recipient_email, reset_link, user_name="User"):
         """
         
         text_content = f"""
-OpenAlgo Password Reset Request
+MarvelQuant Password Reset Request
 
 Hello {user_name},
 
-We received a request to reset your OpenAlgo account password. If you made this request, use the link below to reset your password:
+We received a request to reset your MarvelQuant account password. If you made this request, use the link below to reset your password:
 
 {reset_link}
 
@@ -265,7 +265,7 @@ Security Notice:
 If you didn't request this password reset, you can safely ignore this email. Your password will not be changed.
 
 ---
-This is an automated email from OpenAlgo.
+This is an automated email from MarvelQuant.
 For security reasons, please do not reply to this email.
         """
         

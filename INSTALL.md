@@ -1,8 +1,8 @@
-# OpenAlgo Installation Guide
+# MarvelQuant Installation Guide
 
 ## Prerequisites
 
-Before installing OpenAlgo, ensure you have the following prerequisites installed:
+Before installing MarvelQuant, ensure you have the following prerequisites installed:
 
 - **Visual Studio Code (VS Code)** installed on Windows.
 - **Python** version 3.10 or 3.11 installed.
@@ -17,9 +17,9 @@ Before installing OpenAlgo, ensure you have the following prerequisites installe
    - Install the Python, Pylance, and Jupyter extensions
 
 2. **Clone the Repository**: 
-   Open the VS Code Terminal and clone the OpenAlgo repository:
+   Open the VS Code Terminal and clone the MarvelQuant repository:
    ```bash
-   git clone https://github.com/marketcalls/openalgo
+   git clone https://github.com/marketcalls/marvelquant
    ```
 
 3. **Install Python Dependencies**: 
@@ -63,12 +63,12 @@ Before installing OpenAlgo, ensure you have the following prerequisites installe
 
 4. **Install Node.js Dependencies**: 
    ```bash
-   cd openalgo
+   cd marvelquant
    npm install
    ```
 
 5. **Configure Environment Variables**: 
-   - Rename `.sample.env` to `.env` in the `openalgo` folder
+   - Rename `.sample.env` to `.env` in the `marvelquant` folder
    - Update the `.env` file with your specific configurations
 
 ## CSS Compilation Setup
@@ -140,4 +140,4 @@ If you encounter any issues during installation:
    - Check if your firewall allows WebSocket connections
    - Verify Socket.IO client version matches server version
 
-For more detailed configuration instructions, visit [https://docs.openalgo.in](https://docs.openalgo.in)
+For more detailed configuration instructions, visit [https://docs.marvelquant.com](https://docs.marvelquant.com)

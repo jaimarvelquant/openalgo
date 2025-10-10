@@ -348,7 +348,7 @@ import websockets
 import json
 import asyncio
 
-class OpenAlgoWebSocket:
+class MarvelQuantWebSocket:
     def __init__(self, api_key):
         self.api_key = api_key
         self.ws_url = "ws://localhost:8765"
@@ -393,7 +393,7 @@ async def market_callback(data):
     print(f"Market Update: {data['symbol']} = ₹{data['data']['ltp']}")
 
 async def main():
-    client = OpenAlgoWebSocket("your_api_key_here")
+    client = MarvelQuantWebSocket("your_api_key_here")
     await client.connect()
     
     await client.subscribe([
@@ -410,7 +410,7 @@ asyncio.run(main())
 ### JavaScript SDK Example
 
 ```javascript
-class OpenAlgoWebSocket {
+class MarvelQuantWebSocket {
     constructor(apiKey) {
         this.apiKey = apiKey;
         this.wsUrl = 'ws://localhost:8765';
@@ -462,10 +462,10 @@ class OpenAlgoWebSocket {
 }
 
 // Usage
-const client = new OpenAlgoWebSocket('your_api_key_here');
+const client = new MarvelQuantWebSocket('your_api_key_here');
 
 client.connect().then(() => {
-    console.log('Connected to OpenAlgo WebSocket');
+    console.log('Connected to MarvelQuant WebSocket');
     
     client.onMarketData((data) => {
         console.log(`${data.symbol}: ₹${data.data.ltp}`);

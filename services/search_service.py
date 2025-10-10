@@ -25,7 +25,7 @@ def search_symbols(query: str, exchange: str = None, api_key: str = None) -> Tup
                 logger.warning(f"Invalid API key provided for search")
                 return False, {
                     'status': 'error',
-                    'message': 'Invalid openalgo apikey'
+                    'message': 'Invalid marvelquant apikey'
                 }, 403
         
         # Validate input

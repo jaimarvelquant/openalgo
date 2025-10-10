@@ -3,7 +3,7 @@ from database.token_db import get_token, get_brexchange
 from database.symbol import SymToken
 
 class ExchangeMapper:
-    """Base class for mapping OpenAlgo exchange codes to broker-specific exchange types"""
+    """Base class for mapping MarvelQuant exchange codes to broker-specific exchange types"""
     
     @staticmethod
     def get_exchange_type(exchange, broker):
@@ -25,7 +25,7 @@ class ExchangeMapper:
 
 
 class SymbolMapper:
-    """Maps OpenAlgo symbols to broker-specific tokens"""
+    """Maps MarvelQuant symbols to broker-specific tokens"""
     
     logger = get_logger("symbol_mapper")
     

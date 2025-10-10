@@ -27,7 +27,7 @@ def get_expiry_dates(symbol: str, exchange: str, instrumenttype: str, api_key: s
                 logger.warning(f"Invalid API key provided for expiry dates")
                 return False, {
                     'status': 'error',
-                    'message': 'Invalid openalgo apikey'
+                    'message': 'Invalid marvelquant apikey'
                 }, 403
         
         # Validate input

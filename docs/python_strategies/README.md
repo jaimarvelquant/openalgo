@@ -15,7 +15,7 @@
 
 ## Overview
 
-The Python Strategy Management System is a comprehensive solution for hosting, executing, and managing Python-based trading strategies within OpenAlgo. It provides a web-based interface for strategy lifecycle management with complete process isolation and cross-platform support.
+The Python Strategy Management System is a comprehensive solution for hosting, executing, and managing Python-based trading strategies within MarvelQuant. It provides a web-based interface for strategy lifecycle management with complete process isolation and cross-platform support.
 
 ### Key Capabilities
 - 🚀 **Process Isolation**: Each strategy runs in a separate process
@@ -99,7 +99,7 @@ pip install cryptography  # For secure environment variables
 ### Directory Structure
 The system will automatically create these directories:
 ```
-openalgo/
+marvelquant/
 ├── strategies/
 │   ├── scripts/           # Strategy Python files
 │   ├── strategy_configs.json  # Strategy configurations
@@ -125,7 +125,7 @@ Or access from Profile menu → Python Strategies
 ### 2. Upload Your First Strategy
 ```python
 # example_strategy.py
-from openalgo import api
+from marvelquant import api
 import time
 
 # Initialize API
@@ -341,7 +341,7 @@ Location: `strategies/strategy_configs.json`
 
 ### Environment Variables
 Strategies inherit the environment from the main application:
-- `PYTHONPATH`: Includes OpenAlgo directory
+- `PYTHONPATH`: Includes MarvelQuant directory
 - `PATH`: System PATH
 - Custom variables from `.env` file
 
@@ -442,7 +442,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 ### EMA Crossover Strategy with Environment Variables
 ```python
-from openalgo import api
+from marvelquant import api
 import pandas as pd
 import time
 import os
@@ -511,7 +511,7 @@ if __name__ == "__main__":
 ```
 
 **Environment Variables for this strategy:**
-- **Secure:** `API_KEY` (your OpenAlgo API key)
+- **Secure:** `API_KEY` (your MarvelQuant API key)
 - **Regular:** `SYMBOL` (default: RELIANCE), `EXCHANGE` (default: NSE), `INTERVAL` (default: 5m), `SHORT_EMA` (default: 9), `LONG_EMA` (default: 21), `LOG_LEVEL` (default: INFO), `SLEEP_SECONDS` (default: 300)
 
 ## Contributing
@@ -519,7 +519,7 @@ if __name__ == "__main__":
 ### Development Setup
 ```bash
 # Clone repository
-git clone https://github.com/openalgo/openalgo.git
+git clone https://github.com/marvelquant/marvelquant.git
 
 # Install dependencies
 pip install -r requirements.txt
@@ -549,7 +549,7 @@ python -m pytest tests/
 
 ## License
 
-This project is part of OpenAlgo and follows the same license terms.
+This project is part of MarvelQuant and follows the same license terms.
 
 ---
 

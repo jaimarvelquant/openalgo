@@ -1,14 +1,14 @@
-#Mapping OpenAlgo API Request https://openalgo.in/docs
+#Mapping MarvelQuant API Request https://marvelquant.com/docs
 #Mapping Pocketful API Parameters https://api.pocketful.in/docs/
 
 from database.token_db import get_br_symbol, get_token
 
 def transform_data(data, client_id=None):
     """
-    Transforms OpenAlgo order format to Pocketful order format.
+    Transforms MarvelQuant order format to Pocketful order format.
     
     Args:
-        data: OpenAlgo order data dictionary
+        data: MarvelQuant order data dictionary
         client_id: Client ID to use for the order, if available
     """
     # Get broker symbol for the order
@@ -55,10 +55,10 @@ def transform_data(data, client_id=None):
 
 def transform_modify_order_data(data, client_id=None):
     """
-    Transforms OpenAlgo order modification format to Pocketful order format.
+    Transforms MarvelQuant order modification format to Pocketful order format.
     
     Args:
-        data: OpenAlgo order data dictionary
+        data: MarvelQuant order data dictionary
         client_id: Client ID to use for the order, if available
     """
     # Get broker symbol for the order
@@ -98,7 +98,7 @@ def transform_modify_order_data(data, client_id=None):
 
 def map_order_type(pricetype):
     """
-    Maps OpenAlgo pricetype to Pocketful order type.
+    Maps MarvelQuant pricetype to Pocketful order type.
     """
     order_type_mapping = {
         "MARKET": "MARKET",
@@ -110,7 +110,7 @@ def map_order_type(pricetype):
 
 def map_product_type(product):
     """
-    Maps OpenAlgo product type to Pocketful product type.
+    Maps MarvelQuant product type to Pocketful product type.
     """
     product_type_mapping = {
         "CNC": "CNC",
@@ -121,9 +121,9 @@ def map_product_type(product):
 
 def reverse_map_product_type(exchange,product):
     """
-    Reverse maps the broker product type to the OpenAlgo product type, considering the exchange.
+    Reverse maps the broker product type to the MarvelQuant product type, considering the exchange.
     """
-    # Exchange to OpenAlgo product type mapping for 'D'
+    # Exchange to MarvelQuant product type mapping for 'D'
     exchange_mapping = {
         "CNC": "CNC",
         "NRML": "NRML",

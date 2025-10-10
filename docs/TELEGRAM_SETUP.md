@@ -1,19 +1,19 @@
 # Telegram Bot Integration Setup Guide
 
 ## Overview
-This guide will help you set up the Telegram bot integration for OpenAlgo, enabling read-only access to trading data through Telegram.
+This guide will help you set up the Telegram bot integration for MarvelQuant, enabling read-only access to trading data through Telegram.
 
 ## Setup Steps
 
 ### 1. Create Your Telegram Bot
 1. Open Telegram and search for **@BotFather**
 2. Send the command `/newbot`
-3. Choose a name for your bot (e.g., "OpenAlgo Trading Bot")
-4. Choose a username (must end with 'bot', e.g., "openalgo_trading_bot")
+3. Choose a name for your bot (e.g., "MarvelQuant Trading Bot")
+4. Choose a username (must end with 'bot', e.g., "marvelquant_trading_bot")
 5. Copy the bot token provided by BotFather
 
-### 2. Configure the Bot in OpenAlgo
-1. Start your OpenAlgo application
+### 2. Configure the Bot in MarvelQuant
+1. Start your MarvelQuant application
 2. Log in to the web interface
 3. Click on your profile icon (top right)
 4. Select **"Telegram Bot"** from the dropdown menu
@@ -31,8 +31,8 @@ This guide will help you set up the Telegram bot integration for OpenAlgo, enabl
 2. Send `/start` to the bot
 3. Send `/link <your_api_key> <host_url> [username]` to link your account
    - Example: `/link your_api_key_here http://127.0.0.1:5000 admin`
-   - The API key should be your OpenAlgo API key (found in Profile → API Key)
-   - The host URL should be where your OpenAlgo is running
+   - The API key should be your MarvelQuant API key (found in Profile → API Key)
+   - The host URL should be where your MarvelQuant is running
    - Username is optional (defaults to your Telegram username)
 
 ## Available Commands
@@ -40,7 +40,7 @@ This guide will help you set up the Telegram bot integration for OpenAlgo, enabl
 Once linked, users can use these commands:
 
 - `/start` - Welcome message and help
-- `/link <api_key> <host_url> [username]` - Link OpenAlgo account with API key
+- `/link <api_key> <host_url> [username]` - Link MarvelQuant account with API key
 - `/menu` - Interactive menu with buttons
 - `/orderbook` - View open orders
 - `/tradebook` - View executed trades
@@ -67,7 +67,7 @@ Access the control panel from the Profile dropdown menu → Telegram Bot
 - Read-only access (no trading operations)
 - API key validation required for linking accounts
 - All API keys are encrypted using Fernet encryption
-- User authentication through OpenAlgo API
+- User authentication through MarvelQuant API
 - SQLAlchemy for secure database operations
 - Rate limiting to prevent abuse
 - Host URL validation to prevent unauthorized access
@@ -80,9 +80,9 @@ Access the control panel from the Profile dropdown menu → Telegram Bot
 3. Ensure database migration completed successfully
 
 ### Cannot Link Account
-1. Verify your OpenAlgo API key is correct (found in Profile → API Key)
+1. Verify your MarvelQuant API key is correct (found in Profile → API Key)
 2. Ensure the host URL is correct (e.g., http://127.0.0.1:5000)
-3. Test your API key by accessing the OpenAlgo API directly
+3. Test your API key by accessing the MarvelQuant API directly
 4. Check if the account is already linked
 
 ### Commands Not Working
@@ -113,7 +113,7 @@ python migrate_telegram_bot.py --downgrade
 ## Support
 
 For issues or questions:
-1. Check the Logs section in OpenAlgo
+1. Check the Logs section in MarvelQuant
 2. Review command statistics in Analytics
 3. Contact your system administrator
 
