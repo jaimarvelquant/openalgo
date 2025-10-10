@@ -1,0 +1,27 @@
+# Git Attributes for MarvelQuant Branding
+# Story 2.1 - Phase 1 Rebranding
+
+# Logo files - Use "ours" strategy to keep MarvelQuant branding during upstream merges
+static/favicon/logo.png merge=ours
+static/favicon/apple-touch-icon.png merge=ours
+static/favicon/android-chrome-192x192.png merge=ours
+static/favicon/mstile-150x150.png merge=ours
+static/favicon/favicon-32x32.png merge=ours
+static/favicon/favicon-16x16.png merge=ours
+static/favicon/favicon.ico merge=ours
+static/favicon/safari-pinned-tab.svg merge=ours
+
+# Branding-related documentation - Use "ours" strategy
+README.md merge=ours
+CONTRIBUTING.md merge=ours
+
+# Package configuration - Use "ours" strategy for branding fields
+package.json merge=ours
+pyproject.toml merge=ours
+
+# Automation scripts - Use "ours" strategy
+scripts/replace-branding.sh merge=ours
+scripts/verify-branding.sh merge=ours
+scripts/reapply-branding.sh merge=ours
+scripts/convert-logos.sh merge=ours
+
