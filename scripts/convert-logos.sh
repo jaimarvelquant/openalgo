@@ -196,10 +196,14 @@ convert_svg_to_png() {
     # 5. Add sharpening for small sizes
 
     # Calculate high-res dimensions
-    # Use 5x for small sizes (<=48px) for better quality, 3x for larger sizes
+    # Use higher multipliers for smaller sizes to reduce artifacts
     local multiplier=3
-    if [ "$size" -le 48 ]; then
-        multiplier=5
+    if [ "$size" -le 16 ]; then
+        multiplier=8  # 8x for 16x16 (128px source)
+    elif [ "$size" -le 32 ]; then
+        multiplier=6  # 6x for 32x32 (192px source)
+    elif [ "$size" -le 48 ]; then
+        multiplier=5  # 5x for 48x48 (240px source)
     fi
 
     local hires_size=$((size * multiplier))
@@ -235,18 +239,37 @@ convert_svg_to_png() {
 
         # FINAL APPROACH: Crop, resize, then make white transparent
         # This preserves the gradient colors while removing white background
+        # Use higher fuzz tolerance for small sizes to catch all white artifacts
+        local fuzz_tolerance="10%"
+        if [ "$size" -le 48 ]; then
+            fuzz_tolerance="25%"  # Higher tolerance for small sizes to remove all white
+        fi
+
         magick "/tmp/logo_hires_white.png" \
             -crop "${crop_width}x${full_height}+0+0" \
             +repage \
             -filter Lanczos \
             -resize "${size}x${size}" \
+            -fuzz "$fuzz_tolerance" \
+            -transparent white \
             $sharpen_args \
-            -background white \
+            -background none \
             -gravity center \
             -extent "${size}x${size}" \
-            -fuzz 5% \
+            -fuzz "$fuzz_tolerance" \
+            -transparent white \
+            -fuzz 35% \
             -transparent white \
             "$output_path"
+
+        # Additional cleanup for small sizes: remove very light pixels (anti-aliasing artifacts)
+        # Target light gray pixels that appear near-white (e.g., #DCDCDC and lighter)
+        if [ "$size" -le 48 ]; then
+            magick "$output_path" \
+                -fuzz 50% \
+                -transparent "rgb(220,220,220)" \
+                "$output_path"
+        fi
     else
         print_error "ImageMagick not found! Please install: brew install imagemagick"
         return 1
