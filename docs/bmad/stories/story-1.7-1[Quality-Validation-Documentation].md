@@ -1,7 +1,16 @@
 # Story 1.7-1: Quality Validation & Documentation
 
-## Status
-Draft
+## ⚠️ DEPRECATED - DO NOT USE
+
+**Status:** SUPERSEDED
+**Superseded By:** `story-1.7-1-comprehensive-quality-validation-documentation.md`
+**Date Deprecated:** 2025-10-11
+**Reason:** Replaced with code reuse-first version (65% reuse from existing patterns, effort reduced from 4 days to 2 days)
+
+---
+
+## Original Status
+Draft (OBSOLETE)
 
 ## Estimated Effort
 **8-12 hours** (Testing, documentation, validation)

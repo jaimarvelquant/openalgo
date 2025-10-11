@@ -1,5 +1,14 @@
 # Story 1.4-1: Error-Handling-Testing
 
+## ⚠️ DEPRECATED - DO NOT USE
+
+**Status:** SUPERSEDED
+**Superseded By:** `story-1.4-1-http-helper-with-retry-logic.md`
+**Date Deprecated:** 2025-10-11
+**Reason:** Replaced with code reuse-first version (90% reuse from FivePaisaXTS, effort reduced from 2 days to 0.5 days)
+
+---
+
 ## Status
 Draft
 

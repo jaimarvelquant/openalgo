@@ -1,7 +1,16 @@
 # Story 1.6-1: Configuration Management
 
-## Status
-Draft
+## ⚠️ DEPRECATED - DO NOT USE
+
+**Status:** SUPERSEDED
+**Superseded By:** `story-1.6-1-configuration-management.md`
+**Date Deprecated:** 2025-10-11
+**Reason:** Replaced with code reuse-first version (60% reuse from FivePaisaXTS, effort reduced from 1.5 days to 0.5 days)
+
+---
+
+## Original Status
+Draft (OBSOLETE)
 
 ## Estimated Effort
 **4-6 hours** (High code reuse from existing config patterns)

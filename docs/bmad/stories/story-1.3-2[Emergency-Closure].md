@@ -1,5 +1,14 @@
 # Story 1.3-2: Emergency-Closure
 
+## ⚠️ DEPRECATED - DO NOT USE
+
+**Status:** SUPERSEDED
+**Superseded By:** `story-1.3-2-emergency-position-closure.md`
+**Date Deprecated:** 2025-10-11
+**Reason:** Replaced with code reuse-first version (35% reuse from FivePaisaXTS, effort reduced from 3 days to 2 days)
+
+---
+
 ## Status
 Draft
 

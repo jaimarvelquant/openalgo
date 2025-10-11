@@ -1,7 +1,16 @@
 # Story 1.6-2: SDK Integration Strategy
 
-## Status
-Draft
+## ⚠️ DEPRECATED - DO NOT USE
+
+**Status:** SUPERSEDED
+**Superseded By:** `story-1.6-2-sdk-integration-strategy.md`
+**Date Deprecated:** 2025-10-11
+**Reason:** Replaced with code reuse-first version (50% reuse from FivePaisaXTS, effort reduced from 2 days to 1 day)
+
+---
+
+## Original Status
+Draft (OBSOLETE)
 
 ## Estimated Effort
 **8-12 hours** (SDK wrapper creation, refactoring, documentation)

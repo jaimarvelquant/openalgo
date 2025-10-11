@@ -1,5 +1,14 @@
 # Story 1.3-1a: Pro-Smart-Order-Enhancements
 
+## ⚠️ DEPRECATED - DO NOT USE
+
+**Status:** SUPERSEDED
+**Superseded By:** `story-1.3-1a-pro-specific-smart-order-enhancements.md`
+**Date Deprecated:** 2025-10-11
+**Reason:** Replaced with code reuse-first version (40% reuse from FivePaisaXTS, effort reduced from 3 days to 1.5 days)
+
+---
+
 ## Status
 Draft
 

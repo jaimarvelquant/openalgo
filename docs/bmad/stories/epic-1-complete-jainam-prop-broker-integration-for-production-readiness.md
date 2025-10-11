@@ -12,7 +12,25 @@ Complete the Jainam Prop broker integration by implementing SDK-based authentica
 6. Follow OpenAlgo's environment variable patterns; centralize config via broker/jainam_prop/api/config
 7. Leverage XTS Pro SDK (`_sample_strategy/xts_PRO_SDK`) for authentication and streaming; wrap, don't modify SDK sources
 
-**Timeline Estimate:** 21–24 calendar days, 147–178 engineering hours
+**Timeline Estimate (REVISED):** 10.75 calendar days, 86 engineering hours
+**Original Estimate:** 24.5 days, 196 hours
+**Savings from Code Reuse:** 56% reduction (110 hours saved)
+**Code Reuse Strategy:** Leverage FivePaisaXTS patterns for 70-90% of implementation
+
+---
+
+## ⚠️ IMPORTANT: Story Deprecation Notice
+
+**Date:** 2025-10-11
+**Action:** Course Correction - Code Reuse-First Approach
+
+**9 story files have been DEPRECATED** and replaced with code reuse-first versions:
+- ❌ Old stories use `[Brackets]` in filename (e.g., `story-1.4-1[Error-Handling-Testing].md`)
+- ✅ New stories use `-dashes-` in filename (e.g., `story-1.4-1-http-helper-with-retry-logic.md`)
+
+**DO NOT USE deprecated stories.** See `DEPRECATION_NOTICE.md` and `STORY-BACKLOG-STATUS.md` for details.
+
+**Active Stories:** Use only the 9 new story files listed in Phase 2.5, 3.5, and 4 below.
 
 ---
 
@@ -35,26 +53,36 @@ Complete the Jainam Prop broker integration by implementing SDK-based authentica
 - Story 1.2-3: Open position lookup — **Status:** Done ✅
 - Story 1.2-4: Live integration validation — **Status:** Approved 🔄
 
-**Phase 2.5: SDK Integration & Pro-Specific Features (Stories 1.2-5, 1.3-1a, 1.4-1)** — 3–4 days, 24–30 hours
-- Story 1.2-5: Token Lifecycle Management Enhancement — **Status:** Draft
+**Phase 2.5: SDK Integration & Pro-Specific Features (Stories 1.2-5, 1.3-1a, 1.4-1)** — **REVISED: 2.75 days, 22 hours** (was 3-4 days)
+- Story 1.2-5: Token Lifecycle Management Enhancement — **Status:** Ready for Development ✅
+  - **Effort:** 0.75 days (6 hours) - **Code Reuse: 80%** (was 3 days)
   - Wrap XTS Pro SDK for login; persist tokens to `database.auth_db`
   - Rehydrate tokens in REST/streaming consumers
+  - **Savings:** 18 hours (database functions already exist!)
 - Story 1.3-1a: Pro-Specific Smart Order Enhancements — **Status:** Draft
+  - **Effort:** 1.5 days (12 hours) - **Code Reuse: 40%** (was 3 days)
   - Extend smart order with Pro dealer position endpoints (`get_dealerposition_netwise`)
   - Add `clientID` passthrough for dealer flows
-- Story 1.4-1: HTTP Helper with Retry Logic (centralized `request_with_retry`) — **Status:** Draft
+  - **Savings:** 12 hours (copy delta logic from FivePaisaXTS)
+- Story 1.4-1: HTTP Helper with Retry Logic (centralized `request_with_retry`) — **Status:** Ready for Development ✅
+  - **Effort:** 0.5 days (4 hours) - **Code Reuse: 90%** (was 2 days)
+  - **Savings:** 12 hours (direct copy from FivePaisaXTS with minimal adaptation)
 
 **Phase 3: Advanced Features (Stories 1.3-1, 1.3-2)** — 2–3 days, 18–24 hours
 - Story 1.3-1: Smart order placement (enhance with Pro dealer support) — **Status:** Approved ✅
 - Story 1.3-2: Emergency position closure (expand with Pro dealer closure flows) — **Status:** Draft
 
-**Phase 3.5: Streaming & Realtime Reliability (Stories 1.5-1, 1.5-2)** — 4–5 days, 28–34 hours
-- Story 1.5-1: Streaming Adapter Refactor — **Status:** Draft
+**Phase 3.5: Streaming & Realtime Reliability (Stories 1.5-1, 1.5-2)** — **REVISED: 2 days, 16 hours** (was 4-5 days)
+- Story 1.5-1: Streaming Adapter Refactor — **Status:** Ready for Development ✅
+  - **Effort:** 1.5 days (12 hours) - **Code Reuse: 70%** (was 4 days)
   - Mirror Fivepaisa adapter: reconnect, backoff, subscription replay
   - Reuse persisted feed tokens
-- Story 1.5-2: Capability Registry & Token Validation — **Status:** Draft
+  - **Savings:** 20 hours (copy reconnection logic from FivePaisaXTS)
+- Story 1.5-2: Capability Registry & Token Validation — **Status:** Ready for Development ✅
+  - **Effort:** 0.5 days (4 hours) - **Code Reuse: 85%** (was 2 days)
   - Introduce `JainamCapabilityRegistry` for exchanges/depth/message codes
   - Parse feed-token JWTs to validate user IDs
+  - **Savings:** 12 hours (almost direct copy from FivePaisaXTS)
 
 **Phase 4: Configuration & SDK Strategy (Stories 1.6-1, 1.6-2)** — 2 days, 7–10 hours
 - Story 1.6-1: Configuration Management — **Status:** Draft

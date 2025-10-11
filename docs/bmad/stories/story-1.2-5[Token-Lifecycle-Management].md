@@ -1,7 +1,22 @@
 # Story 1.2-5: Token-Lifecycle-Management
 
-## Status
-Draft
+## ⚠️ DEPRECATED - DO NOT USE
+
+**Status:** SUPERSEDED
+**Superseded By:** `story-1.2-5-token-lifecycle-management.md` (Code Reuse-First Version)
+**Date Deprecated:** 2025-10-11
+**Reason:** Replaced with code reuse-first approach that leverages FivePaisaXTS patterns and existing database infrastructure
+
+**Use the new version instead:** This story has been completely rewritten with:
+- 80% code reuse from existing `database/auth_db.py` functions
+- Specific FivePaisaXTS source file references
+- Reduced effort from 3 days to 0.75 days (18 hours saved)
+- Clear "Copy" vs "Adapt" implementation instructions
+
+---
+
+## Original Status
+Draft (OBSOLETE)
 
 ## Estimated Effort
 **6-8 hours** (reduced from 24-30 hours due to code reuse)

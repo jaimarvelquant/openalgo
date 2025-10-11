@@ -1,7 +1,16 @@
 # Story 1.5-1: Streaming Adapter Refactor
 
-## Status
-Draft
+## ⚠️ DEPRECATED - DO NOT USE
+
+**Status:** SUPERSEDED
+**Superseded By:** `story-1.5-1-streaming-adapter-refactor.md`
+**Date Deprecated:** 2025-10-11
+**Reason:** Replaced with code reuse-first version (70% reuse from FivePaisaXTS, effort reduced from 4 days to 1.5 days)
+
+---
+
+## Original Status
+Draft (OBSOLETE)
 
 ## Estimated Effort
 **8-12 hours** (Deferred to Phase 2 - Streaming implementation)

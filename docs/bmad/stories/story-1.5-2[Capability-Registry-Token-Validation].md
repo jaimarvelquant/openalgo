@@ -1,7 +1,16 @@
 # Story 1.5-2: Capability Registry & Token Validation
 
-## Status
-Draft
+## ⚠️ DEPRECATED - DO NOT USE
+
+**Status:** SUPERSEDED
+**Superseded By:** `story-1.5-2-capability-registry-token-validation.md`
+**Date Deprecated:** 2025-10-11
+**Reason:** Replaced with code reuse-first version (85% reuse from FivePaisaXTS, effort reduced from 2 days to 0.5 days)
+
+---
+
+## Original Status
+Draft (OBSOLETE)
 
 ## Estimated Effort
 **4-6 hours** (Deferred to Phase 2 - Streaming implementation)
