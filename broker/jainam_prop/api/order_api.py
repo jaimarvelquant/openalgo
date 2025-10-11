@@ -25,13 +25,20 @@ SMART_ORDER_LATENCY_THRESHOLD_SECONDS = 10.0
 
 def _parse_auth_token(auth_token):
     """
-    Parse auth_token to extract interactive_token and user_id.
+    Parse auth_token to extract interactive_token, user_id, client_id, and account type.
 
     Args:
         auth_token: JSON string or dict containing credentials
 
     Returns:
-        tuple: (interactive_token, user_id)
+        tuple: (interactive_token, user_id, client_id, is_investor_client, is_dealer_account,
+                is_pro_dealer, is_normal_dealer, api_client_id)
+
+    Note:
+        - Pro Dealer (ZZJ13048): Uses clientID="*****" in API requests
+        - Normal Dealer (DLL7182): Uses actual clientID value in API requests
+        - Investor accounts: is_investor_client=True, no clientID needed
+        - api_client_id is the value to send in API requests
     """
     if isinstance(auth_token, str):
         try:
@@ -43,8 +50,26 @@ def _parse_auth_token(auth_token):
 
     interactive_token = credentials.get('interactive_token', credentials.get('token', auth_token))
     user_id = credentials.get('user_id', credentials.get('client_id', 'DEFAULT_USER'))
+    client_id = credentials.get('clientID', credentials.get('client_id'))
+    is_investor_client = credentials.get('isInvestorClient', True)  # Default to True for safety
 
-    return interactive_token, user_id
+    # Determine dealer account type
+    is_dealer_account = (not is_investor_client) and (client_id is not None)
+    is_pro_dealer = (client_id == "ZZJ13048")
+    is_normal_dealer = (client_id == "DLL7182")
+
+    # Determine the clientID value to send in API requests
+    # Pro Dealer: Use masked value "*****"
+    # Normal Dealer: Use actual clientID value
+    # Investor: None (no clientID needed)
+    if is_pro_dealer:
+        api_client_id = "*****"
+    elif is_normal_dealer:
+        api_client_id = client_id  # Use actual clientID for Normal Dealer
+    else:
+        api_client_id = None  # Investor account or unknown
+
+    return interactive_token, user_id, client_id, is_investor_client, is_dealer_account, is_pro_dealer, is_normal_dealer, api_client_id
 
 
 # ============================================================================
@@ -281,14 +306,22 @@ def place_order_api(data, auth_token):
         (response_object, response_data, order_id)
     """
     try:
-        # Parse auth_token
-        interactive_token, user_id = _parse_auth_token(auth_token)
+        # Parse auth_token to get dealer account information
+        interactive_token, user_id, client_id, is_investor_client, is_dealer_account, is_pro_dealer, is_normal_dealer, api_client_id = _parse_auth_token(auth_token)
 
         # Transform data to Jainam format
         jainam_order = transform_data(data)
 
-        # Add client ID
-        jainam_order['clientID'] = user_id
+        # Add client ID based on account type
+        if is_pro_dealer:
+            jainam_order['clientID'] = api_client_id  # "*****" for Pro Dealer
+            logger.info(f"Placing order with Pro Dealer account clientID='*****' (configured: {client_id})")
+        elif is_normal_dealer:
+            jainam_order['clientID'] = api_client_id  # Actual clientID for Normal Dealer
+            logger.info(f"Placing order with Normal Dealer account clientID='{api_client_id}' (configured: {client_id})")
+        else:
+            jainam_order['clientID'] = user_id
+            logger.info(f"Placing order with investor account clientID={user_id}")
 
         # Use OrderAPIClient
         client = OrderAPIClient(auth_token=interactive_token)
@@ -337,13 +370,23 @@ def modify_order_api(order_id, data, auth_token):
         (response_object, response_data, order_id)
     """
     try:
-        # Parse auth_token
-        interactive_token, user_id = _parse_auth_token(auth_token)
+        # Parse auth_token to get dealer account information
+        interactive_token, user_id, client_id, is_investor_client, is_dealer_account, is_pro_dealer, is_normal_dealer, api_client_id = _parse_auth_token(auth_token)
 
         # Transform data to Jainam format
         jainam_order = transform_data(data)
         jainam_order['appOrderID'] = int(order_id)
-        jainam_order['clientID'] = user_id
+
+        # Add client ID based on account type
+        if is_pro_dealer:
+            jainam_order['clientID'] = api_client_id  # "*****" for Pro Dealer
+            logger.info(f"Modifying order with Pro Dealer account clientID='*****' (configured: {client_id})")
+        elif is_normal_dealer:
+            jainam_order['clientID'] = api_client_id  # Actual clientID for Normal Dealer
+            logger.info(f"Modifying order with Normal Dealer account clientID='{api_client_id}' (configured: {client_id})")
+        else:
+            jainam_order['clientID'] = user_id
+            logger.info(f"Modifying order with investor account clientID={user_id}")
 
         # Remove fields not needed for modification
         jainam_order.pop('exchangeSegment', None)
@@ -454,15 +497,31 @@ def get_order_book(auth_token):
         }
     """
     try:
-        # Parse auth_token
-        interactive_token, user_id = _parse_auth_token(auth_token)
+        # Parse auth_token to get dealer account information
+        interactive_token, user_id, client_id, is_investor_client, is_dealer_account, is_pro_dealer, is_normal_dealer, api_client_id = _parse_auth_token(auth_token)
 
-        logger.info(f"Fetching order book from Jainam for user {user_id}")
+        logger.info(
+            f"Fetching order book from Jainam for user {user_id}, "
+            f"clientID={client_id}, isInvestorClient={is_investor_client}, "
+            f"isDealerAccount={is_dealer_account}, isProDealer={is_pro_dealer}, isNormalDealer={is_normal_dealer}"
+        )
 
-        # Use OrderAPIClient (regular endpoint for PRO accounts)
-        # CRITICAL FIX: Do NOT pass clientID parameter for regular PRO accounts
+        # Use OrderAPIClient
         client = OrderAPIClient(auth_token=interactive_token)
-        response_data = client.get_orderbook(client_id=None)
+
+        # For dealer accounts (both Pro and Normal), use dealer-specific endpoint
+        # Pro Dealer: clientID="*****"
+        # Normal Dealer: clientID=actual value (e.g., "DLL7182")
+        # Investor: regular endpoint without clientID
+        if is_dealer_account:
+            if is_pro_dealer:
+                logger.info(f"Using dealer orderbook endpoint with Pro Dealer clientID='*****' (configured: {client_id})")
+            else:
+                logger.info(f"Using dealer orderbook endpoint with Normal Dealer clientID='{api_client_id}' (configured: {client_id})")
+            response_data = client.get_dealer_orderbook(client_id=api_client_id)
+        else:
+            logger.info("Using regular orderbook endpoint (investor account)")
+            response_data = client.get_orderbook(client_id=None)
 
         # Check for error response
         if not isinstance(response_data, dict):
@@ -582,15 +641,31 @@ def get_positions(auth_token):
         }
     """
     try:
-        # Parse auth_token
-        interactive_token, user_id = _parse_auth_token(auth_token)
+        # Parse auth_token to get dealer account information
+        interactive_token, user_id, client_id, is_investor_client, is_dealer_account, is_pro_dealer, is_normal_dealer, api_client_id = _parse_auth_token(auth_token)
 
-        logger.info(f"Fetching positions from Jainam for user {user_id}")
+        logger.info(
+            f"Fetching positions from Jainam for user {user_id}, "
+            f"clientID={client_id}, isInvestorClient={is_investor_client}, "
+            f"isDealerAccount={is_dealer_account}, isProDealer={is_pro_dealer}, isNormalDealer={is_normal_dealer}"
+        )
 
-        # Use OrderAPIClient (regular endpoint for PRO accounts)
-        # CRITICAL FIX: Do NOT pass clientID parameter for regular PRO accounts
+        # Use OrderAPIClient
         client = OrderAPIClient(auth_token=interactive_token)
-        response_data = client.get_positions(client_id=None, day_or_net="NetWise")
+
+        # For dealer accounts (both Pro and Normal), use dealer-specific endpoint
+        # Pro Dealer: clientID="*****"
+        # Normal Dealer: clientID=actual value (e.g., "DLL7182")
+        # Investor: regular endpoint without clientID
+        if is_dealer_account:
+            if is_pro_dealer:
+                logger.info(f"Using dealer positions endpoint with Pro Dealer clientID='*****' (configured: {client_id})")
+            else:
+                logger.info(f"Using dealer positions endpoint with Normal Dealer clientID='{api_client_id}' (configured: {client_id})")
+            response_data = client.get_dealer_positions(client_id=api_client_id, day_or_net="NetWise")
+        else:
+            logger.info("Using regular positions endpoint (investor account)")
+            response_data = client.get_positions(client_id=None, day_or_net="NetWise")
 
         logger.info(f"Positions retrieved successfully")
         return response_data
@@ -663,15 +738,31 @@ def get_holdings(auth_token):
         }
     """
     try:
-        # Parse auth_token
-        interactive_token, user_id = _parse_auth_token(auth_token)
+        # Parse auth_token to get dealer account information
+        interactive_token, user_id, client_id, is_investor_client, is_dealer_account, is_pro_dealer, is_normal_dealer, api_client_id = _parse_auth_token(auth_token)
 
-        logger.info(f"Fetching holdings from Jainam for user {user_id}")
+        logger.info(
+            f"Fetching holdings from Jainam for user {user_id}, "
+            f"clientID={client_id}, isInvestorClient={is_investor_client}, "
+            f"isDealerAccount={is_dealer_account}, isProDealer={is_pro_dealer}, isNormalDealer={is_normal_dealer}"
+        )
 
-        # Use OrderAPIClient (regular endpoint for PRO accounts)
-        # CRITICAL FIX: Do NOT pass clientID parameter for regular PRO accounts
+        # Use OrderAPIClient
         client = OrderAPIClient(auth_token=interactive_token)
-        response_data = client.get_holdings(client_id=None)
+
+        # For dealer accounts (both Pro and Normal), pass appropriate clientID
+        # Pro Dealer: clientID="*****"
+        # Normal Dealer: clientID=actual value (e.g., "DLL7182")
+        # Investor: regular endpoint without clientID
+        if is_dealer_account:
+            if is_pro_dealer:
+                logger.info(f"Using holdings endpoint with Pro Dealer clientID='*****' (configured: {client_id})")
+            else:
+                logger.info(f"Using holdings endpoint with Normal Dealer clientID='{api_client_id}' (configured: {client_id})")
+            response_data = client.get_holdings(client_id=api_client_id)
+        else:
+            logger.info("Using regular holdings endpoint (investor account)")
+            response_data = client.get_holdings(client_id=None)
 
         logger.info(f"Holdings retrieved successfully")
         return response_data
@@ -757,18 +848,31 @@ def get_trade_book(auth_token):
         }
     """
     try:
-        # Parse auth_token
-        interactive_token, user_id = _parse_auth_token(auth_token)
+        # Parse auth_token to get dealer account information
+        interactive_token, user_id, client_id, is_investor_client, is_dealer_account, is_pro_dealer, is_normal_dealer, api_client_id = _parse_auth_token(auth_token)
 
-        logger.info(f"Fetching trade book from Jainam for user {user_id}")
+        logger.info(
+            f"Fetching trade book from Jainam for user {user_id}, "
+            f"clientID={client_id}, isInvestorClient={is_investor_client}, "
+            f"isDealerAccount={is_dealer_account}, isProDealer={is_pro_dealer}, isNormalDealer={is_normal_dealer}"
+        )
 
-        # Use OrderAPIClient (regular endpoint for PRO accounts)
-        # CRITICAL FIX: Do NOT pass clientID parameter for regular PRO accounts
-        # The reference implementation is designed for dealer accounts, not regular PRO accounts
-        # Passing clientID causes "Supplied client not mapped under dealer" error (e-trade-00002)
-        # Without clientID, we get "Data Not Available" (e-tradeBook-0005) when no trades exist - this is correct!
+        # Use OrderAPIClient
         client = OrderAPIClient(auth_token=interactive_token)
-        response_data = client.get_tradebook(client_id=None)
+
+        # For dealer accounts (both Pro and Normal), use dealer-specific endpoint
+        # Pro Dealer: clientID="*****"
+        # Normal Dealer: clientID=actual value (e.g., "DLL7182")
+        # Investor: regular endpoint without clientID
+        if is_dealer_account:
+            if is_pro_dealer:
+                logger.info(f"Using dealer tradebook endpoint with Pro Dealer clientID='*****' (configured: {client_id})")
+            else:
+                logger.info(f"Using dealer tradebook endpoint with Normal Dealer clientID='{api_client_id}' (configured: {client_id})")
+            response_data = client.get_dealer_tradebook(client_id=api_client_id)
+        else:
+            logger.info("Using regular tradebook endpoint (investor account)")
+            response_data = client.get_tradebook(client_id=None)
 
         # DEBUG: Log the actual response to diagnose empty tradebook issue
         logger.info(f"Tradebook API response type: {response_data.get('type') if isinstance(response_data, dict) else type(response_data)}")

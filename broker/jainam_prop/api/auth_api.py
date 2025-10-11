@@ -5,7 +5,7 @@ import httpx
 
 from utils.logging import get_logger
 from utils.httpx_client import get_httpx_client
-from broker.jainam_prop.api.config import get_jainam_base_url
+from broker.jainam_prop.api.config import get_jainam_base_url, get_jainam_credentials
 from broker.jainam_prop.api.base_client import BaseAPIClient
 
 logger = get_logger(__name__)
@@ -98,28 +98,32 @@ def _validate_credentials(
     require_market: bool = True,
 ) -> Tuple[Optional[str], Optional[str], Optional[str], Optional[str]]:
     """Validate Jainam credentials based on the requested requirements."""
-    interactive_key = os.getenv("JAINAM_INTERACTIVE_API_KEY")
-    interactive_secret = os.getenv("JAINAM_INTERACTIVE_API_SECRET")
-    market_key = os.getenv("JAINAM_MARKET_API_KEY")
-    market_secret = os.getenv("JAINAM_MARKET_API_SECRET")
+    try:
+        (
+            interactive_key,
+            interactive_secret,
+            market_key,
+            market_secret,
+            server,
+            account_type,
+            client_id,
+        ) = get_jainam_credentials()
+    except ValueError as exc:
+        raise ValueError(str(exc)) from exc
 
-    missing = [
-        name
-        for name, value, required in (
-            ("JAINAM_INTERACTIVE_API_KEY", interactive_key, require_interactive),
-            ("JAINAM_INTERACTIVE_API_SECRET", interactive_secret, require_interactive),
-            ("JAINAM_MARKET_API_KEY", market_key, require_market),
-            ("JAINAM_MARKET_API_SECRET", market_secret, require_market),
-        )
-        if required and not value
-    ]
+    logger.debug(
+        "Credential validation: server=%s account=%s clientID=%s \u2013 requirements: interactive=%s, market=%s",
+        server,
+        account_type,
+        client_id,
+        require_interactive,
+        require_market,
+    )
 
-    if missing:
-        joined = ", ".join(missing)
-        raise ValueError(
-            f"Missing required Jainam credentials: {joined}. "
-            "Set these environment variables before attempting authentication."
-        )
+    if not require_interactive and require_market:
+        return None, None, market_key, market_secret
+    if require_interactive and not require_market:
+        return interactive_key, interactive_secret, None, None
 
     return interactive_key, interactive_secret, market_key, market_secret
 
@@ -171,47 +175,80 @@ def _extract_error_detail(response: Optional[httpx.Response]) -> str:
 # Removed _login_market_data - now handled by MarketDataAuthClient class
 
 
-def authenticate_direct() -> Tuple[Optional[str], Optional[str], Optional[str], Optional[str]]:
+def authenticate_direct() -> Tuple[Optional[str], Optional[str], Optional[str], Optional[bool], Optional[str], Optional[str]]:
     """
     Authenticate with Jainam XTS using direct API key/secret login.
 
-    Refactored to use BaseAPIClient (Task 24.1).
-
     Returns:
-        tuple: (interactive_token, market_token, user_id, error_message)
+        tuple: (interactive_token, market_token, user_id, is_investor_client, client_id, error_message)
     """
     try:
-        interactive_key, interactive_secret, market_key, market_secret = _validate_credentials()
+        (
+            interactive_key,
+            interactive_secret,
+            market_key,
+            market_secret,
+            server,
+            account_type,
+            client_id,
+        ) = get_jainam_credentials()
     except ValueError as exc:
-        logger.error(str(exc))
-        return None, None, None, str(exc)
+        message = str(exc)
+        logger.error(message)
+        return None, None, None, None, None, message
 
     base_url = get_jainam_base_url()
 
+    logger.info(
+        "Authenticating Jainam account: server=%s account_type=%s clientID=%s",
+        server,
+        account_type,
+        client_id,
+    )
+
+    interactive_token = market_token = user_id = None
+    is_investor = None
+
     try:
-        # Authenticate Interactive API
         interactive_client = InteractiveAuthClient(base_url=base_url)
         interactive_response = interactive_client.login(interactive_key, interactive_secret)
         interactive_token, user_id, is_investor = _extract_token_from_response(
-            interactive_response, "Interactive"
+            interactive_response,
+            "Interactive",
         )
 
-        # Authenticate Market Data API
         market_client = MarketDataAuthClient(base_url=base_url)
         market_response = market_client.login(market_key, market_secret)
         market_token, _, _ = _extract_token_from_response(market_response, "Market data")
 
         logger.info(
-            "Jainam direct authentication succeeded (user_id=%s, investor_client=%s)",
+            "Jainam authentication successful: server=%s account=%s userID=%s clientID=%s investor=%s",
+            server,
+            account_type,
             user_id,
+            client_id,
             bool(is_investor),
         )
-        # Return is_investor flag for PRO account handling
-        return interactive_token, market_token, user_id, is_investor, None
-    except Exception as exc:
+
+        if is_investor:
+            logger.warning(
+                "isInvestorClient=True returned for %s account (clientID=%s); dealer accounts should report False",
+                account_type,
+                client_id,
+            )
+
+        return interactive_token, market_token, user_id, is_investor, client_id, None
+
+    except Exception as exc:  # noqa: BLE001
         error_message = str(exc)
-        logger.error("Jainam direct authentication failed: %s", error_message)
-        return None, None, None, None, error_message
+        logger.error(
+            "Jainam authentication failed: server=%s account=%s clientID=%s error=%s",
+            server,
+            account_type,
+            client_id,
+            error_message,
+        )
+        return None, None, None, None, None, error_message
 
 
 def authenticate_broker(*_args, **_kwargs):
@@ -219,7 +256,7 @@ def authenticate_broker(*_args, **_kwargs):
     Backwards-compatible wrapper to support plugin loader expectations.
 
     Returns:
-        tuple: (interactive_token, market_token, user_id, is_investor_client, error_message)
+        tuple: (interactive_token, market_token, user_id, is_investor_client, client_id, error_message)
     """
     return authenticate_direct()
 

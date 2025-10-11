@@ -22,12 +22,13 @@ JAINAM_ROUTES = {
     "interactive.prefix": "interactive",
     
     # Authentication
-    # CRITICAL FIX: Endpoint is /user/session NOT /interactive/user/session
-    # Reference: Hostlookup_B.pdf shows endpoint as "/user/session"
-    # But we need to check if base URL includes /interactive or not
-    # For now, trying /user/session (without /interactive prefix)
-    "user.login": "/user/session",
-    "user.logout": "/user/session",
+    # CORRECT ENDPOINT: /interactive/user/session (confirmed from pro-dealer-api.md)
+    # Reference: pro-dealer-api.md lines 122 - Interactive API authentication endpoint
+    # Base URL: https://smpb.jainam.in:4143
+    # Full URL: https://smpb.jainam.in:4143/interactive/user/session
+    # Note: Market Data API uses separate endpoint /apibinarymarketdata/auth/login
+    "user.login": "/interactive/user/session",
+    "user.logout": "/interactive/user/session",
     "user.profile": "/interactive/user/profile",
     "user.balance": "/interactive/user/balance",
     

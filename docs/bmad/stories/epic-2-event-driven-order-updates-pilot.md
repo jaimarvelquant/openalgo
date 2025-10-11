@@ -1,9 +1,11 @@
 # Epic 2: Event-Driven Order Updates Pilot (Jainam + Zerodha)
 
 **Epic Goal:**
-Implement event-driven order updates for Jainam and Zerodha brokers using Vn.py's proven EventEngine architecture to provide real-time order status updates (<100ms latency) as a pilot program, with clear success criteria for data-driven go/no-go decision on expansion to additional brokers.
+Implement event-driven order updates for Jainam and Zerodha brokers using VNPY's proven EventEngine architecture with Server-Sent Events (SSE) transport to provide real-time order status updates (<100ms latency) as a pilot program, with clear success criteria for data-driven go/no-go decision on expansion to additional brokers.
 
 **Status:** Proposed (Pending Epic 1 Completion)
+
+**🔄 UPDATED:** 2025-10-10 - Architecture modified to use SSE instead of Flask-SocketIO based on MarvelQuant-Live-Integration alignment and research findings.
 
 **Dependencies:**
 - **HARD DEPENDENCY:** Epic 1 must be COMPLETE and STABLE
@@ -17,13 +19,16 @@ Implement event-driven order updates for Jainam and Zerodha brokers using Vn.py'
 
 **Scope Boundaries:**
 - ✅ **In Scope:** Jainam + Zerodha only (2 brokers)
-- ✅ **In Scope:** EventEngine adaptation from Vn.py
+- ✅ **In Scope:** EventEngine adaptation from VNPY
 - ✅ **In Scope:** WebSocket/postback integration
+- ✅ **In Scope:** SSE (Server-Sent Events) for UI updates
+- ✅ **In Scope:** SSEBroadcaster integration with EventEngine
 - ✅ **In Scope:** Monitoring and metrics infrastructure
 - ✅ **In Scope:** Feature flags and rollback mechanism
 - ❌ **Out of Scope:** Other brokers (expansion requires separate approval)
 - ❌ **Out of Scope:** Removing REST API (maintained as fallback)
 - ❌ **Out of Scope:** Market data WebSocket (already implemented)
+- ❌ **Out of Scope:** Flask-SocketIO (replaced by SSE for simplicity)
 
 ---
 
@@ -142,22 +147,35 @@ All stories → Evaluation Period (6.6 weeks)
 
 ## Story Definitions
 
-### Story 2.1: EventEngine Implementation
+### Story 2.1: EventEngine + SSE Implementation
 
 **As a** platform architect,
-**I want** to adapt Vn.py's EventEngine for OpenAlgo,
-**so that** we have a production-proven event processing system for order updates.
+**I want** to adapt VNPY's EventEngine for OpenAlgo with SSE transport,
+**so that** we have a production-proven event processing system for order updates with lightweight real-time UI updates.
+
+**🔄 UPDATED:** Changed from Flask-SocketIO to SSE (Server-Sent Events) for simpler, more efficient one-way communication.
 
 **Acceptance Criteria:**
-1. EventEngine class adapted from Vn.py with thread-safe queue
-2. EventType enum created with trading-specific events (ORDER_UPDATE, TRADE_UPDATE, etc.)
+1. EventEngine class adapted from VNPY with thread-safe queue
+2. EventType enum created with trading-specific events (EVENT_ORDER, EVENT_TRADE, EVENT_POSITION, EVENT_PORTFOLIO_PNL)
 3. Timer events firing every 1 second for periodic tasks
 4. Handler registration/unregistration working correctly
-5. Integration with Flask-SocketIO for UI updates
-6. Unit tests for thread safety and queue management
-7. No memory leaks after 24-hour stress test
+5. **SSEBroadcaster** class implemented to bridge EventEngine → SSE clients
+6. **SSE Flask endpoint** created (`/api/v1/sse/portfolio/<name>/stream`)
+7. Unit tests for thread safety and queue management
+8. Integration tests for event flow: EventEngine → SSEBroadcaster → SSE client
+9. Latency test: <100ms from event emission to SSE client receipt
+10. No memory leaks after 24-hour stress test
+
+**Technical Details:**
+- Use `Queue` for client message buffering
+- Implement heartbeat (30s timeout) to keep connections alive
+- Auto-cleanup on client disconnect (finally block)
+- Support 100+ concurrent SSE connections per portfolio
 
 **Effort:** 3 days, 24 hours
+
+**Reference:** See `bmad/docs/EventEngine-SSE-Integration-Guide.md` for detailed implementation steps.
 
 ---
 
@@ -321,7 +339,7 @@ All stories → Evaluation Period (6.6 weeks)
 ## Notes
 
 **Code Reuse Strategy:**
-- Vn.py EventEngine: https://github.com/vnpy/vnpy/blob/master/vnpy/event/engine.py
+- VNPY EventEngine: https://github.com/vnpy/vnpy/blob/master/vnpy/event/engine.py
 - Proven in production since 2015
 - Battle-tested in high-frequency trading environments
 - Reduces implementation risk significantly
@@ -331,12 +349,82 @@ All stories → Evaluation Period (6.6 weeks)
 - Zerodha Postback: https://kite.trade/docs/connect/v3/postbacks/
 
 **Reference Implementation:**
-- Vn.py Gateway Pattern: https://github.com/vnpy/vnpy/tree/master/vnpy/gateway
+- VNPY Gateway Pattern: https://github.com/vnpy/vnpy/tree/master/vnpy/gateway
 - OpenAlgo WebSocket Proxy: `websocket_proxy/` (for market data)
+- **EventEngine + SSE Integration Guide:** `bmad/docs/EventEngine-SSE-Integration-Guide.md`
+
+---
+
+## Architectural Alignment with MarvelQuant-Live-Integration
+
+**Date:** 2025-10-10
+**Analysis:** Comprehensive compatibility assessment completed
+
+### Key Findings
+
+✅ **COMPATIBLE:** Epic 2's event-driven architecture is fully compatible with the SSE implementation planned for MarvelQuant-Live-Integration.
+
+### Unified Architecture
+
+Both Epic 2 (OpenAlgo) and MarvelQuant-Live-Integration will share:
+
+1. **EventEngine** (from VNPY) - Central event bus for all system events
+2. **SSE Transport** - Lightweight, one-way real-time updates (replaces Flask-SocketIO)
+3. **SSEBroadcaster** - Event handler that bridges EventEngine → SSE clients
+4. **Event Types** - Unified event definitions (EVENT_ORDER, EVENT_TRADE, EVENT_POSITION, EVENT_PORTFOLIO_PNL)
+5. **Timer Events** - Periodic P&L calculations (every 1-5 seconds)
+
+### Benefits of Alignment
+
+| Benefit | Description |
+|---------|-------------|
+| **Code Reuse** | Single EventEngine implementation serves both projects |
+| **Consistency** | Same event-driven patterns across OpenAlgo and MarvelQuant |
+| **Simplicity** | SSE simpler than WebSocket (no bidirectional overhead) |
+| **Performance** | <100ms latency from event → UI update |
+| **Scalability** | Proven to handle 100+ concurrent portfolios |
+
+### Architecture Diagram
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    UNIFIED ARCHITECTURE                      │
+│         (Shared by Epic 2 + MarvelQuant-Live)               │
+└─────────────────────────────────────────────────────────────┘
+
+Broker APIs → BrokerAdapter → EventEngine → Event Handlers
+  (Jainam,         (emits           ↓         (SSEBroadcaster,
+   Zerodha,        events)      Event Queue   Risk Manager,
+   Upstox...)                                  Logger, etc.)
+                                     ↓
+                              SSEBroadcaster
+                                     ↓
+                         SSE Endpoint (Flask)
+                                     ↓
+                         Browser (EventSource)
+                                     ↓
+                              Portfolio UI
+```
+
+### Implementation Timeline
+
+- **Week 1:** EventEngine + SSEBroadcaster (Epic 2 Story 2.1)
+- **Week 2:** Broker Integration (Epic 2 Stories 2.3-2.4)
+- **Week 3:** MarvelQuant Integration (Portfolio Manager + P&L)
+- **Week 4:** Testing + Performance Optimization
+- **Week 5-10:** Production Evaluation Period
+
+### References
+
+- **Compatibility Analysis:** `bmad/docs/EventEngine-SSE-Integration-Guide.md`
+- **VNPY EventEngine Source:** https://github.com/vnpy/vnpy/blob/master/vnpy/event/engine.py
+- **MarvelQuant Documentation:** `docs/bmad/live_integration/`
+- **Research Findings:** `docs/bmad/research/chat-gpt-research-output/`
 
 ---
 
 **Epic Created:** 2025-10-08
+**Epic Updated:** 2025-10-10 (Architecture aligned with MarvelQuant-Live-Integration)
 **Epic Owner:** Sarah (PO Agent)
 **Status:** Proposed (Pending Epic 1 Completion & User Approval)
 **Approved By:** User (2025-10-08)

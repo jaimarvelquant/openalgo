@@ -74,6 +74,7 @@ def get_margin_data(auth_token):
     Get margin/funds data from Jainam.
 
     Refactored to use FundsAPIClient (Task 24.1).
+    Updated to support both Pro and Normal dealer accounts.
 
     Args:
         auth_token: Authentication token
@@ -93,6 +94,20 @@ def get_margin_data(auth_token):
 
         interactive_token = credentials.get('interactive_token', credentials.get('token', auth_token))
         client_id = _resolve_client_id(credentials)
+        is_investor_client = credentials.get('isInvestorClient', True)
+
+        # Determine dealer account type
+        is_dealer_account = (not is_investor_client) and (client_id is not None)
+        is_pro_dealer = (client_id == "ZZJ13048")
+        is_normal_dealer = (client_id == "DLL7182")
+
+        # Determine the clientID value to send in API requests
+        if is_pro_dealer:
+            api_client_id = "*****"
+        elif is_normal_dealer:
+            api_client_id = client_id  # Use actual clientID for Normal Dealer
+        else:
+            api_client_id = client_id  # Investor account
 
         # Use FundsAPIClient
         client = FundsAPIClient(auth_token=interactive_token)
@@ -101,7 +116,15 @@ def get_margin_data(auth_token):
         got_400_error = False
 
         try:
-            response_data = client.get_balance(client_id)
+            # Use appropriate clientID based on account type
+            if is_pro_dealer:
+                logger.info(f"Fetching balance with Pro Dealer clientID='*****' (configured: {client_id})")
+            elif is_normal_dealer:
+                logger.info(f"Fetching balance with Normal Dealer clientID='{api_client_id}' (configured: {client_id})")
+            else:
+                logger.info(f"Fetching balance with investor account clientID={api_client_id}")
+
+            response_data = client.get_balance(api_client_id)
         except httpx.HTTPStatusError as exc:
             # Handle HTTP errors
             got_400_error = (exc.response.status_code == 400)
@@ -171,6 +194,7 @@ def get_profile(auth_token):
     Get user profile from Jainam.
 
     Refactored to use FundsAPIClient (Task 24.1).
+    Updated to support both Pro and Normal dealer accounts.
 
     Args:
         auth_token: Authentication token
@@ -190,10 +214,33 @@ def get_profile(auth_token):
 
         interactive_token = credentials.get('interactive_token', credentials.get('token', auth_token))
         client_id = _resolve_client_id(credentials)
+        is_investor_client = credentials.get('isInvestorClient', True)
+
+        # Determine dealer account type
+        is_dealer_account = (not is_investor_client) and (client_id is not None)
+        is_pro_dealer = (client_id == "ZZJ13048")
+        is_normal_dealer = (client_id == "DLL7182")
+
+        # Determine the clientID value to send in API requests
+        if is_pro_dealer:
+            api_client_id = "*****"
+        elif is_normal_dealer:
+            api_client_id = client_id  # Use actual clientID for Normal Dealer
+        else:
+            api_client_id = client_id  # Investor account
 
         # Use FundsAPIClient
         client = FundsAPIClient(auth_token=interactive_token)
-        response_data = client.get_profile(client_id)
+
+        # Use appropriate clientID based on account type
+        if is_pro_dealer:
+            logger.info(f"Fetching profile with Pro Dealer clientID='*****' (configured: {client_id})")
+        elif is_normal_dealer:
+            logger.info(f"Fetching profile with Normal Dealer clientID='{api_client_id}' (configured: {client_id})")
+        else:
+            logger.info(f"Fetching profile with investor account clientID={api_client_id}")
+
+        response_data = client.get_profile(api_client_id)
 
         if response_data.get('type') == 'success' and 'result' in response_data:
             profile_data = response_data['result']

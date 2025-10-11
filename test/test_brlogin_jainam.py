@@ -1,5 +1,12 @@
+import os
+import sys
+
 import pytest
 from flask import Flask, Response
+
+PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if PROJECT_ROOT not in sys.path:
+    sys.path.insert(0, PROJECT_ROOT)
 
 from blueprints.brlogin import brlogin_bp
 from limiter import limiter
@@ -20,7 +27,14 @@ def test_jainam_prop_direct_login_flow(monkeypatch, flask_app):
     captured = {}
 
     flask_app.broker_auth_functions = {
-        "jainam_prop_auth": lambda: ("auth-token", "feed-token", "user-123", None)
+        "jainam_prop_auth": lambda: (
+            "auth-token",
+            "feed-token",
+            "user-123",
+            False,
+            "client-456",
+            None,
+        )
     }
 
     def fake_success(auth_token, user_session_key, broker, feed_token=None, user_id=None):
@@ -47,9 +61,9 @@ def test_jainam_prop_direct_login_flow(monkeypatch, flask_app):
 
     assert response.status_code == 302
     assert captured["success"] == (
-        "auth-token",
+        '{"token": "auth-token", "user_id": "user-123", "clientID": "client-456", "isInvestorClient": false}',
         "demo-user",
         "jainam_prop",
         "feed-token",
-        "user-123",
+        "client-456",
     )

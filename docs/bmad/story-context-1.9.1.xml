@@ -1,0 +1,182 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1.9</epicId>
+    <storyId>1</storyId>
+    <title>Story 1.9.1: Jainam Multi-Server and Dealer Account Configuration</title>
+    <status>Approved</status>
+    <generatedAt>2025-10-11T00:00:00Z</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>/Users/maruth/projects/openalgo/docs/bmad/stories/story-1.9.1-jainam-multi-server-dealer-account-configuration.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer deploying Jainam Prop integration</asA>
+    <iWant>dynamic multi-server (Symphony A/B/C) and multi-account (Pro/Normal dealer) configuration support</iWant>
+    <soThat>I can switch between Symphony servers and dealer accounts by changing environment variables without code modifications, ensuring correct clientID usage in all API calls</soThat>
+    <tasks><![CDATA[
+- [ ] Task 1: Update .env configuration (AC: #1, #6)
+  - [ ] 1.1: Backup existing `.env` file if present
+  - [ ] 1.2: Append Jainam Symphony configuration block to `.env` with all server/account combinations
+  - [ ] 1.3: Set `JAINAM_ACTIVE_SYMPHONY_SERVER='B'` and `JAINAM_ACTIVE_ACCOUNT_TYPE='PRO'` as defaults
+  - [ ] 1.4: Add Symphony B Pro credentials (Interactive API, Market API, ClientID)
+  - [ ] 1.5: Add Symphony B Normal credentials (Interactive API, Market API, ClientID)
+  - [ ] 1.6: Add placeholder comments for Symphony A and C credentials
+
+- [ ] Task 2: Implement config.py multi-server support (AC: #2, #3, #7)
+  - [ ] 2.1: Add `SYMPHONY_SERVERS` dictionary mapping A/B/C to base URLs
+  - [ ] 2.2: Update `get_jainam_base_url()` to read `JAINAM_ACTIVE_SYMPHONY_SERVER` and return mapped URL
+  - [ ] 2.3: Implement `get_jainam_credentials()` function returning 7-tuple (interactive_key, interactive_secret, market_key, market_secret, server, account_type, client_id)
+  - [ ] 2.4: Add credential validation with clear error messages listing missing environment variables
+  - [ ] 2.5: Add clientID validation warning if configured value doesn't match expected (ZZJ13048 for PRO, DLL7182 for NORMAL)
+  - [ ] 2.6: Add comprehensive logging showing loaded configuration
+
+- [ ] Task 3: Update auth_api.py for dynamic credentials (AC: #4, #6, #8)
+  - [ ] 3.1: Update `_validate_credentials()` to call `get_jainam_credentials()` instead of hardcoded env vars
+  - [ ] 3.2: Add legacy variable detection and warning logging for deprecated variables
+  - [ ] 3.3: Update `authenticate_direct()` signature to return 6-tuple including `client_id`
+  - [ ] 3.4: Call `get_jainam_credentials()` in `authenticate_direct()` to retrieve `client_id`
+  - [ ] 3.5: Add logging showing Symphony server, account type, clientID, userID, and isInvestorClient flag
+  - [ ] 3.6: Add warning if `isInvestorClient=True` for dealer accounts (should be False)
+  - [ ] 3.7: Update `authenticate_broker()` wrapper to match new signature
+
+- [ ] Task 4: Update brlogin.py for correct clientID handling (AC: #5)
+  - [ ] 4.1: Update line 142-143 to receive `client_id` from auth_function() (6-tuple unpacking)
+  - [ ] 4.2: Update lines 585-590 to use configured `client_id` instead of `user_id` in auth_token JSON
+  - [ ] 4.3: Add fallback to `user_id` if `client_id` is None (backward compatibility)
+  - [ ] 4.4: Add logging showing stored clientID and userID values
+
+- [ ] Task 5: Testing and validation (AC: #1-9)
+  - [ ] **Task 5a**: Unit Tests - Configuration Functions
+    - [ ] 5a.1: Test `get_jainam_base_url()` with JAINAM_ACTIVE_SYMPHONY_SERVER='A'/'B'/'C' returns correct URLs
+    - [ ] 5a.2: Test `get_jainam_credentials()` with all valid server/account combinations (A-PRO, A-NORMAL, B-PRO, B-NORMAL, C-PRO, C-NORMAL)
+    - [ ] 5a.3: Test `get_jainam_credentials()` raises ValueError with clear message when credentials missing for active configuration
+    - [ ] 5a.4: Test clientID validation warning for mismatched values (ZZJ13048 for PRO, DLL7182 for NORMAL)
+
+  - [ ] **Task 5b**: Integration Tests - Authentication Flow
+    - [ ] 5b.1: Test Pro Dealer authentication (Symphony B + PRO) - verify clientID ZZJ13048 returned
+    - [ ] 5b.2: Test Normal Dealer authentication (Symphony B + NORMAL) - verify clientID DLL7182 returned
+    - [ ] 5b.3: Test account switching by changing JAINAM_ACTIVE_ACCOUNT_TYPE environment variable and restarting
+    - [ ] 5b.4: Test server switching by changing JAINAM_ACTIVE_SYMPHONY_SERVER (if credentials available for multiple servers)
+    - [ ] 5b.5: Verify full authentication flow logs server, account type, clientID, userID, isInvestorClient
+    - [ ] 5b.6: Verify brlogin.py stores correct clientID in auth_token JSON (not user_id)
+    - [ ] 5b.7: Verify API calls (orders, positions) work with correct clientID parameter
+    - [ ] 5b.8: Verify isInvestorClient=False for both dealer accounts
+
+  - [ ] **Task 5c**: Security Validation
+    - [ ] 5c.1: Verify no API keys appear in application logs
+    - [ ] 5c.2: Verify no secrets appear in error messages (test with missing credentials)
+    - [ ] 5c.3: Verify authentication failure messages don't leak credential details
+    - [ ] 5c.4: Test invalid credentials don't expose configuration patterns
+
+  - [ ] **Task 5d**: Backward Compatibility Testing
+    - [ ] 5d.1: Test legacy JAINAM_INTERACTIVE_API_KEY triggers deprecation warning
+    - [ ] 5d.2: Test legacy JAINAM_MARKET_API_KEY triggers deprecation warning
+    - [ ] 5d.3: Verify authentication still works with legacy variables (backward compatibility)
+    - [ ] 5d.4: Test mixed legacy/new variables handled gracefully with appropriate warnings
+
+  - [ ] **Task 5e**: Regression Testing (AC: #9)
+    - [ ] 5e.1: Verify existing Jainam authentication with default configuration still works
+    - [ ] 5e.2: Test order placement functionality unchanged
+    - [ ] 5e.3: Test position retrieval functionality unchanged
+    - [ ] 5e.4: Verify no performance regression in authentication flow
+]]></tasks>
+  </story>
+
+  <acceptanceCriteria><![CDATA[
+1. AC1: Environment variables `JAINAM_ACTIVE_SYMPHONY_SERVER` (A/B/C) and `JAINAM_ACTIVE_ACCOUNT_TYPE` (PRO/NORMAL) control active configuration
+2. AC2: `get_jainam_base_url()` returns correct Symphony server URL based on `JAINAM_ACTIVE_SYMPHONY_SERVER`
+3. AC3: `get_jainam_credentials()` dynamically loads credentials using pattern `JAINAM_SYMPHONY_{server}_{account_type}_{credential_type}`
+4. AC4: `authenticate_direct()` returns configured `client_id` (ZZJ13048 or DLL7182) instead of API-returned `user_id`
+5. AC5: `brlogin.py` stores configured `client_id` in auth_token JSON, not `user_id`
+6. AC6: Legacy environment variables (`JAINAM_INTERACTIVE_API_KEY`, etc.) trigger deprecation warnings
+7. AC7: Missing credentials for active server/account combination raise clear `ValueError` with required variable names
+8. AC8: Logging clearly shows active Symphony server, account type, and clientID on authentication
+9. AC9: No regression in existing Jainam authentication or trading functionality
+]]></acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc path="docs/jainam-multi-server-config.plan.md" title="Jainam Multi-Server and Dealer Account Configuration - Implementation Plan" section="Implementation Steps">
+        <snippet><![CDATA[# IMPORTANT: Both PRO and NORMAL are dealer accounts (require clientID)
+# The ONLY differences:
+# - Different credentials (API keys/secrets)
+# - Different clientID values (ZZJ13048 vs DLL7182)
+# - Same endpoints, same base URLs (server-dependent)
+JAINAM_ACTIVE_SYMPHONY_SERVER='B'
+JAINAM_ACTIVE_ACCOUNT_TYPE='PRO'
+JAINAM_SYMPHONY_B_PRO_CLIENT_ID='ZZJ13048']]></snippet>
+      </doc>
+      <doc path="docs/bmad/jainam-prop-completion-prd.md" title="Jainam Prop Broker Integration Completion - Brownfield Enhancement PRD" section="1.2 Current Project State">
+        <snippet><![CDATA[OpenAlgo broker plugin architecture already exists with authentication system and dealer endpoints, but configuration needs to follow established patterns from other brokers to reach production readiness.]]></snippet>
+      </doc>
+      <doc path="docs/bmad/research/jainam-authentication-guide.md" title="Jainam Prop Authentication Guide" section="Executive Summary">
+        <snippet><![CDATA[The Jainam XTS API supports direct programmatic login using API key and secret for both Interactive and Market Data endpoints. Tokens must be stored and reused, with no OAuth request token step required.]]></snippet>
+      </doc>
+      <doc path="docs/bmad/examples/jainam-env-config-example.txt" title="Jainam Symphony Multi-Server Configuration Example" section="Active Configuration Control">
+        <snippet><![CDATA[JAINAM_ACTIVE_SYMPHONY_SERVER=B
+JAINAM_ACTIVE_ACCOUNT_TYPE=PRO
+JAINAM_SYMPHONY_B_PRO_CLIENT_ID=ZZJ13048
+# ...
+JAINAM_SYMPHONY_B_NORMAL_CLIENT_ID=DLL7182
+# Legacy variables (deprecated) trigger warnings]]></snippet>
+      </doc>
+      <doc path="docs/bmad/research/jainam-prop-implementation-plan.md" title="Jainam Prop Implementation Plan" section="9. Implementation Guidelines">
+        <snippet><![CDATA[Reuse reference patterns from fivepaisa, centralise configuration in api/config.py, and maintain naming consistency so broker integrations share identical flows and telemetry.]]></snippet>
+      </doc>
+      <doc path="docs/architecture/enterprise-broker-api-client.md" title="Enterprise-Grade Broker API Client Architecture" section="Solution: Enterprise-Grade Resilience Stack">
+        <snippet><![CDATA[BrokerAPIClient introduces retry logic, standardized error responses, and structured logging to prevent cascading failures when broker APIs return HTTP 500 or degrade.]]></snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact path="broker/jainam_prop/api/config.py" kind="module" symbol="get_jainam_credentials" lines="59-125" reason="Implements multi-server credential loading and clientID validation used across configuration and authentication tasks." />
+      <artifact path="broker/jainam_prop/api/auth_api.py" kind="function" symbol="authenticate_direct" lines="178-252" reason="Performs direct login using configured credentials and logs server/account/client context required for AC4-AC8." />
+      <artifact path="broker/jainam_prop/api/base_client.py" kind="class" symbol="BaseAPIClient" lines="21-200" reason="Shared HTTP client that routes through canonical endpoints; updates ensure new configuration values propagate consistently." />
+      <artifact path="broker/jainam_prop/api/order_api.py" kind="method" symbol="OrderAPIClient.get_positions" lines="126-146" reason="Demonstrates how clientID must be forwarded for dealer accounts so regression checks cover AC5 and AC9." />
+      <artifact path="blueprints/brlogin.py" kind="handler" symbol="handle_auth_success" lines="574-603" reason="Stores returned clientID inside auth token JSON, enforcing AC5 and ensuring UI reflects configuration changes." />
+    </code>
+    <dependencies>
+      <python>
+        <package name="httpx" version="0.28.1" reason="HTTP client used by Jainam API modules for interactive and market data requests." />
+        <package name="python-dotenv" version="1.0.1" reason="Loads environment variables so multi-server credentials can be managed via .env." />
+        <package name="Flask" version="3.0.3" reason="Web framework powering brlogin blueprint that consumes the updated authentication flow." />
+        <package name="pytest" version="8.4.2" reason="Primary testing framework for unit and integration coverage under test/." />
+      </python>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint source="docs/jainam-multi-server-config.plan.md">Only Symphony servers A, B, or C are valid; configuration must be switchable via JAINAM_ACTIVE_SYMPHONY_SERVER without code edits.</constraint>
+    <constraint source="broker/jainam_prop/api/config.py">Dealer account client IDs are fixed (ZZJ13048 for PRO, DLL7182 for NORMAL); mismatches should log warnings but continue with supplied values.</constraint>
+    <constraint source="docs/bmad/examples/jainam-env-config-example.txt">Environment variables must follow the JAINAM_SYMPHONY_{SERVER}_{ACCOUNT_TYPE}_{CREDENTIAL} naming pattern so automated lookups succeed.</constraint>
+    <constraint source="broker/jainam_prop/api/auth_api.py">Authentication logging must include server, account type, clientID, userID, and isInvestorClient to satisfy observability requirements.</constraint>
+    <constraint source="broker/jainam_prop/api/base_client.py">All Jainam API calls must go through BaseAPIClient to inherit retry/error handling aligned with enterprise broker client standards.</constraint>
+    <constraint source="blueprints/brlogin.py">brlogin must persist clientID in session JSON to keep downstream order APIs in sync with selected dealer account.</constraint>
+  </constraints>
+  <interfaces>
+    <interface name="get_jainam_base_url" kind="function" signature="get_jainam_base_url() -> str" path="broker/jainam_prop/api/config.py" />
+    <interface name="get_jainam_credentials" kind="function" signature="get_jainam_credentials() -> Tuple[str, str, str, str, str, str, str]" path="broker/jainam_prop/api/config.py" />
+    <interface name="authenticate_direct" kind="function" signature="authenticate_direct() -> Tuple[Optional[str], Optional[str], Optional[str], Optional[bool], Optional[str], Optional[str]]" path="broker/jainam_prop/api/auth_api.py" />
+    <interface name="OrderAPIClient.get_positions" kind="method" signature="get_positions(client_id: str | None = None, day_or_net: str = \"NetWise\") -> dict" path="broker/jainam_prop/api/order_api.py" />
+    <interface name="OrderAPIClient.get_dealer_orderbook" kind="method" signature="get_dealer_orderbook(client_id: str) -> dict" path="broker/jainam_prop/api/order_api.py" />
+  </interfaces>
+  <tests>
+    <standards>Project uses pytest with HTTP interactions wrapped via httpx clients; tests should mock broker endpoints where credentials are required and follow patterns documented in the Jainam implementation plan.</standards>
+    <locations>
+      <location>test/broker/jainam_prop/</location>
+      <location>test/test_jainam_endpoints.py</location>
+      <location>test/test_tradebook_api.py</location>
+    </locations>
+    <ideas>
+      <idea ac="AC1">Toggle JAINAM_ACTIVE_SYMPHONY_SERVER between A/B/C and assert get_jainam_base_url returns expected endpoints while logging the selection.</idea>
+      <idea ac="AC2">Validate that get_jainam_base_url normalizes trailing slashes and rejects invalid server keys with ValueError.</idea>
+      <idea ac="AC3">Iterate over server/account combinations to confirm get_jainam_credentials assembles the correct environment variable names and raises when any credential is missing.</idea>
+      <idea ac="AC4">Mock MarketDataAuthClient login responses to ensure authenticate_direct returns configured clientID rather than API user_id.</idea>
+      <idea ac="AC5">Simulate brlogin authentication flow to confirm stored auth token JSON persists clientID and falls back to user_id only when clientID is None.</idea>
+      <idea ac="AC6">Set legacy JAINAM_INTERACTIVE_API_KEY and ensure logger.warning is emitted alongside successful credential retrieval.</idea>
+      <idea ac="AC7">Remove a single env var (e.g., JAINAM_SYMPHONY_B_PRO_MARKET_API_SECRET) and assert get_jainam_credentials surfaces required variable list in the exception message.</idea>
+      <idea ac="AC8">Capture logs from authenticate_direct to verify structured entries include server, account_type, clientID, userID, and isInvestorClient flags.</idea>
+      <idea ac="AC9">Run regression suite covering order placement and position retrieval to confirm no behavioral changes after configuration updates.</idea>
+    </ideas>
+  </tests>
+</story-context>
+

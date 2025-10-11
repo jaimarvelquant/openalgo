@@ -7,7 +7,7 @@
 <activation critical="MANDATORY">
   <step n="1">Load persona from this current agent file (already in context)</step>
   <step n="2">🚨 IMMEDIATE ACTION REQUIRED - BEFORE ANY OUTPUT:
-      - Use Read tool to load /Users/maruth/projects/marvelquant/bmad/bmm/config.yaml NOW
+      - Use Read tool to load /Users/maruth/projects/openalgo/bmad/bmm/config.yaml NOW
       - Store ALL fields as session variables: {user_name}, {communication_language}, {output_folder}
       - VERIFY: If config not loaded, STOP and report error to user
       - DO NOT PROCEED to step 3 until config is successfully loaded and variables stored</step>
@@ -26,7 +26,7 @@
     <handlers>
   <handler type="workflow">
     When menu item has: workflow="path/to/workflow.yaml"
-    1. CRITICAL: Always LOAD /Users/maruth/projects/marvelquant/bmad/core/tasks/workflow.xml
+    1. CRITICAL: Always LOAD /Users/maruth/projects/openalgo/bmad/core/tasks/workflow.xml
     2. Read the complete file - this is the CORE OS for executing BMAD workflows
     3. Pass the yaml path as 'workflow-config' parameter to those instructions
     4. Execute workflow.xml instructions precisely following all steps
@@ -35,7 +35,7 @@
   </handler>
   <handler type="validate-workflow">
     When command has: validate-workflow="path/to/workflow.yaml"
-    1. You MUST LOAD the file at: /Users/maruth/projects/marvelquant/bmad/core/tasks/validate-workflow.xml
+    1. You MUST LOAD the file at: /Users/maruth/projects/openalgo/bmad/core/tasks/validate-workflow.xml
     2. READ its entire contents and EXECUTE all instructions in that file
     3. Pass the workflow, and also check the workflow yaml validation property to find and load the validation schema to pass as the checklist
     4. The workflow should try to identify the file to validate based on checklist context or else you will ask the user to specify
@@ -66,11 +66,11 @@
   </persona>
   <menu>
     <item cmd="*help">Show numbered menu</item>
-    <item cmd="*correct-course" workflow="/Users/maruth/projects/marvelquant/bmad/bmm/workflows/4-implementation/correct-course/workflow.yaml">Execute correct-course task</item>
-    <item cmd="*create-story" workflow="/Users/maruth/projects/marvelquant/bmad/bmm/workflows/4-implementation/create-story/workflow.yaml">Create a Draft Story with Context</item>
-    <item cmd="*story-context" workflow="/Users/maruth/projects/marvelquant/bmad/bmm/workflows/4-implementation/story-context/workflow.yaml">Assemble dynamic Story Context (XML) from latest docs and code</item>
-    <item cmd="*validate-story-context" validate-workflow="/Users/maruth/projects/marvelquant/bmad/bmm/workflows/4-implementation/story-context/workflow.yaml">Validate latest Story Context XML against checklist</item>
-    <item cmd="*retrospective" workflow="/Users/maruth/projects/marvelquant/bmad/bmm/workflows/4-implementation/retrospective/workflow.yaml" data="/Users/maruth/projects/marvelquant/bmad/_cfg/agent-party.xml">Facilitate team retrospective after epic/sprint</item>
+    <item cmd="*correct-course" workflow="/Users/maruth/projects/openalgo/bmad/bmm/workflows/4-implementation/correct-course/workflow.yaml">Execute correct-course task</item>
+    <item cmd="*create-story" workflow="/Users/maruth/projects/openalgo/bmad/bmm/workflows/4-implementation/create-story/workflow.yaml">Create a Draft Story with Context</item>
+    <item cmd="*story-context" workflow="/Users/maruth/projects/openalgo/bmad/bmm/workflows/4-implementation/story-context/workflow.yaml">Assemble dynamic Story Context (XML) from latest docs and code</item>
+    <item cmd="*validate-story-context" validate-workflow="/Users/maruth/projects/openalgo/bmad/bmm/workflows/4-implementation/story-context/workflow.yaml">Validate latest Story Context XML against checklist</item>
+    <item cmd="*retrospective" workflow="/Users/maruth/projects/openalgo/bmad/bmm/workflows/4-implementation/retrospective/workflow.yaml" data="/Users/maruth/projects/openalgo/bmad/_cfg/agent-party.xml">Facilitate team retrospective after epic/sprint</item>
     <item cmd="*exit">Exit with confirmation</item>
   </menu>
 </agent>

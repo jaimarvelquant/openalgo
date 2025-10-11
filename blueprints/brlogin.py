@@ -140,7 +140,7 @@ def broker_callback(broker,para=None):
 
         # Direct login – auth_function already encapsulates credential handling
         # Returns: (interactive_token, market_token, user_id, is_investor_client, error_message)
-        auth_token, feed_token, user_id, is_investor_client, error_message = auth_function()
+        auth_token, feed_token, user_id, is_investor_client, client_id, error_message = auth_function()
         forward_url = 'broker.html'
 
 
@@ -585,12 +585,22 @@ def broker_callback(broker,para=None):
             auth_token_json = json.dumps({
                 'token': auth_token,
                 'user_id': user_id,
-                'clientID': user_id,  # Jainam API uses clientID parameter
-                'isInvestorClient': is_investor_client  # PRO accounts need clientID in API calls
+                'clientID': client_id or user_id,
+                'isInvestorClient': is_investor_client
             })
-            logger.info(f"Jainam Prop: Storing auth token as JSON with user_id: {user_id}, isInvestorClient: {is_investor_client}")
-            # Store JSON version in database, but keep original in session
-            return handle_auth_success(auth_token_json, session['user'], broker, feed_token=feed_token, user_id=user_id)
+            logger.info(
+                "Jainam Prop: Storing auth token JSON (user_id=%s, clientID=%s, investor=%s)",
+                user_id,
+                client_id or user_id,
+                is_investor_client,
+            )
+            return handle_auth_success(
+                auth_token_json,
+                session['user'],
+                broker,
+                feed_token=feed_token,
+                user_id=client_id or user_id,
+            )
 
         # For brokers that have user_id and feed_token from authenticate_broker
         if broker in ['angel', 'compositedge', 'pocketful', 'definedge', 'dhan', 'jainam_prop']:
