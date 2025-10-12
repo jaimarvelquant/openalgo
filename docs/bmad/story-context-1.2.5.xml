@@ -1,0 +1,300 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1.2</epicId>
+    <storyId>5</storyId>
+    <title>Token Lifecycle Management Enhancement</title>
+    <status>Draft</status>
+    <generatedAt>2025-10-12</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>/Users/maruth/projects/openalgo/docs/bmad/stories/story-1.2-5-token-lifecycle-management.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>developer implementing Jainam Prop authentication</asA>
+    <iWant>interactive and market tokens to persist in the database and be reused across sessions</iWant>
+    <soThat>the system doesn't re-authenticate on every startup and tokens are available for streaming/REST consumers</soThat>
+    <tasks>
+      <task id="1" ac="1">
+        <description>Add token persistence</description>
+        <subtasks>
+          <subtask id="1.1">Import upsert_auth in auth_api.py (5 min)</subtask>
+          <subtask id="1.2">Add persistence call after successful authentication (15 min)</subtask>
+          <subtask id="1.3">Store dealer account metadata in JSON format (10 min)</subtask>
+          <subtask id="1.4">Add error handling for persistence failures (10 min)</subtask>
+          <subtask id="1.5">Test token storage in database (10 min)</subtask>
+        </subtasks>
+      </task>
+      <task id="2" ac="2">
+        <description>Add token rehydration</description>
+        <subtasks>
+          <subtask id="2.1">Copy pattern from broker/fivepaisaxts/streaming/fivepaisaxts_adapter.py:59-66 (10 min)</subtask>
+          <subtask id="2.2">Update jainam_adapter.py initialize method (15 min)</subtask>
+          <subtask id="2.3">Add token retrieval from database (10 min)</subtask>
+          <subtask id="2.4">Test token retrieval on adapter startup (10 min)</subtask>
+        </subtasks>
+      </task>
+      <task id="3" ac="3">
+        <description>Add expiry validation</description>
+        <subtasks>
+          <subtask id="3.1">Add is_token_expired() helper function (20 min)</subtask>
+          <subtask id="3.2">Add get_valid_tokens() function (25 min)</subtask>
+          <subtask id="3.3">Test expiry logic with mock JWT tokens (15 min)</subtask>
+          <subtask id="3.4">Test re-authentication on expired tokens (15 min)</subtask>
+        </subtasks>
+      </task>
+      <task id="4" ac="4">
+        <description>Update API clients to use persisted tokens</description>
+        <subtasks>
+          <subtask id="4.1">Refactor order_api.py to use get_valid_tokens() (40 min)</subtask>
+          <subtask id="4.2">Refactor data.py to use get_valid_tokens() (30 min)</subtask>
+          <subtask id="4.3">Refactor funds.py to use get_valid_tokens() (20 min)</subtask>
+          <subtask id="4.4">Test all endpoints with token reuse (30 min)</subtask>
+        </subtasks>
+      </task>
+      <task id="5" ac="integration">
+        <description>Integration testing</description>
+        <subtasks>
+          <subtask id="5.1">Test full authentication flow with persistence (30 min)</subtask>
+          <subtask id="5.2">Test token reuse on system restart (30 min)</subtask>
+          <subtask id="5.3">Test token expiry and automatic re-authentication (30 min)</subtask>
+          <subtask id="5.4">Test streaming adapter with persisted tokens (30 min)</subtask>
+        </subtasks>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <ac id="AC1" priority="high">
+      <title>Persist Tokens After Authentication</title>
+      <criteria>
+        <criterion>upsert_auth() called after successful authentication in auth_api.py</criterion>
+        <criterion>Tokens stored with dealer account metadata (clientID, isInvestorClient)</criterion>
+        <criterion>Errors during persistence don't fail authentication</criterion>
+        <criterion>Logging confirms successful persistence</criterion>
+      </criteria>
+    </ac>
+    <ac id="AC2" priority="high">
+      <title>Rehydrate Tokens on Startup</title>
+      <criteria>
+        <criterion>Tokens retrieved from database on startup in streaming adapter</criterion>
+        <criterion>No re-authentication if valid tokens exist</criterion>
+        <criterion>Graceful fallback if tokens not found</criterion>
+      </criteria>
+    </ac>
+    <ac id="AC3" priority="high">
+      <title>Add Token Expiry Validation</title>
+      <criteria>
+        <criterion>JWT tokens decoded to check expiry</criterion>
+        <criterion>Expired tokens trigger re-authentication</criterion>
+        <criterion>Valid tokens returned from database</criterion>
+        <criterion>Graceful handling of non-JWT tokens</criterion>
+      </criteria>
+    </ac>
+    <ac id="AC4" priority="high">
+      <title>Update API Clients to Use Persisted Tokens</title>
+      <criteria>
+        <criterion>All API functions use get_valid_tokens()</criterion>
+        <criterion>Tokens reused from database when valid</criterion>
+        <criterion>Re-authentication only when tokens expired/missing</criterion>
+      </criteria>
+    </ac>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>/Users/maruth/projects/openalgo/database/auth_db.py</path>
+        <title>Authentication Database Module</title>
+        <section>Complete database infrastructure for token storage and retrieval</section>
+        <snippet>
+          Provides: upsert_auth(), get_auth_token(), get_feed_token(), get_user_id()
+          Features: Fernet encryption/decryption, TTL-based caching, revocation support
+          Lines: 1-412 (complete module)
+        </snippet>
+      </doc>
+      <doc>
+        <path>/Users/maruth/projects/openalgo/docs/bmad/research/jainam-authentication-guide.md</path>
+        <title>Jainam Authentication Guide</title>
+        <section>Complete authentication patterns and token lifecycle documentation</section>
+        <snippet>
+          Direct login authentication flow for both Interactive and Market Data APIs
+          Token lifecycle: validity (~24 hours), expiry behavior (401 errors), refresh patterns
+          Storage patterns for web applications and scripts
+          Lines: 1-510 (complete guide)
+        </snippet>
+      </doc>
+      <doc>
+        <path>/Users/maruth/projects/openalgo/broker/fivepaisaxts/api/auth_api.py</path>
+        <title>FivePaisaXTS Authentication Reference Implementation</title>
+        <section>Reference pattern for token persistence after authentication</section>
+        <snippet>
+          authenticate_broker() function calls get_feed_token() and returns tokens
+          Pattern: authenticate → return tokens → caller persists to database
+          Lines: 12-97
+        </snippet>
+      </doc>
+      <doc>
+        <path>/Users/maruth/projects/openalgo/broker/fivepaisaxts/streaming/fivepaisaxts_adapter.py</path>
+        <title>FivePaisaXTS Streaming Adapter Token Rehydration</title>
+        <section>Reference pattern for token retrieval from database on startup</section>
+        <snippet>
+          initialize() method retrieves tokens from database using get_auth_token() and get_feed_token()
+          Pattern: check auth_data → if None fetch from DB → validate → use for connection
+          Lines: 43-74
+        </snippet>
+      </doc>
+    </docs>
+
+    <code>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/database/auth_db.py</path>
+        <kind>module</kind>
+        <symbol>upsert_auth</symbol>
+        <lines>149-175</lines>
+        <reason>Core function to persist authentication tokens with encryption. Must be called after successful authentication.</reason>
+      </artifact>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/database/auth_db.py</path>
+        <kind>module</kind>
+        <symbol>get_auth_token</symbol>
+        <lines>177-197</lines>
+        <reason>Retrieves decrypted auth token from database with caching. Used for token rehydration on startup.</reason>
+      </artifact>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/database/auth_db.py</path>
+        <kind>module</kind>
+        <symbol>get_feed_token</symbol>
+        <lines>218-238</lines>
+        <reason>Retrieves decrypted feed/market token from database with caching. Used for streaming adapter initialization.</reason>
+      </artifact>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/database/auth_db.py</path>
+        <kind>module</kind>
+        <symbol>encrypt_token</symbol>
+        <lines>131-135</lines>
+        <reason>Fernet encryption for token storage. Used internally by upsert_auth().</reason>
+      </artifact>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/database/auth_db.py</path>
+        <kind>module</kind>
+        <symbol>decrypt_token</symbol>
+        <lines>137-147</lines>
+        <reason>Fernet decryption for token retrieval. Used internally by get_auth_token().</reason>
+      </artifact>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/broker/jainam_prop/api/auth_api.py</path>
+        <kind>module</kind>
+        <symbol>authenticate_direct</symbol>
+        <lines>178-251</lines>
+        <reason>Current implementation of Jainam authentication. Returns tokens but does NOT persist them. This is where upsert_auth() must be called.</reason>
+      </artifact>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/broker/jainam_prop/api/order_api.py</path>
+        <kind>module</kind>
+        <symbol>Multiple API functions</symbol>
+        <lines>1-end</lines>
+        <reason>Order API module that currently authenticates on every call. Must be refactored to use get_valid_tokens() pattern.</reason>
+      </artifact>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/broker/jainam_prop/api/data.py</path>
+        <kind>module</kind>
+        <symbol>Multiple API functions</symbol>
+        <lines>1-end</lines>
+        <reason>Market data API module that needs token reuse pattern implementation.</reason>
+      </artifact>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/broker/jainam_prop/api/funds.py</path>
+        <kind>module</kind>
+        <symbol>Multiple API functions</symbol>
+        <lines>1-end</lines>
+        <reason>Funds API module that needs token reuse pattern implementation.</reason>
+      </artifact>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/broker/jainam_prop/streaming/jainam_adapter.py</path>
+        <kind>module</kind>
+        <symbol>initialize</symbol>
+        <lines>1-end</lines>
+        <reason>Streaming adapter that needs token rehydration pattern similar to FivePaisaXTS.</reason>
+      </artifact>
+    </code>
+
+    <dependencies>
+      <python>
+        <package name="cryptography" version="44.0.1">Token encryption/decryption using Fernet</package>
+        <package name="SQLAlchemy" version="2.0.31">Database ORM for auth storage</package>
+        <package name="cachetools" version="5.3.3">TTL cache for token retrieval optimization</package>
+        <package name="PyJWT" version="2.8.0">JWT token decoding for expiry validation</package>
+        <package name="httpx" version="0.28.1">HTTP client for API calls with retry logic</package>
+      </python>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>MUST use existing database.auth_db module - DO NOT create new database infrastructure</constraint>
+    <constraint>Token persistence MUST NOT fail authentication - errors should be logged but not propagated</constraint>
+    <constraint>JWT decoding MUST handle non-JWT tokens gracefully (some brokers may not use JWT format)</constraint>
+    <constraint>Token expiry validation MUST be defensive - assume valid if expiry cannot be determined</constraint>
+    <constraint>Dealer account metadata (clientID, isInvestorClient) MUST be stored as JSON in auth_token field</constraint>
+    <constraint>Code reuse priority: 80% of implementation uses existing database functions</constraint>
+    <constraint>Pattern consistency: Follow FivePaisaXTS reference implementation for token rehydration</constraint>
+    <constraint>Backward compatibility: API clients must continue working if token persistence fails</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>upsert_auth</name>
+      <kind>function</kind>
+      <signature>upsert_auth(name, auth_token, broker, feed_token=None, user_id=None, revoke=False) -> int</signature>
+      <path>/Users/maruth/projects/openalgo/database/auth_db.py:149</path>
+    </interface>
+    <interface>
+      <name>get_auth_token</name>
+      <kind>function</kind>
+      <signature>get_auth_token(name) -> Optional[str]</signature>
+      <path>/Users/maruth/projects/openalgo/database/auth_db.py:177</path>
+    </interface>
+    <interface>
+      <name>get_feed_token</name>
+      <kind>function</kind>
+      <signature>get_feed_token(name) -> Optional[str]</signature>
+      <path>/Users/maruth/projects/openalgo/database/auth_db.py:218</path>
+    </interface>
+    <interface>
+      <name>get_user_id</name>
+      <kind>function</kind>
+      <signature>get_user_id(name) -> Optional[str]</signature>
+      <path>/Users/maruth/projects/openalgo/database/auth_db.py:259</path>
+    </interface>
+    <interface>
+      <name>authenticate_direct</name>
+      <kind>function</kind>
+      <signature>authenticate_direct() -> Tuple[Optional[str], Optional[str], Optional[str], Optional[bool], Optional[str], Optional[str]]</signature>
+      <path>/Users/maruth/projects/openalgo/broker/jainam_prop/api/auth_api.py:178</path>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Python testing with pytest framework. Unit tests in module test files (test_*.py pattern).
+      Integration tests verify end-to-end flows. Tests must mock external API calls.
+      Coverage focus: token persistence, retrieval, expiry validation, error handling.
+    </standards>
+    <locations>
+      <location>/Users/maruth/projects/openalgo/broker/jainam_prop/api/test_auth_api.py</location>
+      <location>/Users/maruth/projects/openalgo/broker/jainam_prop/test_token_lifecycle.py</location>
+    </locations>
+    <ideas>
+      <idea ac="AC1">Test that upsert_auth() is called after successful authenticate_direct()</idea>
+      <idea ac="AC1">Test dealer account metadata is correctly serialized to JSON</idea>
+      <idea ac="AC1">Test authentication continues even if persistence fails</idea>
+      <idea ac="AC2">Test tokens retrieved from database on adapter startup</idea>
+      <idea ac="AC2">Test graceful fallback when tokens not found in database</idea>
+      <idea ac="AC3">Test JWT token expiry detection with mock expired tokens</idea>
+      <idea ac="AC3">Test non-JWT tokens are handled without errors</idea>
+      <idea ac="AC3">Test re-authentication triggered when tokens expired</idea>
+      <idea ac="AC4">Test all API clients use get_valid_tokens() instead of direct auth</idea>
+      <idea ac="AC4">Test token reuse from database across multiple API calls</idea>
+      <idea ac="integration">Test full cycle: authenticate → persist → restart → rehydrate → use</idea>
+    </ideas>
+  </tests>
+</story-context>
