@@ -4,8 +4,6 @@ from typing import Optional
 import httpx
 from flask import session
 from utils.logging import get_logger
-from utils.httpx_client import get_httpx_client
-from broker.jainam_prop.api.config import get_jainam_base_url
 from broker.jainam_prop.api.base_client import BaseAPIClient
 
 logger = get_logger(__name__)

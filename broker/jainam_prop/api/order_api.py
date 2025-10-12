@@ -12,7 +12,6 @@ from broker.jainam_prop.mapping.transform_data import transform_data, transform_
 from broker.jainam_prop.api.config import get_jainam_base_url
 from broker.jainam_prop.api.base_client import BaseAPIClient
 from utils.logging import get_logger
-from utils.httpx_client import get_httpx_client
 
 logger = get_logger(__name__)
 
@@ -263,7 +262,6 @@ class JainamAPI:
         self.root_url = get_jainam_base_url()
         self.interactive_token = None
         self.market_token = None
-        self.client = get_httpx_client()
 
     def _get_headers(self):
         """Get headers for API requests"""
@@ -434,14 +432,52 @@ def cancel_order_api(order_id, auth_token):
         (response_object, response_data)
     """
     try:
-        # Parse auth_token
-        interactive_token, user_id = _parse_auth_token(auth_token)
+        (
+            interactive_token,
+            user_id,
+            client_id,
+            is_investor_client,
+            is_dealer_account,
+            is_pro_dealer,
+            is_normal_dealer,
+            api_client_id,
+        ) = _parse_auth_token(auth_token)
 
-        # Request data
+        if is_dealer_account:
+            if is_pro_dealer:
+                request_client_id = api_client_id
+                logger.info(
+                    "Cancelling order with Pro Dealer account clientID='*****' (configured: %s)",
+                    client_id,
+                )
+            elif is_normal_dealer:
+                request_client_id = api_client_id
+                logger.info(
+                    "Cancelling order with Normal Dealer account clientID='%s' (configured: %s)",
+                    api_client_id,
+                    client_id,
+                )
+            else:
+                # Dealer flag without recognised subtype – fall back to raw client_id
+                request_client_id = client_id
+                logger.info(
+                    "Cancelling order with dealer account clientID='%s' (unclassified subtype)",
+                    request_client_id,
+                )
+        else:
+            request_client_id = user_id
+            logger.info(
+                "Cancelling order with investor account clientID=%s",
+                request_client_id,
+            )
+
         cancel_data = {
             'appOrderID': int(order_id),
-            'orderUniqueIdentifier': 'OPENALGO_PLATFORM'
+            'orderUniqueIdentifier': 'OPENALGO_PLATFORM',
         }
+
+        if request_client_id is not None:
+            cancel_data['clientID'] = request_client_id
 
         # Use OrderAPIClient
         client = OrderAPIClient(auth_token=interactive_token)

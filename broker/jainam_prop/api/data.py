@@ -1,9 +1,7 @@
 import json
 from broker.jainam_prop.mapping.transform_data import get_token_from_symbol, map_exchange_to_jainam
-from broker.jainam_prop.api.config import get_jainam_base_url
 from broker.jainam_prop.api.base_client import BaseAPIClient
 from utils.logging import get_logger
-from utils.httpx_client import get_httpx_client
 
 logger = get_logger(__name__)
 

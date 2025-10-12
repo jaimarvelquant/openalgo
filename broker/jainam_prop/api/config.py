@@ -24,6 +24,28 @@ LEGACY_ENV_VARS = (
 )
 
 
+def _read_int(name: str, default: int) -> int:
+    value = _read_env(name)
+    if value is None:
+        return default
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        logger.warning("Invalid integer for %s, falling back to %s", name, default)
+        return default
+
+
+def _read_float(name: str, default: float) -> float:
+    value = _read_env(name)
+    if value is None:
+        return default
+    try:
+        return float(value)
+    except (TypeError, ValueError):
+        logger.warning("Invalid float for %s, falling back to %s", name, default)
+        return default
+
+
 def _read_env(name: str, default: str | None = None) -> str | None:
     """Return environment variable stripped of whitespace or None if unset."""
     value = os.getenv(name, default)
@@ -41,6 +63,11 @@ def _log_legacy_warnings() -> None:
             "Please migrate to JAINAM_SYMPHONY_* variables as described in the docs.",
             ", ".join(sorted(legacy_present)),
         )
+
+
+JAINAM_RETRY_ATTEMPTS = _read_int("JAINAM_RETRY_ATTEMPTS", 3)
+JAINAM_RETRY_BACKOFF_MIN = _read_float("JAINAM_RETRY_BACKOFF_MIN", 0.25)
+JAINAM_RETRY_BACKOFF_MAX = _read_float("JAINAM_RETRY_BACKOFF_MAX", 2.0)
 
 
 def get_jainam_base_url() -> str:
