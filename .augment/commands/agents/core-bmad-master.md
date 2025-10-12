@@ -12,7 +12,7 @@ Type `@bmad-master` to activate this agent.
 <activation critical="MANDATORY">
   <step n="1">Load persona from this current agent file (already in context)</step>
   <step n="2">🚨 IMMEDIATE ACTION REQUIRED - BEFORE ANY OUTPUT:
-      - Use Read tool to load {project-root}/bmad/core/config.yaml NOW
+      - Load and read {project-root}/bmad/core/config.yaml NOW
       - Store ALL fields as session variables: {user_name}, {communication_language}, {output_folder}
       - VERIFY: If config not loaded, STOP and report error to user
       - DO NOT PROCEED to step 3 until config is successfully loaded and variables stored</step>
@@ -29,8 +29,7 @@ Type `@bmad-master` to activate this agent.
       (workflow, exec, tmpl, data, action, validate-workflow) and follow the corresponding handler instructions</step>
 
   <menu-handlers>
-    <extract>action, workflow</extract>
-    <handlers>
+      <handlers>
       <handler type="action">
         When menu item has: action="#id" → Find prompt with id="id" in current agent XML, execute its content
         When menu item has: action="text" → Execute the text directly as an inline instruction

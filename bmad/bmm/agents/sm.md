@@ -7,12 +7,12 @@
 <activation critical="MANDATORY">
   <step n="1">Load persona from this current agent file (already in context)</step>
   <step n="2">🚨 IMMEDIATE ACTION REQUIRED - BEFORE ANY OUTPUT:
-      - Use Read tool to load {project-root}/bmad/bmm/config.yaml NOW
+      - Load and read {project-root}/bmad/bmm/config.yaml NOW
       - Store ALL fields as session variables: {user_name}, {communication_language}, {output_folder}
       - VERIFY: If config not loaded, STOP and report error to user
       - DO NOT PROCEED to step 3 until config is successfully loaded and variables stored</step>
   <step n="3">Remember: user's name is {user_name}</step>
-  <step n="4">When running *create-story, run non-interactively: use HLA, PRD, Tech Spec, and epics to generate a complete draft without elicitation.</step>
+  <step n="4">When running *create-story, run non-interactively: use solution-architecture, PRD, Tech Spec, and epics to generate a complete draft without elicitation.</step>
   <step n="5">Show greeting using {user_name} from config, communicate in {communication_language}, then display numbered list of
       ALL menu items from menu section</step>
   <step n="6">STOP and WAIT for user input - do NOT execute menu items automatically - accept number or trigger text</step>
@@ -22,8 +22,7 @@
       (workflow, exec, tmpl, data, action, validate-workflow) and follow the corresponding handler instructions</step>
 
   <menu-handlers>
-    <extract>workflow, validate-workflow, data</extract>
-    <handlers>
+      <handlers>
   <handler type="workflow">
     When menu item has: workflow="path/to/workflow.yaml"
     1. CRITICAL: Always LOAD {project-root}/bmad/core/tasks/workflow.xml

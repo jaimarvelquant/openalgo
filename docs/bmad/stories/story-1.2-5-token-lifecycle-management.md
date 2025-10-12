@@ -1,31 +1,86 @@
 # Story 1.2-5: Token Lifecycle Management Enhancement
 
-**Status:** Ready for Development  
-**Priority:** HIGH (Blocks streaming resilience)  
-**Effort:** 0.75 days (6 hours) - **Code Reuse: 80%**  
-**Original Effort:** 3 days (24 hours)  
-**Savings:** 75% (18 hours saved)
-
----
+## Status
+ContextReadyDraft
 
 ## Story
 
-As a **developer implementing Jainam Prop authentication**,  
-I want **interactive and market tokens to persist in the database and be reused across sessions**,  
-so that **the system doesn't re-authenticate on every startup and tokens are available for streaming/REST consumers**.
+As a developer implementing Jainam Prop authentication,
+I want interactive and market tokens to persist in the database and be reused across sessions,
+so that the system doesn't re-authenticate on every startup and tokens are available for streaming/REST consumers.
 
----
+## Acceptance Criteria
 
-## Context
+1. **AC1: Persist Tokens After Authentication**
+   - `upsert_auth()` called after successful authentication in `auth_api.py`
+   - Tokens stored with dealer account metadata (clientID, isInvestorClient)
+   - Errors during persistence don't fail authentication
+   - Logging confirms successful persistence
 
-### Current State
+2. **AC2: Rehydrate Tokens on Startup**
+   - Tokens retrieved from database on startup in streaming adapter
+   - No re-authentication if valid tokens exist
+   - Graceful fallback if tokens not found
+
+3. **AC3: Add Token Expiry Validation**
+   - JWT tokens decoded to check expiry
+   - Expired tokens trigger re-authentication
+   - Valid tokens returned from database
+   - Graceful handling of non-JWT tokens
+
+4. **AC4: Update API Clients to Use Persisted Tokens**
+   - All API functions use `get_valid_tokens()`
+   - Tokens reused from database when valid
+   - Re-authentication only when tokens expired/missing
+
+## Tasks / Subtasks
+
+- [ ] Task 1: Add token persistence (AC: 1)
+  - [ ] Subtask 1.1: Import `upsert_auth` in `auth_api.py` (5 min)
+  - [ ] Subtask 1.2: Add persistence call after successful authentication (15 min)
+  - [ ] Subtask 1.3: Store dealer account metadata in JSON format (10 min)
+  - [ ] Subtask 1.4: Add error handling for persistence failures (10 min)
+  - [ ] Subtask 1.5: Test token storage in database (10 min)
+
+- [ ] Task 2: Add token rehydration (AC: 2)
+  - [ ] Subtask 2.1: Copy pattern from `broker/fivepaisaxts/streaming/fivepaisaxts_adapter.py:59-66` (10 min)
+  - [ ] Subtask 2.2: Update `jainam_adapter.py` initialize method (15 min)
+  - [ ] Subtask 2.3: Add token retrieval from database (10 min)
+  - [ ] Subtask 2.4: Test token retrieval on adapter startup (10 min)
+
+- [ ] Task 3: Add expiry validation (AC: 3)
+  - [ ] Subtask 3.1: Add `is_token_expired()` helper function (20 min)
+  - [ ] Subtask 3.2: Add `get_valid_tokens()` function (25 min)
+  - [ ] Subtask 3.3: Test expiry logic with mock JWT tokens (15 min)
+  - [ ] Subtask 3.4: Test re-authentication on expired tokens (15 min)
+
+- [ ] Task 4: Update API clients (AC: 4)
+  - [ ] Subtask 4.1: Refactor `order_api.py` to use `get_valid_tokens()` (40 min)
+  - [ ] Subtask 4.2: Refactor `data.py` to use `get_valid_tokens()` (30 min)
+  - [ ] Subtask 4.3: Refactor `funds.py` to use `get_valid_tokens()` (20 min)
+  - [ ] Subtask 4.4: Test all endpoints with token reuse (30 min)
+
+- [ ] Task 5: Integration testing
+  - [ ] Subtask 5.1: Test full authentication flow with persistence (30 min)
+  - [ ] Subtask 5.2: Test token reuse on system restart (30 min)
+  - [ ] Subtask 5.3: Test token expiry and automatic re-authentication (30 min)
+  - [ ] Subtask 5.4: Test streaming adapter with persisted tokens (30 min)
+
+## Dev Notes
+
+### Current State & Requirements
+
+**Current State:**
 - `authenticate_direct()` successfully obtains tokens from Jainam API
 - Tokens are NOT persisted to `database.auth_db`
 - System re-authenticates on every startup (inefficient)
 - Streaming adapter cannot reuse persisted tokens
 
-### Critical Discovery
-**The database infrastructure ALREADY EXISTS!** 🎉
+**Priority:** HIGH (Blocks streaming resilience)
+**Estimated Effort:** 0.75 days (6 hours)
+**Code Reuse:** 80% (database infrastructure already exists)
+
+**Critical Discovery:** The database infrastructure ALREADY EXISTS! 🎉
 
 `database/auth_db.py` provides:
 - ✅ `upsert_auth(name, auth_token, broker, feed_token, user_id)` - Store tokens
@@ -37,6 +92,7 @@ so that **the system doesn't re-authenticate on every startup and tokens are ava
 - ✅ Revocation support
 
 ### Reference Implementation
+
 **Source:** `broker/fivepaisaxts/api/auth_api.py:12-97`
 
 FivePaisaXTS already uses these functions:
@@ -49,44 +105,38 @@ auth_token = get_auth_token(user_id)
 feed_token = get_feed_token(user_id)
 ```
 
+[Source: broker/fivepaisaxts/api/auth_api.py#authentication]
+[Source: broker/fivepaisaxts/streaming/fivepaisaxts_adapter.py#token-rehydration]
+
 ### Code Reuse Strategy
+
 **80% of code already exists - just need to use it!**
 
 **What Already Exists:**
-- ✅ Database schema with all required fields
-- ✅ Encryption/decryption functions
-- ✅ Upsert and retrieval functions
-- ✅ Caching layer
+- Database schema with all required fields (100%)
+- Encryption/decryption functions (100%)
+- Upsert and retrieval functions (100%)
+- Caching layer (100%)
 
 **What to Add:**
-- ✏️ Call `upsert_auth()` after successful authentication
-- ✏️ Add token rehydration logic in API clients
-- ✏️ Add token expiry validation (JWT exp claim)
-- ✏️ Store dealer account metadata (is_investor_client, client_id)
+- Call `upsert_auth()` after successful authentication (new)
+- Add token rehydration logic in API clients (new)
+- Add token expiry validation using JWT exp claim (new)
+- Store dealer account metadata (is_investor_client, client_id) (new)
 
----
+**Effort Savings:** 75% (18 hours saved, reduced from 3 days to 0.75 days)
 
-## Acceptance Criteria
+### Implementation Patterns
 
-### AC1: Persist Tokens After Authentication ✅
-
-**File:** `broker/jainam_prop/api/auth_api.py`
-
-**Current Code (lines 178-251):**
-```python
-def authenticate_direct():
-    # ... authentication logic ...
-    return interactive_token, market_token, user_id, is_investor, client_id, None
-```
-
-**Updated Code:**
+**Pattern 1: Token Persistence (auth_api.py lines 178-251)**
 ```python
 from database.auth_db import upsert_auth
+import json
 
 def authenticate_direct():
     # ... existing authentication logic ...
     
-    # ✏️ ADD: Persist tokens to database
+    # ADD: Persist tokens to database
     if interactive_token and market_token and user_id:
         try:
             # Store tokens with dealer account metadata
@@ -114,36 +164,12 @@ def authenticate_direct():
     return interactive_token, market_token, user_id, is_investor, client_id, None
 ```
 
-**Verification:**
-- [ ] `upsert_auth()` called after successful authentication
-- [ ] Tokens stored with dealer account metadata (clientID, isInvestorClient)
-- [ ] Errors during persistence don't fail authentication
-- [ ] Logging confirms successful persistence
-
----
-
-### AC2: Rehydrate Tokens on Startup ✅
-
-**Pattern:** Copy from `broker/fivepaisaxts/streaming/fivepaisaxts_adapter.py:59-66`
-
-**File:** `broker/jainam_prop/streaming/jainam_adapter.py`
-
-**Current Code (lines 29-50):**
-```python
-def initialize(self, broker_name, user_id, auth_data=None):
-    if auth_data and 'market_token' in auth_data:
-        self.market_token = auth_data['market_token']
-    else:
-        # Re-authenticate every time (inefficient!)
-        market_token, error = authenticate_market_data()
-```
-
-**Updated Code (Copy from FivePaisaXTS):**
+**Pattern 2: Token Rehydration (jainam_adapter.py lines 29-50)**
 ```python
 from database.auth_db import get_auth_token, get_feed_token
 
 def initialize(self, broker_name, user_id, auth_data=None):
-    # ✅ COPIED FROM FivePaisaXTS (lines 59-66)
+    # COPIED FROM FivePaisaXTS (lines 59-66)
     if not auth_data:
         # Fetch tokens from database
         auth_token = get_auth_token(user_id)
@@ -159,34 +185,14 @@ def initialize(self, broker_name, user_id, auth_data=None):
         self.market_token = auth_data.get('market_token')
 ```
 
-**Verification:**
-- [ ] Tokens retrieved from database on startup
-- [ ] No re-authentication if valid tokens exist
-- [ ] Graceful fallback if tokens not found
-
----
-
-### AC3: Add Token Expiry Validation ✅
-
-**File:** `broker/jainam_prop/api/auth_api.py`
-
-**Add Helper Function:**
+**Pattern 3: Token Expiry Validation**
 ```python
 import jwt
 from datetime import datetime
 
 def is_token_expired(token: str) -> bool:
-    """
-    Check if JWT token is expired.
-    
-    Args:
-        token: JWT token string
-    
-    Returns:
-        bool: True if expired, False if valid
-    """
+    """Check if JWT token is expired"""
     try:
-        # Decode without verification (just to check expiry)
         decoded = jwt.decode(token, options={"verify_signature": False})
         exp = decoded.get('exp')
         
@@ -194,15 +200,11 @@ def is_token_expired(token: str) -> bool:
             expiry_time = datetime.fromtimestamp(exp)
             return datetime.now() > expiry_time
         
-        # No expiry claim, assume valid
-        return False
+        return False  # No expiry claim, assume valid
     except Exception as e:
         logger.warning(f"Could not decode token for expiry check: {e}")
         return True  # Assume expired if can't decode
-```
 
-**Update Token Retrieval:**
-```python
 def get_valid_tokens(user_id):
     """Get tokens from database, re-authenticate if expired"""
     from database.auth_db import get_auth_token, get_feed_token
@@ -234,22 +236,7 @@ def get_valid_tokens(user_id):
     )
 ```
 
-**Verification:**
-- [ ] JWT tokens decoded to check expiry
-- [ ] Expired tokens trigger re-authentication
-- [ ] Valid tokens returned from database
-- [ ] Graceful handling of non-JWT tokens
-
----
-
-### AC4: Update API Clients to Use Persisted Tokens ✅
-
-**Files to Update:**
-- `broker/jainam_prop/api/order_api.py`
-- `broker/jainam_prop/api/data.py`
-- `broker/jainam_prop/api/funds.py`
-
-**Pattern:**
+**Pattern 4: API Client Usage**
 ```python
 from broker.jainam_prop.api.auth_api import get_valid_tokens
 
@@ -264,133 +251,79 @@ def get_order_book(user_id):
     return get_api_response("/interactive/orders/dealerorderbook", interactive_token)
 ```
 
-**Verification:**
-- [ ] All API functions use `get_valid_tokens()`
-- [ ] Tokens reused from database when valid
-- [ ] Re-authentication only when tokens expired/missing
+### Project Structure Notes
 
----
+**Files to Modify:**
+- `broker/jainam_prop/api/auth_api.py` - Add persistence, expiry validation, get_valid_tokens()
+- `broker/jainam_prop/streaming/jainam_adapter.py` - Add token rehydration
+- `broker/jainam_prop/api/order_api.py` - Use get_valid_tokens()
+- `broker/jainam_prop/api/data.py` - Use get_valid_tokens()
+- `broker/jainam_prop/api/funds.py` - Use get_valid_tokens()
 
-## Implementation Steps
+**No New Files Required** - all database infrastructure exists
 
-### Step 1: Add Token Persistence (30 minutes)
-1. Import `upsert_auth` in `auth_api.py`
-2. Add persistence call after successful authentication
-3. Store dealer account metadata in JSON
-4. Test token storage
+### Testing Standards
 
-### Step 2: Add Token Rehydration (30 minutes)
-1. Copy pattern from FivePaisaXTS adapter
-2. Update `jainam_adapter.py` to use `get_auth_token()` and `get_feed_token()`
-3. Test token retrieval
+**Unit Tests:** `broker/jainam_prop/api/test_auth_api.py`
+- Test tokens are persisted after authentication
+- Test JWT expiry validation with expired and valid tokens
+- Test tokens retrieved from database
+- Test graceful handling of missing tokens
 
-### Step 3: Add Expiry Validation (1 hour)
-1. Add `is_token_expired()` helper
-2. Add `get_valid_tokens()` function
-3. Test expiry logic with mock tokens
+**Integration Tests:** `broker/jainam_prop/test_token_lifecycle.py`
+- Test full lifecycle: authenticate → persist → retrieve → reuse
+- Test re-authentication when tokens expired
+- Test streaming adapter with persisted tokens
 
-### Step 4: Update API Clients (2 hours)
-1. Refactor `order_api.py` to use `get_valid_tokens()`
-2. Refactor `data.py` to use `get_valid_tokens()`
-3. Refactor `funds.py` to use `get_valid_tokens()`
-4. Test all endpoints
+**Success Metrics:**
+- Tokens persisted to database after authentication
+- Tokens retrieved from database on startup
+- No re-authentication if valid tokens exist
+- Expired tokens trigger automatic re-authentication
+- Streaming adapter uses persisted tokens
+- All API clients use token rehydration
 
-### Step 5: Integration Testing (2 hours)
-1. Test full authentication flow
-2. Test token reuse on restart
-3. Test token expiry and re-authentication
-4. Test streaming adapter with persisted tokens
+### Dependencies
 
-**Total Effort: ~6 hours (0.75 days)**
-
----
-
-## Testing Strategy
-
-### Unit Tests
-```python
-# broker/jainam_prop/api/test_auth_api.py
-
-def test_token_persistence():
-    """Test tokens are persisted after authentication"""
-    # Authenticate and verify DB storage
-
-def test_token_expiry_check():
-    """Test JWT expiry validation"""
-    # Test with expired and valid tokens
-
-def test_token_rehydration():
-    """Test tokens retrieved from database"""
-    # Verify get_valid_tokens() returns DB tokens
-```
-
-### Integration Tests
-```python
-# broker/jainam_prop/test_token_lifecycle.py
-
-def test_full_token_lifecycle():
-    """Test authenticate → persist → retrieve → reuse"""
-    # Full end-to-end test
-
-def test_token_expiry_reauth():
-    """Test re-authentication when tokens expired"""
-    # Verify automatic re-auth
-```
-
----
-
-## Dependencies
-
-**Requires:**
-- ✅ `database.auth_db` module (already exists)
-- ✅ `database.auth_db.upsert_auth()` (already exists)
-- ✅ `database.auth_db.get_auth_token()` (already exists)
-- ✅ `database.auth_db.get_feed_token()` (already exists)
+**Requires (all exist):**
+- `database.auth_db` module
+- `database.auth_db.upsert_auth()`
+- `database.auth_db.get_auth_token()`
+- `database.auth_db.get_feed_token()`
 
 **Blocks:**
 - Story 1.5-1 (Streaming Adapter Refactor) - needs persisted tokens
 - Story 1.5-2 (Capability Registry) - needs token parsing
 
----
+**Related Stories:**
+- Story 1.4-1 (HTTP Helper)
 
-## Success Metrics
+### References
 
-- [ ] Tokens persisted to database after authentication
-- [ ] Tokens retrieved from database on startup
-- [ ] No re-authentication if valid tokens exist
-- [ ] Expired tokens trigger automatic re-authentication
-- [ ] Streaming adapter uses persisted tokens
-- [ ] All API clients use token rehydration
+- [Source: database/auth_db.py#upsert_auth]
+- [Source: database/auth_db.py#get_auth_token]
+- [Source: database/auth_db.py#get_feed_token]
+- [Source: broker/fivepaisaxts/api/auth_api.py#authentication]
+- [Source: broker/fivepaisaxts/streaming/fivepaisaxts_adapter.py#token-rehydration]
 
----
+## Dev Agent Record
 
-## Code Reuse Summary
+### Context Reference
 
-**Already Exists (No Code Needed):**
-- ✅ Database schema (100%)
-- ✅ Encryption/decryption (100%)
-- ✅ Upsert function (100%)
-- ✅ Retrieval functions (100%)
-- ✅ Caching layer (100%)
+- [Story Context XML](/Users/maruth/projects/openalgo/docs/bmad/story-context-1.2.5.xml) - Generated: 2025-10-12
 
-**Jainam-Specific Additions:**
-- ✏️ Call `upsert_auth()` after authentication (new)
-- ✏️ Token expiry validation (new)
-- ✏️ `get_valid_tokens()` helper (new)
-- ✏️ Update API clients to use persisted tokens (new)
+### Agent Model Used
 
-**Overall Code Reuse: 80%**  
-**Effort Savings: 75% (18 hours saved)**
+<!-- Will be populated by dev agent during implementation -->
 
----
+### Debug Log References
 
-## Related Stories
+<!-- Dev agent will add test execution logs and debugging information here -->
 
-- **Depends On:** None (uses existing database infrastructure)
-- **Blocks:** Story 1.5-1, Story 1.5-2 (streaming needs persisted tokens)
-- **Related:** Story 1.4-1 (HTTP Helper)
+### Completion Notes List
 
----
+<!-- Dev agent will document implementation decisions and deviations here -->
 
-**Ready for Development** ✅
+### File List
 
+<!-- Dev agent will list all created/modified files here -->

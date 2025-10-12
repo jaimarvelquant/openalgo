@@ -1,6 +1,6 @@
 # Story 2.1: OpenAlgo to MarvelQuant Rebranding - Phase 1 (Logo & Documentation)
 
-Status: Ready for Review
+Status: ready for review
 
 ## Story
 

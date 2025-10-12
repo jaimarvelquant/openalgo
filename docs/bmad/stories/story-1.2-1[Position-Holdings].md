@@ -1,7 +1,7 @@
 # Story 1.2-1: Position-Holdings
 
 ## Status
-Ready for Review 
+Done
 
 ## Story
 
