@@ -1,0 +1,12 @@
+Index Info Request:
+{"request":{"data":{"symbols":["101999972"]},"response_format":"json","gscid":"RET11","gcid":"8464","request_type":"subscribe","streaming_type":"index"}}
+Response:-
+{"response":{"svcName":"Broadcast","serverTime":"1667371639000","streaming_type":"index","data":{"p_change":"1.66","symbol":"Nifty Bank","exch":"NSE","ltp":"39263.50","change":"639.50","name":"Nifty Bank","indexCode":"101999972"}}}
+LTP Info Request
+{"request":{"data":{"symbols":[{"symbol":"101017963"},{"symbol":"101011915"},{"symbol":"101001394"},{"symbol":"101000236"},{"symbol":"101000317"},{"symbol":"101000547"},{"symbol":"101003063"}]},"response_format":"json","gscid":"RET11","gcid":"8464","request_type":"subscribe","streaming_type":"ltpinfo"}}
+Response:-
+{"response":{"svcName":"Broadcast","serverTime":"1667371639000","streaming_type":"ltpinfo","data":{"p_change":"-7.99","name":"NESTLEIND","symbol":"101017963","ltp":"18944.85","change":"-1645.10","ltt":"14-10-2022 15:07:27","lut":"14-10-2022 15:07:31"}}}
+Market Picture:
+{"request":{"data":{"symbols":[{"symbol":"101005258"}]},"response_format":"json","gscid":"ret11","gcid":"8464","request_type":"subscribe","streaming_type":"marketPicture"}}
+Response:-
+{"response":{"svcName":"Broadcast","serverTime":"1667373556000","streaming_type":"marketPicture","data":{"l52w":"0.00","bidqty":"23","tbq":"230334","h52w":"0.00","askqty":"10","p_change":"3.27","ltp":"1188.85","atp":"1193.87","high":"1216.35","change":"37.70","asset_type":"","open":"1201.25","ask":"1189.20","oi":"0","close":"1151.15","tot_vol":"2147846","tot_buyQty":"230334.00","tot_sellQty":"347154.00","ltq":"6","level2":[{"bid":{"price":"1188.80","no":"1","qty":"23"},"ask":{"price":"1189.20","no":"1","qty":"10"}},{"bid":{"price":"1188.70","no":"2","qty":"92"},"ask":{"price":"1189.25","no":"2","qty":"211"}},{"bid":{"price":"1188.65","no":"1","qty":"10"},"ask":{"price":"1189.30","no":"2","qty":"14"}},{"bid":{"price":"1188.55","no":"3","qty":"72"},"ask":{"price":"1189.35","no":"2","qty":"227"}},{"bid":{"price":"1188.50","no":"4","qty":"360"},"ask":{"price":"1189.40","no":"1","qty":"5"}}],"symbol":"101005258","bid":"1188.8000","taq":"0","exch":"NSE","ltt":"14-10-2022 14:09:00","lut":"14-10-2022 14:09:02","low":"1184.40","name":"INDUSINDBK"}}}
