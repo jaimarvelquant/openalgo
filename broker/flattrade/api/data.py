@@ -80,6 +80,13 @@ class BrokerData:
             dict: Simplified quote data with required fields including OI
         """
         try:
+            # Validate that symbol is not a template variable
+            if symbol and (symbol.startswith("{{") and symbol.endswith("}}")):
+                raise ValueError(
+                    f"Invalid symbol: '{symbol}' appears to be a template variable that was not replaced. "
+                    f"Please ensure the symbol is properly resolved before fetching quotes."
+                )
+            
             # Convert symbol to broker format and get token
             br_symbol = get_br_symbol(symbol, exchange)
             token = get_token(symbol, exchange)
