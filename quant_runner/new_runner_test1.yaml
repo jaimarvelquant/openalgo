@@ -1,0 +1,160 @@
+# =============================================================================
+# NIFTY 0DTE PE V2 Backtest Runner
+# =============================================================================
+#
+# Purpose: YAML-driven runner for NIFTY 0DTE Premium Edge V2 backtests.
+#   Validates PE V2 trade blotter columns, signal tracing end-to-end, and
+#   R:R ratio calculation. NT debug logging enabled for signal tracing.
+#
+# Feature: m4-nifty-0dte-backtest
+# Validation assertions: VAL-BACK-001, VAL-BACK-004, VAL-BACK-005
+#
+# Date: 2024-10-03 (NIFTY Thu weekly expiry day — 0DTE)
+#
+# CLI Usage (local):
+#   .venv/bin/python -m marvelquant.runners.cli \
+#       --config marvelquant/config/templates/tbs/pe_nifty_0dte_v2_runner.yaml \
+#       --mode backtest \
+#       --story-id VAL-BACK-001 \
+#       --output-dir infra/docker/reports/validation/pe-ml/m4-nifty-0dte-backtest
+#
+# CLI Usage (Docker):
+#   docker compose -f infra/docker/docker-compose.dev.yaml \
+#     --env-file infra/docker/.env.docker \
+#     --profile backtest run --rm backtest \
+#     --config /app/marvelquant/config/templates/tbs/pe_nifty_0dte_v2_runner.yaml \
+#     --mode backtest \
+#     --story-id VAL-BACK-001 \
+#     --output-dir /app/reports/validation/pe-ml/m4-nifty-0dte-backtest
+#
+# =============================================================================
+
+version: "3.0"
+type: "tbs_runner"
+
+strategies:
+  - name: nifty_pe_0dte_v2
+    path: "pe_nifty_0dte_v2_strategy.yaml"
+
+# =============================================================================
+# Premium Edge Actor Configuration
+# =============================================================================
+premium_edge:
+
+  model:
+    # Path to pickled ModelEnvelope. Dummy model always predicts SELL_STRADDLE
+    # with 80% confidence — sufficient for validation of signal tracing & blotter.
+    path: "/tmp/pe_model_dummy.pkl"
+    cache_key: "pe_model_v1"
+
+  rolling_straddle:
+    underlying_instrument_id: "NIFTY-INDEX.NSE"
+    expiry_buckets: ["CW"]
+    strike_interval: 50
+    atm_method: "SPOT"
+    publish_mode: "every_bar"
+
+  wick_rejection:
+    underlying_instrument_id: "NIFTY-INDEX.NSE"
+
+  cepe_correlation:
+    underlying_instrument_id: "NIFTY-INDEX.NSE"
+
+  premium_percentile:
+    underlying_instrument_id: "NIFTY-INDEX.NSE"
+
+  ml_actor:
+    model_cache_key: "pe_model_v1"
+    min_confidence_threshold: 0.60
+    position_sizing:
+      base_lots: 1
+      max_lots: 5
+      confidence_scaling: true
+      scale_map:
+        "0.60": 1
+        "0.70": 2
+        "0.80": 3
+        "0.90": 5
+    cooldown_seconds: 300
+    max_entries_per_session: 5
+
+# =============================================================================
+# Execution Configuration
+# =============================================================================
+execution:
+  environment: BACKTEST
+  adapter: null
+  credentials:
+    env_prefix: ""
+
+  # NT Debug Logging: enabled for signal tracing (VAL-PAR-003, VAL-BACK-004)
+  logging:
+    level: DEBUG
+    bypass_logging: false
+    log_colors: false
+    log_to_file: true
+    log_file_format: json
+
+  parallel:
+    enabled: false
+    max_workers: 1
+    chunk_mode: DAILY
+    timeout_per_chunk_secs: 600
+    stagger_seconds: 2
+
+  # 2024-10-03: NIFTY weekly expiry (Thu), 0DTE backtest date
+  date_range:
+    start: "2024-10-03"
+    end: "2024-10-03"
+
+  data:
+    source_type: local
+    local:
+      path: "/Volumes/Home/maruth/nautilus_data"
+
+  backtest_defaults:
+    initial_balance: 10000000
+    bar_spec: "1-MINUTE-LAST-EXTERNAL"
+    expiry_pattern: null
+
+# =============================================================================
+# Output Configuration
+# =============================================================================
+output:
+  directory: "infra/docker/reports/validation/nataraj"
+  story_id: "VAL-BACK-001"
+  formats:
+    parquet: false
+    csv: true
+    json: true
+  artifacts:
+    orders_csv: true
+    fills_csv: true
+    positions_csv: true
+    snapshots_csv: true
+    account_csv: true
+    metrics_json: true
+    equity_csv: true
+    tearsheet_html: false
+    validation_json: true
+    monthly_pnl_csv: true
+  visualization:
+    enabled: false
+  outputs:
+    trade_blotter:
+      enabled: true
+    config_reference:
+      enabled: true
+    signal_log:
+      enabled: true
+    feature_importance:
+      enabled: true
+
+# =============================================================================
+# Version History
+# =============================================================================
+# v1.0 (2026-03-06):
+# - Initial NIFTY 0DTE PE V2 backtest runner (m4-nifty-0dte-backtest)
+# - NT debug logging enabled for VAL-BACK-004 signal tracing
+# - Targets VAL-BACK-001, VAL-BACK-004, VAL-BACK-005
+# =============================================================================

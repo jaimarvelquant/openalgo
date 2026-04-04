@@ -8,18 +8,18 @@ import time
 from openalgo import api
 
 # Configuration
-API_KEY = "your-api-key-here"
+API_KEY = "de31866767c07868eef202e120f83910ff837ec109560dd497f43da2597fd22e"
 HOST = "http://127.0.0.1:5000"
 WS_URL = "ws://127.0.0.1:8765"
 
-SYMBOL = "CRUDEOIL16JAN26FUT"
+SYMBOL = "CRUDEOIL19MAR26FUT"
 EXCHANGE = "MCX"
 QUANTITY = 100
 PRODUCT = "NRML"
 STRATEGY = "SL_Target_Bot"
 
-STOP_LOSS_POINTS = 3
-TARGET_POINTS = 3
+STOP_LOSS_POINTS = 10
+TARGET_POINTS = 10
 
 # Global variables
 entry_price = 0

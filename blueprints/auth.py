@@ -61,11 +61,16 @@ def get_broker_config():
         return jsonify({"status": "error", "message": "Not authenticated"}), 401
 
     BROKER_API_KEY = os.getenv("BROKER_API_KEY")
-    REDIRECT_URL = os.getenv("REDIRECT_URL")
+    REDIRECT_URL = os.getenv("REDIRECT_URL", "")
+    # Provide a sensible default matching broker.jainamprop.baseurl.BASE_URL
+    jainamprop_base_url = (
+        os.getenv("JAINAMPROP_BASE_URL", "https://smpb.jainam.in:4143").strip().rstrip("/")
+    )
 
-    # Extract broker name from redirect URL
-    match = re.search(r"/([^/]+)/callback$", REDIRECT_URL)
-    broker_name = match.group(1) if match else None
+    # Extract broker name from redirect URL, allowing trailing slash/query.
+    # Example: http://127.0.0.1:5000/jainamprop/callback?foo=bar
+    match = re.search(r"/([^/]+)/callback(?:/)?(?:\?.*)?$", REDIRECT_URL.strip())
+    broker_name = match.group(1).strip().lower() if match else None
 
     if not broker_name:
         return jsonify({"status": "error", "message": "Broker not configured"}), 500
@@ -75,7 +80,9 @@ def get_broker_config():
             "status": "success",
             "broker_name": broker_name,
             "broker_api_key": BROKER_API_KEY,
+            "broker_api_secret": os.getenv("BROKER_API_SECRET"),
             "redirect_url": REDIRECT_URL,
+            "jainamprop_base_url": jainamprop_base_url,
         }
     )
 
@@ -664,8 +671,7 @@ def get_dashboard_data():
         return jsonify({"status": "error", "message": "Broker not set in session"}), 400
 
     try:
-        from database.auth_db import get_api_key_for_tradingview, get_auth_token
-        from database.settings_db import get_analyze_mode
+        from database.auth_db import get_auth_token
         from services.funds_service import get_funds
 
         AUTH_TOKEN = get_auth_token(login_username)
@@ -674,17 +680,7 @@ def get_dashboard_data():
             logger.warning(f"No auth token found for user {login_username}")
             return jsonify({"status": "error", "message": "Session expired"}), 401
 
-        # Check if in analyze mode
-        if get_analyze_mode():
-            api_key = get_api_key_for_tradingview(login_username)
-            if api_key:
-                success, response, status_code = get_funds(api_key=api_key)
-            else:
-                return jsonify(
-                    {"status": "error", "message": "API key required for analyze mode"}
-                ), 400
-        else:
-            success, response, status_code = get_funds(auth_token=AUTH_TOKEN, broker=broker)
+        success, response, status_code = get_funds(auth_token=AUTH_TOKEN, broker=broker)
 
         if not success:
             logger.error(f"Failed to get funds data: {response.get('message', 'Unknown error')}")
@@ -698,6 +694,7 @@ def get_dashboard_data():
             logger.error(f"Failed to get margin data for user {login_username}")
             return jsonify({"status": "error", "message": "Failed to get margin data"}), 500
 
+        logger.info(f"Dashboard funds broker={broker}, data={margin_data}")
         return jsonify({"status": "success", "data": margin_data})
 
     except Exception as e:

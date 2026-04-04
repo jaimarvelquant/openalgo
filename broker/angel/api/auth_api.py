@@ -38,14 +38,15 @@ def authenticate_broker(clientcode, broker_pin, totp_code):
         response.status = response.status_code
 
         data = response.text
-        data_dict = json.loads(data)
+        data_dict = json.loads(data) if data else None
 
-        if "data" in data_dict and "jwtToken" in data_dict["data"]:
+        if data_dict and "data" in data_dict and "jwtToken" in data_dict["data"]:
             # Return both JWT token and feed token if available (None if not)
             auth_token = data_dict["data"]["jwtToken"]
             feed_token = data_dict["data"].get("feedToken", None)
             return auth_token, feed_token, None
         else:
-            return None, None, data_dict.get("message", "Authentication failed. Please try again.")
+            error_msg = data_dict.get("message", "Authentication failed. Please try again.") if data_dict else "No response from broker"
+            return None, None, error_msg
     except Exception as e:
         return None, None, str(e)

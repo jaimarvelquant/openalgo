@@ -261,6 +261,23 @@ const brokerFields: Record<string, BrokerConfig> = {
     ],
     callbackUrl: '/zebu/callback',
   },
+  deltaex: {
+    fields: [
+      {
+        name: 'api_key',
+        label: 'API Key',
+        type: 'text',
+        placeholder: 'Enter your Delta API Key',
+      },
+      {
+        name: 'api_secret',
+        label: 'API Secret',
+        type: 'password',
+        placeholder: 'Enter your Delta API Secret',
+      },
+    ],
+    callbackUrl: '/deltaex/callback',
+  },
   default: {
     fields: [
       { name: 'userid', label: 'User ID', type: 'text', placeholder: 'Enter your User ID' },
@@ -293,6 +310,7 @@ const brokerNames: Record<string, string> = {
   shoonya: 'Shoonya',
   tradejini: 'Tradejini',
   zebu: 'Zebu',
+  deltaex: 'Delta Exchange',
   jmfinancial: 'JM Financial',
 }
 
@@ -313,6 +331,25 @@ export default function BrokerTOTP() {
   const brokerName = broker
     ? brokerNames[broker] || brokerNames[normalizedBroker || ''] || broker
     : 'Broker'
+
+  // Fetch broker config to pre-fill fields
+  useState(() => {
+    const fetchConfig = async () => {
+      try {
+        const response = await fetch('/auth/broker-config')
+        const data = await response.json()
+        if (data.status === 'success' && normalizedBroker === 'deltaex') {
+          setFormData({
+            api_key: data.broker_api_key || '',
+            api_secret: data.broker_api_secret || '',
+          })
+        }
+      } catch (err) {
+        console.error('Failed to pre-fill config:', err)
+      }
+    }
+    fetchConfig()
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

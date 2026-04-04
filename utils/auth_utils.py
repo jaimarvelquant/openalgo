@@ -16,19 +16,23 @@ logger = get_logger(__name__)
 
 def is_ajax_request():
     """Check if the current request is an AJAX/fetch request from React."""
-    # Check for common AJAX indicators
-    if request.headers.get("X-Requested-With") == "XMLHttpRequest":
-        return True
-    # Check if request accepts JSON (React fetch typically sends this)
-    accept = request.headers.get("Accept", "")
-    if "application/json" in accept:
-        return True
-    # Check content type for form submissions from React
-    content_type = request.headers.get("Content-Type", "")
-    if request.method == "POST" and "multipart/form-data" in content_type:
-        # React form submissions use FormData
-        return True
-    return False
+    try:
+        # Check for common AJAX indicators
+        if request.headers.get("X-Requested-With") == "XMLHttpRequest":
+            return True
+        # Check if request accepts JSON (React fetch typically sends this)
+        accept = request.headers.get("Accept") or ""
+        if accept and "application/json" in accept:
+            return True
+        # Check content type for form submissions from React
+        content_type = request.headers.get("Content-Type") or ""
+        if request.method == "POST" and content_type and "multipart/form-data" in content_type:
+            # React form submissions use FormData
+            return True
+        return False
+    except TypeError as e:
+        logger.exception(f"TypeError in is_ajax_request: {e}. Headers: {dict(request.headers)}")
+        return False  # Default to non-AJAX on error
 
 
 def validate_password_strength(password):

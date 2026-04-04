@@ -56,10 +56,36 @@ def request(method: str, url: str, **kwargs) -> httpx.Response:
 
     client = get_httpx_client()
 
-    # Track actual broker API call time for latency monitoring
-    broker_api_start = time.time()
-    response = client.request(method, url, **kwargs)
-    broker_api_end = time.time()
+    # Simple retry on transient network errors (e.g., WinError 10054)
+    # Strategy: up to 3 attempts with incremental backoff
+    # On retry, force 'Connection: close' to avoid broken keep-alive sockets
+    attempts = 3
+    backoffs = [0.2, 0.5]
+    last_exc = None
+    for attempt in range(attempts):
+        try:
+            # Track actual broker API call time for latency monitoring
+            broker_api_start = time.time()
+            response = client.request(method, url, **kwargs)
+            broker_api_end = time.time()
+            break
+        except (httpx.RemoteProtocolError, httpx.ReadError, httpx.ConnectError, httpx.NetworkError, OSError) as e:
+            last_exc = e
+            # Prepare for retry if attempts remain
+            if attempt < attempts - 1:
+                # Force connection close on next attempt
+                try:
+                    headers = kwargs.setdefault("headers", {})
+                    # Don't overwrite caller-provided Connection header if already set
+                    if "Connection" not in {k.title(): v for k, v in headers.items()}:
+                        headers["Connection"] = "close"
+                except Exception:
+                    pass
+                # Backoff before retry
+                time.sleep(backoffs[min(attempt, len(backoffs) - 1)])
+                continue
+            # No attempts left; re-raise
+            raise
 
     # Store broker API time in Flask's g object for latency tracking
     if hasattr(g, "latency_tracker"):

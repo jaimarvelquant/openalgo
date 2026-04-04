@@ -13,7 +13,8 @@ logger = get_logger(__name__)
 def load_broker_auth_functions(broker_directory="broker"):
     auth_functions = {}
     broker_path = os.path.join(current_app.root_path, broker_directory)
-    # List all items in broker directory and filter out __pycache__ and non-directories
+    # List all items in broker directory and filter out __pycache__
+    # and non-directories.
     broker_names = [
         d
         for d in os.listdir(broker_path)
@@ -32,6 +33,17 @@ def load_broker_auth_functions(broker_directory="broker"):
         except ImportError as e:
             logger.error(f"Failed to import broker plugin {broker_name}: {e}")
         except AttributeError as e:
-            logger.error(f"Authentication function not found in broker plugin {broker_name}: {e}")
+            logger.error(
+                "Authentication function not found in "
+                f"broker plugin {broker_name}: {e}"
+            )
+        except Exception as e:
+            # Corrupted/stale .pyc files can raise ValueError
+            # (bad marshal data) during import.
+            # Keep startup resilient by skipping the broken plugin
+            # and logging full traceback.
+            logger.exception(
+                f"Unexpected error loading broker plugin {broker_name}: {e}"
+            )
 
     return auth_functions

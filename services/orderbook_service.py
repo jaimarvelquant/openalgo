@@ -148,12 +148,24 @@ def get_orderbook_with_auth(
         # Get orderbook data using broker's implementation
         order_data = broker_funcs["get_order_book"](auth_token)
 
-        if "status" in order_data and order_data["status"] == "error":
+        # Check for error responses - handle both "status" and "type" error formats
+        is_error = (isinstance(order_data, dict) and order_data.get("status") == "error") or (
+            isinstance(order_data, dict) and order_data.get("type") == "error"
+        )
+        if is_error:
+            error_msg = (
+                order_data.get("description")
+                or order_data.get("message")
+                or "Error fetching order data"
+            )
+            error_code = order_data.get("code", "unknown_error")
+            logger.error(f"Orderbook API error: {error_code} - {error_msg}")
             return (
                 False,
                 {
                     "status": "error",
-                    "message": order_data.get("message", "Error fetching order data"),
+                    "message": error_msg,
+                    "code": error_code,
                 },
                 500,
             )
@@ -167,6 +179,8 @@ def get_orderbook_with_auth(
         formatted_orders = format_order_data(order_data)
         formatted_stats = format_statistics(order_stats)
 
+        # SERVICE-LAYER PULSE: Definitive terminal proof
+        print(f"\n[SERVICE PULSE] >>> ORDERS: Sending {len(formatted_orders)} items to Dashboard for broker {broker} <<<\n")
         return (
             True,
             {

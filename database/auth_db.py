@@ -127,10 +127,25 @@ invalid_api_key_cache = TTLCache(maxsize=512, ttl=300)  # 5 minutes
 # Conditionally create engine based on DB type
 if DATABASE_URL and "sqlite" in DATABASE_URL:
     # SQLite: Use NullPool to prevent connection pool exhaustion
-    # NullPool creates a new connection for each request and closes it when done
+    # Add busy timeout and WAL to reduce 'database is locked' errors
     engine = create_engine(
-        DATABASE_URL, poolclass=NullPool, connect_args={"check_same_thread": False}
+        DATABASE_URL,
+        poolclass=NullPool,
+        connect_args={"check_same_thread": False, "timeout": 30},
     )
+    try:
+        from sqlalchemy import event
+
+        @event.listens_for(engine, "connect")
+        def _set_sqlite_pragma(dbapi_connection, connection_record):
+            cursor = dbapi_connection.cursor()
+            try:
+                cursor.execute("PRAGMA journal_mode=WAL")
+                cursor.execute("PRAGMA busy_timeout=5000")
+            finally:
+                cursor.close()
+    except Exception:
+        pass
 else:
     # For other databases like PostgreSQL, use connection pooling
     engine = create_engine(DATABASE_URL, pool_size=50, max_overflow=100, pool_timeout=10)
@@ -459,15 +474,22 @@ def get_api_key(user_id):
 
 
 def get_api_key_for_tradingview(user_id):
-    """Get decrypted API key for TradingView configuration"""
-    try:
-        api_key_obj = ApiKeys.query.filter_by(user_id=user_id).first()
-        if api_key_obj and api_key_obj.api_key_encrypted:
-            return decrypt_token(api_key_obj.api_key_encrypted)
-        return None
-    except Exception as e:
-        logger.exception(f"Error while querying the database for API key: {e}")
-        return None
+    import time
+    attempts = 5
+    delay = 0.1
+    for i in range(attempts):
+        try:
+            api_key_obj = ApiKeys.query.filter_by(user_id=user_id).first()
+            if api_key_obj and api_key_obj.api_key_encrypted:
+                return decrypt_token(api_key_obj.api_key_encrypted)
+            return None
+        except Exception as e:
+            msg = str(e).lower()
+            if "database is locked" in msg and i < attempts - 1:
+                time.sleep(delay * (i + 1))
+                continue
+            logger.exception(f"Error while querying the database for API key: {e}")
+            return None
 
 
 def get_first_available_api_key():

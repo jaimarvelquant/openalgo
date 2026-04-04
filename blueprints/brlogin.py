@@ -67,8 +67,9 @@ def broker_callback(broker, para=None):
     if not auth_function:
         return jsonify(error="Broker authentication function not found."), 404
 
-    # Initialize feed_token to None by default
+    # Initialize feed_token and user_id to None by default
     feed_token = None
+    user_id = None
 
     if broker == "fivepaisa":
         if request.method == "GET":
@@ -314,9 +315,19 @@ def broker_callback(broker, para=None):
         auth_token, feed_token, user_id, error_message = auth_function(code)
         forward_url = "broker.html"
 
-    elif broker == "jainamxts":
-        code = "jainamxts"
-        logger.debug(f"JainamXTS broker - code: {code}")
+    elif broker in ("jainamxts", "jainamprop"):
+        # XTS OAuth redirect can return different token keys depending on host.
+        code = (
+            request.args.get("code")
+            or request.args.get("request_token")
+            or request.args.get("requestToken")
+            or request.args.get("access_token")
+            or request.args.get("accessToken")
+            or request.args.get("token")
+        )
+        logger.debug(
+            f"{broker} broker - callback params: {dict(request.args)}, token present: {bool(code)}"
+        )
 
         # Fetch auth token, feed token and user ID
         auth_token, feed_token, user_id, error_message = auth_function(code)
@@ -597,6 +608,21 @@ def broker_callback(broker, para=None):
         auth_token, feed_token, user_id, error_message = auth_function(auth_code, state)
         forward_url = "broker.html"
 
+    elif broker == "deltaex":
+        if request.method == "GET":
+            # Redirect to React TOTP page (custom fields for deltaex)
+            return redirect("/broker/deltaex/totp")
+
+        elif request.method == "POST":
+            api_key = request.form.get("api_key")
+            api_secret = request.form.get("api_secret")
+
+            if not api_key or not api_secret:
+                return jsonify({"status": "error", "message": "API Key and Secret are required."}), 400
+
+            auth_token, error_message = auth_function(api_key, api_secret)
+            forward_url = "broker.html"
+
     elif broker == "definedge":
         if request.method == "GET":
             # Trigger OTP generation and redirect to React page
@@ -702,7 +728,17 @@ def broker_callback(broker, para=None):
             auth_token = f"{auth_token}"
 
         # For brokers that have user_id and feed_token from authenticate_broker
-        if broker in ["angel", "compositedge", "pocketful", "definedge", "dhan"]:
+        if broker in [
+            "angel",
+            "compositedge",
+            "pocketful",
+            "definedge",
+            "dhan",
+            "jainamxts",
+            "jainamprop",
+            "ibkr",
+            "deltaex",
+        ]:
             # For Compositedge, handle missing session user
             if broker == "compositedge" and "user" not in session:
                 # Get the admin user from the database
@@ -744,10 +780,10 @@ def dhan_initiate_oauth():
         return redirect(url_for("auth.login"))
 
     # Get client_id from .env BROKER_API_KEY (format: client_id:::api_key)
-    BROKER_API_KEY = os.getenv("BROKER_API_KEY")
+    BROKER_API_KEY = os.getenv("BROKER_API_KEY", "")
     client_id = None
 
-    if ":::" in BROKER_API_KEY:
+    if BROKER_API_KEY and ":::" in BROKER_API_KEY:
         client_id, _ = BROKER_API_KEY.split(":::")
 
     if not client_id:

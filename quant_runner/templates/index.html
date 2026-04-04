@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Strategy Runner Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f9f9f9; }
+        h1 { color: #2c3e50; }
+        table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+        th, td { border: 1px solid #ccc; padding: 6px; }
+        th { background: #eee; }
+        #strategyModal { display:none; position:fixed; top:20%; left:30%; background:#fff; padding:20px; border:1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>Strategy Runner Dashboard</h1>
+
+    <h2>Strategies</h2>
+    <button onclick="openUploadModal()">New Strategy</button>
+    <table id="strategiesTable"></table>
+
+    <h2>Leg Status (executed)</h2>
+    <table id="legsTable"></table>
+
+    <!-- Upload/Edit Modal -->
+    <div id="strategyModal">
+      <h3 id="modalTitle">Upload Strategy</h3>
+      <form id="strategyForm">
+        <input name="instance_name" placeholder="Instance Name"><br>
+        <input name="symbol" placeholder="Symbol"><br>
+        <input name="straddle_width" type="number" step="0.1"><br>
+        <input name="start_time" placeholder="HH:MM:SS"><br>
+        <input name="squareoff_time" placeholder="HH:MM:SS"><br>
+        <input name="end_time" placeholder="HH:MM:SS"><br>
+        <input name="expiry" placeholder="27-MAR-26"><br>
+        <label>Legs (one per line)</label><br>
+        <textarea name="legs" rows="5" cols="40" placeholder="ATM|C|S|1|SL#20&#10;ATM|P|S|1|SL#20"></textarea><br>
+        <button type="submit">Save</button>
+        <button type="button" onclick="closeModal()">Cancel</button>
+      </form>
+    </div>
+
+<script>
+let editingId = null;
+let tableData = [];
+
+function openUploadModal(){
+    editingId = null;
+    document.getElementById("modalTitle").innerText = "Upload Strategy";
+    document.getElementById("strategyForm").reset();
+    document.getElementById("strategyModal").style.display="block";
+}
+
+function editStrategyById(id){
+    const row = tableData.find(r => r.id === id);
+    if(!row) return;
+    editingId = id;
+    document.getElementById("modalTitle").innerText = "Edit Strategy";
+    const form = document.getElementById("strategyForm");
+    Object.keys(row).forEach(k=>{
+        if(form[k]) form[k].value = row[k] || "";
+    });
+    document.getElementById("strategyModal").style.display="block";
+}
+
+function closeModal(){
+    document.getElementById("strategyModal").style.display="none";
+}
+
+document.getElementById("strategyForm").onsubmit = async function(e){
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const jsonData = {};
+    formData.forEach((v,k)=>jsonData[k]=v);
+
+    if(jsonData.legs){
+        jsonData.legs = jsonData.legs.split("\n").map(l => l.trim()).filter(l => l.length>0);
+    }
+
+    let url = "/upload_strategy";
+    let method = "POST";
+    if(editingId){
+        url = "/edit_strategy/"+editingId;
+        method = "PUT";
+    }
+
+    const res = await fetch(url,{
+        method,
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify(jsonData)
+    });
+    const data = await res.json();
+    alert(data.message);
+    closeModal();
+    loadTables();
+};
+
+async function renderStrategies(){
+    const res = await fetch("/view_strategies");
+    const strategies = await res.json();
+
+    const legsRes = await fetch("/view_strategy_legs"); // <-- use strategy_legs
+    const allLegs = await legsRes.json();
+
+    if(strategies.length === 0){
+        document.getElementById("strategiesTable").innerHTML = "<tr><td>No strategies found</td></tr>";
+        return;
+    }
+
+    tableData = strategies;
+    let html = "<tr><th>ID</th><th>Name</th><th>Symbol</th><th>Status</th><th>Start</th><th>End</th><th>Expiry</th><th>Legs</th><th>Enabled</th><th>Actions</th></tr>";
+
+    strategies.forEach(strat=>{
+        const legs = allLegs.filter(l => l.strategy_id === strat.id);
+        const legSummary = legs.length > 0 ? legs.map(l => `${l.leg_id}:${l.leg_str}`).join("<br>") : "No legs";
+
+        const checked = strat.enabled==1 ? "checked" : "";
+        html += `<tr>
+            <td>${strat.id}</td>
+            <td>${strat.instance_name}</td>
+            <td>${strat.symbol}</td>
+            <td>${strat.status}</td>
+            <td>${strat.start_time}</td>
+            <td>${strat.end_time}</td>
+            <td>${strat.expiry}</td>
+            <td>${legSummary}</td>
+            <td><input type="checkbox" ${checked} onchange="toggleStrategy(${strat.id},this.checked)"></td>
+            <td>
+                <button onclick='editStrategyById(${strat.id})'>Edit</button>
+                <button onclick='duplicateStrategy(${strat.id})'>Duplicate</button>
+            </td>
+        </tr>`;
+    });
+    document.getElementById("strategiesTable").innerHTML = html;
+}
+
+async function renderLegs(){
+    const res = await fetch("/view_leg_status");
+    const data = await res.json();
+    if(data.length === 0){
+        document.getElementById("legsTable").innerHTML = "<tr><td>No legs found</td></tr>";
+        return;
+    }
+
+    let html = "<tr>";
+    Object.keys(data[0]).forEach(k => html += `<th>${k}</th>`);
+    html += "</tr>";
+
+    data.forEach(r=>{
+        html += "<tr>";
+        Object.keys(r).forEach(k => {
+            let val = r[k] === null ? "" : r[k];
+            html += `<td>${val}</td>`;
+        });
+        html += "</tr>";
+    });
+    document.getElementById("legsTable").innerHTML = html;
+}
+
+function loadTables(){
+    renderStrategies();
+    renderLegs();
+}
+
+async function toggleStrategy(id,enabled){
+    const res = await fetch("/toggle_strategy/"+id,{
+        method:"PUT",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({enabled: enabled?1:0})
+    });
+    const data = await res.json();
+    alert(data.message);
+    loadTables();
+}
+
+async function duplicateStrategy(id){
+    const res = await fetch("/duplicate_strategy/"+id,{method:"POST"});
+    const data = await res.json();
+    alert(data.message);
+    loadTables();
+}
+
+loadTables();
+setInterval(loadTables,15000);
+</script>
+</body>
+</html>

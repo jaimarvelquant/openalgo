@@ -240,6 +240,15 @@ def update_credentials():
                         }
                     ), 400
 
+            elif broker_name == "ibkr" and broker_api_key:
+                if ":::" not in broker_api_key or broker_api_key.count(":::") != 1:
+                    return jsonify(
+                        {
+                            "status": "error",
+                            "message": "IBKR API key must be in format: 'client_id:::port' (e.g. 1:::7497)",
+                        }
+                    ), 400
+
         # Read current .env content
         content, error = read_env_file()
         if error:

@@ -54,6 +54,7 @@ def import_broker_module(broker_name: str) -> dict[str, Any] | None:
     try:
         # Import API module
         api_module = importlib.import_module(f"broker.{broker_name}.api.order_api")
+        print(f"\n[AUDIT] >>> DELTA MODULE PATH: {api_module.__file__} <<<\n")
         # Import mapping module
         mapping_module = importlib.import_module(f"broker.{broker_name}.mapping.order_data")
         return {
@@ -129,6 +130,7 @@ def get_tradebook_with_auth(
         # Format numeric values to 2 decimal places
         formatted_trades = format_trade_data(trade_data)
 
+        print(f"\n[SERVICE PULSE] >>> TRADES: Sending {len(formatted_trades)} items to Dashboard for broker {broker} <<<\n")
         return True, {"status": "success", "data": formatted_trades}, 200
     except Exception as e:
         logger.error(f"Error processing trade data: {e}")

@@ -21,9 +21,9 @@ DATABASE_URL = os.getenv("DATABASE_URL")  # Replace with your SQLite path
 
 # Conditionally create engine based on DB type
 if DATABASE_URL and "sqlite" in DATABASE_URL:
-    # SQLite: Use NullPool to prevent connection pool exhaustion
+    # SQLite: Use NullPool to prevent connection pool exhaustion and add timeout for concurrent locks
     engine = create_engine(
-        DATABASE_URL, poolclass=NullPool, connect_args={"check_same_thread": False}
+        DATABASE_URL, poolclass=NullPool, connect_args={"check_same_thread": False, "timeout": 15}
     )
 else:
     # For other databases like PostgreSQL, use connection pooling

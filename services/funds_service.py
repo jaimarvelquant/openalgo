@@ -74,6 +74,8 @@ def get_funds_with_auth(
         # Get funds data using broker's implementation
         funds = broker_module.get_margin_data(auth_token)
 
+        # SERVICE-LAYER PULSE: Definitive terminal proof
+        print(f"\n[SERVICE PULSE] >>> FUNDS: Sending margin data to Dashboard for broker {broker} <<<\n")
         return True, {"status": "success", "data": funds}, 200
     except Exception as e:
         logger.error(f"Error in broker_module.get_margin_data: {e}")

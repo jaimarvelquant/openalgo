@@ -133,6 +133,8 @@ def get_positionbook_with_auth(
         # Format numeric values to 2 decimal places
         formatted_positions = format_position_data(positions_data)
 
+        # SERVICE-LAYER PULSE: Definitive terminal proof
+        print(f"\n[SERVICE PULSE] >>> POSITIONS: Sending {len(formatted_positions)} active items to Dashboard for broker {broker} <<<\n")
         return True, {"status": "success", "data": formatted_positions}, 200
     except Exception as e:
         logger.error(f"Error processing positions data: {e}")

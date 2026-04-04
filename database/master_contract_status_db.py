@@ -55,22 +55,38 @@ def init_broker_status(broker):
         # Check if status already exists
         existing = session.query(MasterContractStatus).filter_by(broker=broker).first()
 
-        if existing:
-            # Update existing status
-            existing.status = "pending"
-            existing.message = "Master contract download pending"
-            existing.last_updated = datetime.now()
-            existing.is_ready = False
+        if broker in ["ibkr", "deltaex"]:
+            if existing:
+                existing.status = "success"
+                existing.message = f"{broker.upper()} uses dynamic contract discovery"
+                existing.last_updated = datetime.now()
+                existing.is_ready = True
+            else:
+                status = MasterContractStatus(
+                    broker=broker,
+                    status="success",
+                    message=f"{broker.upper()} uses dynamic contract discovery",
+                    last_updated=datetime.now(),
+                    is_ready=True,
+                )
+                session.add(status)
         else:
-            # Create new status
-            status = MasterContractStatus(
-                broker=broker,
-                status="pending",
-                message="Master contract download pending",
-                last_updated=datetime.now(),
-                is_ready=False,
-            )
-            session.add(status)
+            if existing:
+                # Update existing status
+                existing.status = "pending"
+                existing.message = "Master contract download pending"
+                existing.last_updated = datetime.now()
+                existing.is_ready = False
+            else:
+                # Create new status
+                status = MasterContractStatus(
+                    broker=broker,
+                    status="pending",
+                    message="Master contract download pending",
+                    last_updated=datetime.now(),
+                    is_ready=False,
+                )
+                session.add(status)
 
         session.commit()
         logger.info(f"Initialized master contract status for {broker}")
@@ -160,6 +176,8 @@ def check_if_ready(broker):
     """Check if master contracts are ready for a broker"""
     session = SessionLocal()
     try:
+        if broker in ["ibkr", "deltaex"]:
+            return True
         status = session.query(MasterContractStatus).filter_by(broker=broker).first()
         return status.is_ready if status else False
     except Exception as e:

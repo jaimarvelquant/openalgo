@@ -60,8 +60,11 @@ from broker.iifl.streaming.iifl_adapter import IiflWebSocketAdapter
 # Import the indmoney_adapter
 from broker.indmoney.streaming.indmoney_adapter import IndmoneyWebSocketAdapter
 
-# Import the fivepaisaxts_adapter
+# Import the jainamxts_adapter
 from broker.jainamxts.streaming.jainamxts_adapter import JainamXTSWebSocketAdapter
+
+# Jainam Prop (same XTS stack, separate broker plugin)
+from broker.jainamprop.streaming.jainamxts_adapter import JainamPropWebSocketAdapter
 
 # Import the kotak_adapter
 from broker.kotak.streaming.kotak_adapter import KotakWebSocketAdapter
@@ -116,6 +119,7 @@ register_adapter("indmoney", IndmoneyWebSocketAdapter)
 register_adapter("mstock", MstockWebSocketAdapter)
 register_adapter("motilal", MotilalWebSocketAdapter)
 register_adapter("jainamxts", JainamXTSWebSocketAdapter)
+register_adapter("jainamprop", JainamPropWebSocketAdapter)
 register_adapter("samco", SamcoWebSocketAdapter)
 register_adapter("pocketful", PocketfulWebSocketAdapter)
 

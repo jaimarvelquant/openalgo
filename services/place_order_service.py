@@ -222,11 +222,11 @@ def place_order_with_auth(
         )
         return True, order_response_data, 200
     else:
-        message = (
-            response_data.get("message", "Failed to place order")
-            if isinstance(response_data, dict)
-            else "Failed to place order"
-        )
+        if isinstance(response_data, dict):
+            message = response_data.get("message") or response_data.get("description") or response_data.get("emsg") or "Failed to place order"
+        else:
+            message = "Failed to place order"
+            
         error_response = {"status": "error", "message": message}
         executor.submit(async_log_order, "placeorder", original_data, error_response)
         return False, error_response, res.status if res.status != 200 else 500

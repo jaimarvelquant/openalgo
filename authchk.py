@@ -1,0 +1,25 @@
+import json, ssl, urllib.request, urllib.error
+
+data = json.dumps({
+    "AccessPassword": "2021HostLookUpAccess",
+    "version": "interactive_1.0.1"
+}).encode()
+
+req = urllib.request.Request(
+    "https://smpb.jainam.in:4143/hostlookup",
+    data=data,
+    headers={"Content-Type": "application/json"},
+    method="POST",
+)
+
+try:
+    with urllib.request.urlopen(req, timeout=15, context=ssl.create_default_context()) as resp:
+        print(resp.read().decode())
+except urllib.error.HTTPError as e:
+    print("HTTP", e.code, e.reason)
+    try:
+        print(e.read().decode())
+    except Exception:
+        pass
+except Exception as e:
+    print("ERROR:", e)

@@ -32,6 +32,7 @@ const allBrokers = [
   { id: 'ibulls', name: 'Ibulls', authType: 'totp' },
   { id: 'iifl', name: 'IIFL', authType: 'totp' },
   { id: 'jainamxts', name: 'JainamXts', authType: 'totp' },
+  { id: 'jainamprop', name: 'Jainam Prop', authType: 'totp' },
   { id: 'kotak', name: 'Kotak Securities', authType: 'totp' },
   { id: 'mstock', name: 'mStock by Mirae Asset', authType: 'totp' },
   { id: 'nubra', name: 'Nubra', authType: 'totp' },
@@ -44,12 +45,15 @@ const allBrokers = [
   { id: 'wisdom', name: 'Wisdom Capital', authType: 'totp' },
   { id: 'zebu', name: 'Zebu', authType: 'totp' },
   { id: 'zerodha', name: 'Zerodha', authType: 'oauth' },
+  { id: 'ibkr', name: 'Interactive Brokers (IBKR)', authType: 'totp' },
+  { id: 'deltaex', name: 'Delta Exchange', authType: 'totp' },
 ] as const
 
 interface BrokerConfig {
   broker_name: string
   broker_api_key: string
   redirect_url: string
+  jainamprop_base_url?: string
 }
 
 // Helper function to get Flattrade API key
@@ -78,6 +82,8 @@ export default function BrokerSelect() {
   const [error, setError] = useState<string | null>(null)
   const [brokerConfig, setBrokerConfig] = useState<BrokerConfig | null>(null)
 
+  const normalizedConfiguredBroker = brokerConfig?.broker_name?.trim().toLowerCase() ?? ''
+
   useEffect(() => {
     // Fetch broker configuration
     const fetchBrokerConfig = async () => {
@@ -88,9 +94,10 @@ export default function BrokerSelect() {
         const data = await response.json()
 
         if (data.status === 'success') {
+          const normalizedBrokerName = (data.broker_name || '').trim().toLowerCase()
           setBrokerConfig(data)
           // Auto-select the configured broker
-          setSelectedBroker(data.broker_name)
+          setSelectedBroker(normalizedBrokerName)
         } else {
           setError(data.message || 'Failed to load broker configuration')
         }
@@ -145,9 +152,18 @@ export default function BrokerSelect() {
       case 'tradejini':
       case 'wisdom':
       case 'zebu':
-        // TOTP brokers - redirect to callback page which shows form
+      case 'ibkr':
+      case 'deltaex':
+        // TOTP brokers - redirect to callback page which shows form (or direct auth for IBKR)
         loginUrl = `/${selectedBroker}/callback`
         break
+
+      case 'jainamprop': {
+        // Direct server-side authentication using hostlookup + user/session (no external redirect)
+        // The backend callback will perform the necessary steps and redirect to dashboard
+        loginUrl = '/jainamprop/callback'
+        break
+      }
 
       case 'dhan':
         loginUrl = '/dhan/initiate-oauth'
@@ -244,7 +260,8 @@ export default function BrokerSelect() {
                     </SelectTrigger>
                     <SelectContent>
                       {allBrokers.map((broker) => {
-                        const isEnabled = broker.id === brokerConfig?.broker_name
+                        const isEnabled =
+                          !normalizedConfiguredBroker || broker.id === normalizedConfiguredBroker
                         return (
                           <SelectItem key={broker.id} value={broker.id} disabled={!isEnabled}>
                             {broker.name} {!isEnabled && '(Disabled)'}
