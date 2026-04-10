@@ -11,7 +11,7 @@ class OrderSchema(Schema):
         required=True, validate=validate.Range(min=1, error="Quantity must be a positive integer.")
     )
     pricetype = fields.Str(
-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "STP", "SL", "SL-M"])
     )
     product = fields.Str(missing="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
     price = fields.Float(
@@ -42,7 +42,7 @@ class SmartOrderSchema(Schema):
     )
     position_size = fields.Int(required=True)
     pricetype = fields.Str(
-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "STP", "SL", "SL-M"])
     )
     product = fields.Str(missing="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
     price = fields.Float(
@@ -67,7 +67,7 @@ class ModifyOrderSchema(Schema):
     action = fields.Str(required=True, validate=validate.OneOf(["BUY", "SELL", "buy", "sell"]))
     product = fields.Str(required=True, validate=validate.OneOf(["MIS", "NRML", "CNC"]))
     pricetype = fields.Str(
-        required=True, validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+        required=True, validate=validate.OneOf(["MARKET", "LIMIT", "STP", "SL", "SL-M"])
     )
     price = fields.Float(
         required=True, validate=validate.Range(min=0, error="Price must be a non-negative number.")
@@ -94,6 +94,10 @@ class CancelOrderSchema(Schema):
 class ClosePositionSchema(Schema):
     apikey = fields.Str(required=True)
     strategy = fields.Str(required=True)
+    exchange = fields.Str(required=False, allow_none=True)
+    symbol = fields.Str(required=False, allow_none=True)
+    product = fields.Str(required=False, allow_none=True)
+    action = fields.Str(required=False, allow_none=True)
 
 
 class CancelAllOrderSchema(Schema):
@@ -109,7 +113,7 @@ class BasketOrderItemSchema(Schema):
         required=True, validate=validate.Range(min=1, error="Quantity must be a positive integer.")
     )
     pricetype = fields.Str(
-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "STP", "SL", "SL-M"])
     )
     product = fields.Str(missing="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
     price = fields.Float(
@@ -148,7 +152,7 @@ class SplitOrderSchema(Schema):
         validate=validate.Range(min=1, error="Split size must be a positive integer."),
     )  # Size of each split
     pricetype = fields.Str(
-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "STP", "SL", "SL-M"])
     )
     product = fields.Str(missing="MIS", validate=validate.OneOf(["MIS", "NRML", "CNC"]))
     price = fields.Float(
@@ -191,7 +195,7 @@ class OptionsOrderSchema(Schema):
         allow_none=True,
     )  # Optional: If > 0, splits order into multiple orders of this size
     pricetype = fields.Str(
-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "STP", "SL", "SL-M"])
     )
     product = fields.Str(
         missing="MIS", validate=validate.OneOf(["MIS", "NRML"])
@@ -229,7 +233,7 @@ class OptionsMultiOrderLegSchema(Schema):
         required=False
     )  # Optional per-leg expiry (DDMMMYY format) - for diagonal/calendar spreads
     pricetype = fields.Str(
-        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+        missing="MARKET", validate=validate.OneOf(["MARKET", "LIMIT", "STP", "SL", "SL-M"])
     )
     product = fields.Str(
         missing="MIS", validate=validate.OneOf(["MIS", "NRML"])
@@ -292,7 +296,7 @@ class MarginPositionSchema(Schema):
     quantity = fields.Str(required=True)  # String to match API contract, validated in service layer
     product = fields.Str(required=True, validate=validate.OneOf(["MIS", "NRML", "CNC"]))
     pricetype = fields.Str(
-        required=True, validate=validate.OneOf(["MARKET", "LIMIT", "SL", "SL-M"])
+        required=True, validate=validate.OneOf(["MARKET", "LIMIT", "STP", "SL", "SL-M"])
     )
     price = fields.Str(missing="0")  # String to match API contract
     trigger_price = fields.Str(missing="0")  # String to match API contract

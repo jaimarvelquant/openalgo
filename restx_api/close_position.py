@@ -27,8 +27,9 @@ class ClosePosition(Resource):
     @limiter.limit(API_RATE_LIMIT)
     def post(self):
         """Close all open positions"""
+        data = request.json
+        logger.info(f"[API ENTRY] ClosePosition POST received: {data}")
         try:
-            data = request.json
 
             # Validate and deserialize input
             try:

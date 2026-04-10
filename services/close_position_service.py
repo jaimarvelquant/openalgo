@@ -129,11 +129,24 @@ def close_position_with_auth(
         return False, error_response, 404
 
     try:
-        # Use the dynamically imported module's function to close all positions
+        # Use the dynamically imported module's function
         api_key = position_data.get("apikey", "")
-        response_code, status_code = broker_module.close_all_positions(api_key, auth_token)
+        
+        # INTELLIGENT ROUTING: 
+        # If symbol is present, call close_position_api (Single Symbol)
+        # Else, call close_all_positions (All)
+        symbol = position_data.get("symbol")
+        logger.info(f"[SERVICE PULSE] Close Position Routing Debug: Symbol={symbol}, Keys={list(position_data.keys())}")
+        
+        if symbol and hasattr(broker_module, "close_position_api"):
+            logger.info(f"Routing to single-symbol closure for {symbol}")
+            response_code, status_code = broker_module.close_position_api(position_data, auth_token)
+        else:
+            logger.info("Routing to global portfolio closure")
+            response_code, status_code = broker_module.close_all_positions(api_key, auth_token)
+            
     except Exception as e:
-        logger.error(f"Error in broker_module.close_all_positions: {e}")
+        logger.error(f"Error in close_position service logic: {e}")
         traceback.print_exc()
         error_response = {
             "status": "error",

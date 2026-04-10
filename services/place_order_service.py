@@ -242,61 +242,39 @@ def place_order(
     """
     Place an order with the broker.
     Supports both API-based authentication and direct internal calls.
-
-    Args:
-        order_data: Order data containing all required fields
-        api_key: OpenAlgo API key (for API-based calls)
-        auth_token: Direct broker authentication token (for internal calls)
-        broker: Direct broker name (for internal calls)
-        emit_event: Whether to emit socket event (default True, set False for batch orders)
-
-    Returns:
-        Tuple containing:
-        - Success status (bool)
-        - Response data (dict)
-        - HTTP status code (int)
     """
-    original_data = copy.deepcopy(order_data)
-    if api_key:
-        original_data["apikey"] = api_key
-        # Also add apikey to order_data for validation
-        order_data["apikey"] = api_key
+    try:
+        original_data = copy.deepcopy(order_data)
+        if api_key:
+            original_data["apikey"] = api_key
+            # Also add apikey to order_data for validation
+            order_data["apikey"] = api_key
 
-    # Check if order should be routed to Action Center (semi-auto mode)
-    # Only check for API-based calls, not internal calls
-    if api_key and not (auth_token and broker):
-        from services.order_router_service import queue_order, should_route_to_pending
+        # Check if order should be routed to Action Center (semi-auto mode)
+        if api_key and not (auth_token and broker):
+            from services.order_router_service import queue_order, should_route_to_pending
+            if should_route_to_pending(api_key, "placeorder"):
+                return queue_order(api_key, original_data, "placeorder")
 
-        if should_route_to_pending(api_key, "placeorder"):
-            return queue_order(api_key, original_data, "placeorder")
+        # Validate the order data
+        is_valid, validated_data, error_message = validate_order_data(order_data)
+        if not is_valid:
+            error_response = {"status": "error", "message": error_message}
+            executor.submit(async_log_order, "placeorder", original_data, error_response)
+            return False, error_response, 400
 
-    # Validate the order data
-    is_valid, _, error_message = validate_order_data(order_data)
-    if not is_valid:
-        if get_analyze_mode():
-            return False, emit_analyzer_error(original_data, error_message), 400
-        error_response = {"status": "error", "message": error_message}
-        executor.submit(async_log_order, "placeorder", original_data, error_response)
-        return False, error_response, 400
+        # Case 1: API-based authentication
+        if api_key and not (auth_token and broker):
+            AUTH_TOKEN, broker_name = get_auth_token_broker(api_key)
+            if AUTH_TOKEN is None:
+                return False, {"status": "error", "message": "Invalid openalgo apikey"}, 403
+            return place_order_with_auth(validated_data, AUTH_TOKEN, broker_name, original_data, emit_event)
 
-    # Case 1: API-based authentication
-    if api_key and not (auth_token and broker):
-        AUTH_TOKEN, broker_name = get_auth_token_broker(api_key)
-        if AUTH_TOKEN is None:
-            error_response = {"status": "error", "message": "Invalid openalgo apikey"}
-            # Skip logging for invalid API keys to prevent database flooding
-            return False, error_response, 403
+        # Case 2: Direct internal call with auth_token and broker
+        elif auth_token and broker:
+            return place_order_with_auth(validated_data, auth_token, broker, original_data, emit_event)
 
-        return place_order_with_auth(order_data, AUTH_TOKEN, broker_name, original_data, emit_event)
-
-    # Case 2: Direct internal call with auth_token and broker
-    elif auth_token and broker:
-        return place_order_with_auth(order_data, auth_token, broker, original_data, emit_event)
-
-    # Case 3: Invalid parameters
-    else:
-        error_response = {
-            "status": "error",
-            "message": "Either api_key or both auth_token and broker must be provided",
-        }
-        return False, error_response, 400
+        return False, {"status": "error", "message": "Invalid parameters"}, 400
+    except Exception as e:
+        logger.exception(f"Unexpected error in place_order: {e}")
+        return False, {"status": "error", "message": f"Place Order Service Crash: {str(e)}"}, 500
