@@ -259,7 +259,7 @@ export default function Historify() {
     computed_intervals: string[]
     all_intervals: string[]
   } | null>(null)
-  const [exchanges, setExchanges] = useState<string[]>(['NSE', 'BSE', 'NFO', 'BFO', 'MCX', 'CDS', 'BCD', 'NSE_INDEX', 'BSE_INDEX'])
+  const [exchanges, setExchanges] = useState<string[]>(['NSE', 'BSE', 'NFO', 'BFO', 'MCX', 'CDS', 'BCD', 'NSE_INDEX', 'BSE_INDEX', 'IBKR', 'IDEALPRO', 'NYMEX', 'GLOBEX'])
   const [stats, setStats] = useState<Stats>({ database_size_mb: 0, total_records: 0, total_symbols: 0, watchlist_count: 0 })
 
   // Tab state
@@ -267,7 +267,7 @@ export default function Historify() {
 
   // Symbol search state
   const [newSymbol, setNewSymbol] = useState('')
-  const [newExchange, setNewExchange] = useState('NSE')
+  const [newExchange, setNewExchange] = useState('IBKR')
   const [searchResults, setSearchResults] = useState<SearchResult[]>([])
   const [showSearchResults, setShowSearchResults] = useState(false)
   const searchContainerRef = useRef<HTMLDivElement>(null)
@@ -322,7 +322,7 @@ export default function Historify() {
   const [isBulkAdding, setIsBulkAdding] = useState(false)
   const [uploadDialogOpen, setUploadDialogOpen] = useState(false)
   const [uploadSymbol, setUploadSymbol] = useState('')
-  const [uploadExchange, setUploadExchange] = useState('NSE')
+  const [uploadExchange, setUploadExchange] = useState('IBKR')
   const [uploadInterval, setUploadInterval] = useState('D')
   const [uploadFile, setUploadFile] = useState<File | null>(null)
   const [isUploading, setIsUploading] = useState(false)
