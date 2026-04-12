@@ -98,7 +98,9 @@ def import_broker_module(broker_name: str) -> dict[str, Any] | None:
             "transform_order_data": mapping_module.transform_order_data,
         }
     except (ImportError, AttributeError) as error:
-        logger.error(f"Error importing broker modules: {error}")
+        logger.error(f"Error importing broker modules for {broker_name}: {error}")
+        import traceback
+        logger.error(traceback.format_exc())
         return None
 
 
@@ -189,7 +191,7 @@ def get_orderbook(
     Supports both API-based authentication and direct internal calls.
 
     Args:
-        api_key: OpenAlgo API key (for API-based calls)
+        api_key: MarvelQuant API key (for API-based calls)
         auth_token: Direct broker authentication token (for internal calls)
         broker: Direct broker name (for internal calls)
 

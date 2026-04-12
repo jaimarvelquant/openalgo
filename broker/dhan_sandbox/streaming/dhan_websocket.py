@@ -1,5 +1,5 @@
 """
-Complete Dhan WebSocket client wrapper for OpenAlgo.
+Complete Dhan WebSocket client wrapper for MarvelQuant.
 Based on Dhan V2 API documentation with proper binary packet parsing.
 """
 
@@ -23,7 +23,7 @@ logger = logging.getLogger("dhan_websocket")
 class DhanWebSocket:
     """
     Complete Wrapper for Dhan's MarketFeed WebSocket client.
-    Bridges the async implementation with OpenAlgo's threading model.
+    Bridges the async implementation with MarvelQuant's threading model.
     """
 
     # Message type constants (based on Dhan binary packet first byte)

@@ -164,7 +164,7 @@ def modify_order(
 
     Args:
         order_data: Order data containing the modifications
-        api_key: OpenAlgo API key (for API-based calls)
+        api_key: MarvelQuant API key (for API-based calls)
         auth_token: Direct broker authentication token (for internal calls)
         broker: Direct broker name (for internal calls)
 

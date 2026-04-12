@@ -111,7 +111,7 @@ def migrate_settings_table():
 def main():
     """Main function to run the migration"""
     logger.info("=" * 60)
-    logger.info("OpenAlgo Security Columns Migration Script")
+    logger.info("MarvelQuant Security Columns Migration Script")
     logger.info("=" * 60)
     logger.info("This script adds missing security columns to the settings table")
     logger.info("to fix the 'no such column: settings.security_404_threshold' error")
@@ -123,7 +123,7 @@ def main():
     if success:
         logger.info("Migration process completed!")
         logger.info("\n📌 Next Steps:")
-        logger.info("   1. Restart your OpenAlgo application")
+        logger.info("   1. Restart your MarvelQuant application")
         logger.info("   2. The /security endpoint should now work properly")
         logger.info("   3. You can access security settings at: http://127.0.0.1:5000/security")
         return 0

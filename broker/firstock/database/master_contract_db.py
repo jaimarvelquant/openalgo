@@ -139,7 +139,7 @@ def download_firstock_data(output_path):
 
 def process_firstock_nse_data(output_path):
     """
-    Processes the Firstock NSE data (NSE_symbols.csv) to generate OpenAlgo symbols.
+    Processes the Firstock NSE data (NSE_symbols.csv) to generate MarvelQuant symbols.
     Separates EQ, BE symbols, and Index symbols.
 
     Index symbols are identified by having 0 values in ISIN, TickSize, and FreezeQty columns.
@@ -242,7 +242,7 @@ def process_firstock_nse_data(output_path):
 
 def process_firstock_nfo_data(output_path):
     """
-    Processes the Firstock NFO data (NFO_symbols.csv) to generate OpenAlgo symbols.
+    Processes the Firstock NFO data (NFO_symbols.csv) to generate MarvelQuant symbols.
     Handles both futures and options formatting.
     """
     logger.info("Processing Firstock NFO Data")
@@ -342,7 +342,7 @@ def process_firstock_nfo_data(output_path):
 
 def process_firstock_bse_data(output_path):
     """
-    Processes the Firstock BSE data (BSE_symbols.csv) to generate OpenAlgo symbols.
+    Processes the Firstock BSE data (BSE_symbols.csv) to generate MarvelQuant symbols.
     Ensures that the instrument type is always 'EQ'.
     """
     logger.info("Processing Firstock BSE Data")
@@ -365,8 +365,8 @@ def process_firstock_bse_data(output_path):
     # Initialize symbol with brsymbol
     df["symbol"] = df["brsymbol"]
 
-    # Apply transformation for OpenAlgo symbols (no special logic needed for BSE)
-    def get_openalgo_symbol(broker_symbol):
+    # Apply transformation for MarvelQuant symbols (no special logic needed for BSE)
+    def get_marvelquant_symbol(broker_symbol):
         return broker_symbol
 
     # Update the symbol column
@@ -409,7 +409,7 @@ def process_firstock_bse_data(output_path):
 
 def process_firstock_bfo_data(output_path):
     """
-    Processes the Firstock BFO data (BFO_symbols.csv) to generate OpenAlgo symbols.
+    Processes the Firstock BFO data (BFO_symbols.csv) to generate MarvelQuant symbols.
     Similar to NFO but for BSE derivatives.
     """
     logger.info("Processing Firstock BFO Data")

@@ -6,7 +6,7 @@ logger = get_logger(__name__)
 Zerodha WebSocket data mapping utilities.
 
 This module provides utilities for mapping between Zerodha's WebSocket data format
-and OpenAlgo's standard format.
+and MarvelQuant's standard format.
 """
 from datetime import UTC, datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
@@ -52,7 +52,7 @@ class ZerodhaExchangeMapper:
             zerodha_exchange: Zerodha exchange code
 
         Returns:
-            OpenAlgo exchange code
+            MarvelQuant exchange code
         """
         return cls._ZERODHA_TO_OA.get(zerodha_exchange.upper(), zerodha_exchange.upper())
 
@@ -113,7 +113,7 @@ class ZerodhaDataTransformer:
             exchange: Exchange code
 
         Returns:
-            Transformed tick data in OpenAlgo format
+            Transformed tick data in MarvelQuant format
         """
         try:
             if not tick_data:
@@ -203,7 +203,7 @@ class ZerodhaDataTransformer:
             order_data: Raw order data from Zerodha WebSocket
 
         Returns:
-            Transformed order data in OpenAlgo format
+            Transformed order data in MarvelQuant format
         """
         try:
             if not order_data or "data" not in order_data:
@@ -257,7 +257,7 @@ class ZerodhaDataTransformer:
             position_data: Raw position data from Zerodha
 
         Returns:
-            Transformed position data in OpenAlgo format
+            Transformed position data in MarvelQuant format
         """
         try:
             if not position_data:

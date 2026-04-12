@@ -245,7 +245,7 @@ def place_order(
 
     Args:
         order_data: Order data containing all required fields
-        api_key: OpenAlgo API key (for API-based calls)
+        api_key: MarvelQuant API key (for API-based calls)
         auth_token: Direct broker authentication token (for internal calls)
         broker: Direct broker name (for internal calls)
         emit_event: Whether to emit socket event (default True, set False for batch orders)

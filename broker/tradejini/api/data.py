@@ -256,7 +256,7 @@ class BrokerData:
             return False
 
     def _format_quote(self, quote_data: dict, symbol: str, exchange: str) -> dict:
-        """Format quote data from Tradejini to OpenAlgo standard format"""
+        """Format quote data from Tradejini to MarvelQuant standard format"""
         try:
             logger.debug(f"Formatting quote data for {symbol}")
 
@@ -273,7 +273,7 @@ class BrokerData:
             bid = float(quote_data.get("bidPrice", 0))
             ask = float(quote_data.get("askPrice", 0))
 
-            # Format the quote to match OpenAlgo response exactly
+            # Format the quote to match MarvelQuant response exactly
             formatted_quote = {
                 "ask": ask,
                 "bid": bid,
@@ -291,7 +291,7 @@ class BrokerData:
 
         except Exception as e:
             logger.error(f"Error formatting quote data: {str(e)}", exc_info=True)
-            # Return minimal valid quote data in OpenAlgo format
+            # Return minimal valid quote data in MarvelQuant format
             return {
                 "ask": 0.0,
                 "bid": 0.0,
@@ -405,7 +405,7 @@ class BrokerData:
                     else:
                         logger.debug("Last quote: None")
 
-            # If no data received, return default quote in OpenAlgo format
+            # If no data received, return default quote in MarvelQuant format
             logger.warning(f"No quote data received for {symbol} after {max_retries} attempts")
             logger.debug(f"Final L1 cache keys: {list(self.ws.L1_dict.keys())}")
 
@@ -664,7 +664,7 @@ class BrokerData:
             return self._get_default_depth()
 
     def _format_depth(self, depth_data: dict, symbol: str, exchange: str) -> dict:
-        """Format depth data from Tradejini to OpenAlgo standard format"""
+        """Format depth data from Tradejini to MarvelQuant standard format"""
         try:
             logger.debug(f"Formatting depth data for {symbol}")
 
@@ -732,7 +732,7 @@ class BrokerData:
             return self._get_default_depth()
 
     def _get_default_depth(self) -> dict:
-        """Return default depth structure in OpenAlgo format"""
+        """Return default depth structure in MarvelQuant format"""
         return {
             "asks": [{"price": 0, "quantity": 0} for _ in range(5)],
             "bids": [{"price": 0, "quantity": 0} for _ in range(5)],

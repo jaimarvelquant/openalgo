@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Cross-platform CSRF Protection Test Suite for OpenAlgo
+Cross-platform CSRF Protection Test Suite for MarvelQuant
 
 This script tests CSRF protection functionality across different platforms (Ubuntu, Windows, macOS)
 and validates that the environment-based configuration works correctly.

@@ -50,7 +50,7 @@ def sandbox_place_order(
 
     Args:
         order_data: Validated order data
-        api_key: OpenAlgo API key
+        api_key: MarvelQuant API key
         original_data: Original request data for logging
 
     Returns:

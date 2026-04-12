@@ -309,7 +309,7 @@ def place_smart_order(
 
     Args:
         order_data: Smart order data
-        api_key: OpenAlgo API key (for API-based calls)
+        api_key: MarvelQuant API key (for API-based calls)
         auth_token: Direct broker authentication token (for internal calls)
         broker: Direct broker name (for internal calls)
         smart_order_delay: Delay in seconds between order placement and response

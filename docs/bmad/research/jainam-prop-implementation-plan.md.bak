@@ -1,0 +1,563 @@
+# JAINAM PROP IMPLEMENTATION PLAN
+## Closing Parity Gaps with fivepaisaxts and Shipping a Production-Ready Broker
+
+**Project:** OpenAlgo – Jainam Prop Broker Integration Enhancement
+**Status:** Updated Implementation Plan – Ready for Execution
+**Date:** October 8, 2025
+**Input Sources:** Fivepaisa XTS reference implementation, Jainam sample SDK (`_sample_strategy/xts_connect.py`), current Jainam Prop codebase
+
+---
+
+## TABLE OF CONTENTS
+
+1. [Executive Summary](#1-executive-summary)
+2. [Implementation Roadmap](#2-implementation-roadmap)
+3. [Phase 1 – Authentication & Token Lifecycle](#3-phase-1--authentication--token-lifecycle)
+4. [Phase 2 – REST API Parity & Mapping Alignment](#4-phase-2--rest-api-parity--mapping-alignment)
+5. [Phase 2.5 – SDK Integration & Pro-Specific Features](#5-phase-25--sdk-integration--pro-specific-features)
+6. [Phase 3 – Streaming & Realtime Reliability](#6-phase-3--streaming--realtime-reliability)
+7. [Phase 3.4 – Advanced Features](#7-phase-34--advanced-features)
+8. [Phase 4 – Quality Hardening & Documentation](#8-phase-4--quality-hardening--documentation)
+9. [Implementation Guidelines](#9-implementation-guidelines)
+10. [Testing Strategy](#10-testing-strategy)
+11. [Risk Assessment](#11-risk-assessment)
+12. [Success Criteria](#12-success-criteria)
+
+---
+
+## 1. EXECUTIVE SUMMARY
+
+### 1.1 Current State
+
+`broker/jainam_prop` mirrors the Fivepaisa reference layout (API, mapping, database, streaming modules) and already delivers stronger token lookup, rich unit tests, and local documentation. However, several critical capabilities are unfinished or inconsistent:
+
+- **Authentication approach:** Jainam XTS API uses direct programmatic login with API key/secret (no OAuth or request tokens). `api/auth_api.py` should implement `authenticate_direct()` that calls XTS API `/interactive/user/session` and `/apimarketdata/auth/login` directly, returning `(interactive_token, market_token, user_id)`. See `docs/bmad/research/jainam-authentication-guide.md` for complete details.
+- **REST plumbing divergence:** Fivepaisa centralises request handling (`get_api_response`) while Jainam repeats per-function HTTP logic, leading to uneven error handling, missing status propagation, and duplicated credential parsing.
+- **Streaming gaps:** The Jainam adapter lacks the reconnect/backoff and DB-token reuse that Fivepaisa’s `FivepaisaXTSWebSocketAdapter` implements. Re-authentication occurs every initialisation and there is no guard against dropped sockets.
+- **SDK leverage gap:** The working sample (`_sample_strategy/xts_connect.py`) demonstrates symmetric interactive/market login, explicit route constants, and full Socket.IO handling, but that structure is not yet mirrored in production code.
+- **Placeholder defaults:** Values like `"DEFAULT_USER"` and broad `try/except` blocks return generic error dicts, signalling incomplete behaviour compared to the production-grade Fivepaisa plug-in.
+
+### 1.2 Strengths to Preserve
+
+- LRU-cached symbol/token resolution backed by `database.symbol` (meets <100 ms target).
+- Broad automated test coverage (11+ pytest modules).
+- Existing master contract ingestion, QA harnesses, and documentation baseline.
+- Sample SDK providing ground truth for XTS request/response contracts.
+
+### 1.3 Objectives
+
+1. Align Jainam authentication, token persistence, and credential flow with Fivepaisa and the sample SDK.
+2. Unify REST API plumbing, mapping, and response handling to achieve feature parity without regressions.
+3. Harden streaming by adopting the reference adapter capabilities (retry, reconnect, token reuse).
+4. Validate functionality through updated automated tests, live QA scripts, and refreshed documentation.
+
+### 1.4 Updated Timeline & Effort
+
+Incorporating the new SDK-focused tasks and Pro-specific safeguards extends the delivery window to **21–24 calendar days** with an estimated **147–178 engineering hours** (previously 14–17 days, 106–124 hours). The additional scope concentrates on production-grade token lifecycle management, resilient transport layers, and preservation of Pro-only functionality surfaced in the working SDK reference.
+
+---
+
+## 2. IMPLEMENTATION ROADMAP
+
+| Phase | Focus | Duration | Effort | Priority | Key Deliverables |
+|-------|-------|----------|--------|----------|------------------|
+| Phase 1 | Authentication & Token Lifecycle | 5–6 days | 38–44 hours | **Critical** | Unified login flow, persisted tokens (interactive + market + user ID), Pro feature inventory checklist |
+| Phase 2 | REST API Parity & Mapping Alignment | 4–5 days | 30–36 hours | **High** | Consistent order/data/funds APIs, mapping alignment, error semantics parity |
+| Phase 2.5 | SDK Integration & Pro-Specific Enhancements | 3–4 days | 24–30 hours | **Critical** | Central HTTP helper with retries, SDK-backed token lifecycle, smart-order orchestration |
+| Phase 3 | Streaming & Realtime Reliability | 4–5 days | 28–34 hours | **High** | Reconnect-safe Socket.IO adapter, subscription replay, feed-token validation |
+| Phase 3.4 | Advanced Features & Configuration | 2 days | 7–10 hours | **Medium** | Environment-driven config, consistent SDK imports, documented integration strategy |
+| Phase 4 | Quality Hardening & Documentation | 3 days | 20–24 hours | **High** | Expanded automated tests, live validation scripts, updated runbooks |
+
+Total: **21–24 days**, **147–178 hours**
+
+---
+
+## 3. PHASE 1 – AUTHENTICATION & TOKEN LIFECYCLE
+
+### Goals
+- Replace the checksum-based `authenticate_broker` flow with the direct interactive + market login used by Fivepaisa and the sample SDK.
+- Persist interactive token, feed token, and user ID in `database.auth_db` so downstream modules can reuse them without re-login.
+- Remove placeholder values (`"dummy_request_token"`, `"DEFAULT_USER"`) and require caller-provided client/user context.
+
+### Key Tasks
+1. **Direct Login Implementation:** Implement `authenticate_direct()` in `api/auth_api.py` that:
+   - Reads `JAINAM_INTERACTIVE_API_KEY/SECRET` and `JAINAM_MARKET_API_KEY/SECRET` from environment
+   - Makes HTTP POST to `/interactive/user/session` endpoint for interactive token
+   - Makes HTTP POST to `/apimarketdata/auth/login` endpoint for market token
+   - Returns `(interactive_token, market_token, user_id)` tuple
+   - **No request token or OAuth flow needed** - direct API key/secret authentication
+2. **Token Persistence:** Store both tokens in `database.auth_db` keyed by `user_id` (mirroring Fivepaisa pattern)
+3. **Helper Script:** Use `broker/jainam_prop/get_jainam_tokens.py` for manual token generation during testing
+4. **Credential Validation:** Add guardrails to validate required environment variables and surface actionable errors
+
+### Deliverables
+- Updated `api/auth_api.py`, `api/order_api.py`, `api/data.py`, streaming adapter initialisers consuming persisted tokens.
+- Migration or script documenting how to populate existing tokens in DB for Jainam.
+- Phase completion checklist (see Section 10).
+
+#### Task 1.7 – Pro-Specific Feature Preservation (6–8 hours, **High**)
+
+**Current State:** Several Pro-only capabilities demonstrated in `_sample_strategy/xts_connect.py` (dealer order book, dealer trade book, bracket/cover orders, market depth/OOI message handling) are only partially surfaced in the production package. Without an explicit preservation plan, parity work could regress Pro functionality.
+**Implementation Approach:**
+- Catalogue Pro endpoints in `broker/jainam_prop/api/order_api.py` and `api/data.py`, ensuring wrappers expose:
+  - `get_dealer_orderbook`, `get_dealer_tradebook`, and dealer-specific position endpoints (`get_dealerposition_netwise`) with `clientID` passthrough.
+  - Bracket order and cover order flows (`place_bracketorder`, `place_cover_order`, modify/cancel variants).
+  - Market data message codes 1501/1502/1505/1510/1512, including correct exchange segment resolution.
+- Cross-reference against sample SDK usage at lines 78 and 225 for canonical payload shapes (reference only).
+- Define a verification checklist covering REST, market data, and streaming artefacts to be executed during Phase 4 testing.
+**Acceptance Criteria:**
+1. Documentation in `broker/jainam_prop` clearly marks Pro-only endpoints and their invocation path.
+2. Automated or manual tests confirm dealer order book, dealer trade book, bracket, and cover orders succeed with `clientID` provided.
+3. Market data subscriptions deliver all required message codes without filtering or downgrading depth.
+4. Verification checklist archived in project docs and referenced in Phase 4 sign-off.
+
+---
+
+## 4. PHASE 2 – REST API PARITY & MAPPING ALIGNMENT
+
+### Goals
+- Achieve behavioural parity with Fivepaisa’s REST flows (order placement, trade/position book, holdings, funds, market data) while leveraging existing mapping logic.
+- Reduce duplicated request code by introducing a Jainam-specific `get_api_response` helper patterned after Fivepaisa.
+- Ensure all request/response transforms use shared mapping utilities, with consistent exchange/product translations.
+
+### Key Tasks
+1. **Shared HTTP Helper:** Introduce `api/http.py` (or extend `api/order_api.py`) with `get_api_response(endpoint, method, payload, token, *, is_market=False)` similar to Fivepaisa’s helper (headers, logging, status, error propagation).
+2. **Order Lifecycle Parity:** Refactor `place_order_api`, `modify_order_api`, `cancel_order_api`, `get_order_book`, `get_trade_book`, `get_positions`, and `get_holdings` to use the helper, removing duplicate auth parsing and ensuring responses pass through `mapping.transform_response` or equivalent.
+3. **Data Services:** Align `api/data.py` (`get_quotes`, `get_historical_data`, search helpers) with Fivepaisa’s approach, including optional OI fetches and consistent fallback behaviour.
+4. **Mapping Enhancements:** Extend `mapping/order_data.py` with the statistics, status normalisation, and exchange/product reverse mappings present in Fivepaisa if missing.
+5. **Error Semantics:** Ensure all API functions return structured dictionaries with `status`, `message`, `data`, mirroring reference expectations.
+
+### Deliverables
+- Refactored REST modules with shared helper and parity coverage.
+- Updated docstrings and inline examples reflecting new flows.
+- Regression-safe unit tests verifying helper behaviour (success, HTTP error, timeout).
+
+---
+
+## 5. PHASE 2.5 – SDK INTEGRATION & PRO-SPECIFIC FEATURES
+
+### Overview
+This intermediate phase packages the highest-impact enhancements that rely directly on the XTS Pro SDK. The goals are to (a) consolidate HTTP orchestration with resilient retries, (b) formalise the token lifecycle around the SDK rather than bespoke flows, and (c) provide smart-order delta logic tailored to Pro accounts. These tasks feed back into Phase 2 deliverables and unblock Phase 3 streaming resilience.
+
+### Task 2.4 – HTTP Helper with Retry Logic (8–10 hours, **Critical**)
+
+**Current State:** REST modules (`order_api.py`, `data.py`, `funds.py`) issue requests ad hoc without shared logging, retry, or telemetry.
+**Recommendation:** Create a module-level helper (`broker/jainam_prop/api/http.py`) that mirrors the Fivepaisa `get_api_response` signaturecitebroker/fivepaisaxts/api/order_api.py:15, adds exponential backoff, and centralises structured logging.
+**Implementation Approach:**
+1. Define `request_with_retry(endpoint, method="GET", payload=None, *, auth_token, market=False, retries=3, backoff=(0.25, 2.0))`.
+2. Wrap `httpx` requests via `utils.httpx_client.get_httpx_client()` to reuse connection pools.
+3. On retryable status codes (5xx, 429) and network errors, sleep exponentially (`delay = base * factor**attempt`) before retry.
+4. Emit structured logs (request metadata, attempt count, latency) using `utils.logging.get_logger`.
+5. Retrofit `order_api.py`, `data.py`, and `funds.py` to depend on the helper; update docstrings to reference Task 2.4.
+6. Coordinate with existing Phase 2 Task 1 (Shared HTTP Helper) to avoid duplication—this task supersedes and implements that design.
+**Illustrative Code:**
+```python
+# broker/jainam_prop/api/http.py
+from __future__ import annotations
+import time
+from http import HTTPStatus
+from typing import Any, Dict, Optional
+
+import httpx
+from utils.httpx_client import get_httpx_client
+from utils.logging import get_logger
+
+logger = get_logger(__name__)
+
+RETRYABLE_STATUS = {
+    HTTPStatus.TOO_MANY_REQUESTS,
+    HTTPStatus.BAD_GATEWAY,
+    HTTPStatus.SERVICE_UNAVAILABLE,
+    HTTPStatus.GATEWAY_TIMEOUT,
+}
+
+def request_with_retry(endpoint: str,
+                       method: str = "GET",
+                       payload: Optional[Dict[str, Any]] = None,
+                       *,
+                       auth_token: str,
+                       market: bool = False,
+                       retries: int = 3,
+                       backoff: tuple[float, float] = (0.25, 2.0)) -> httpx.Response:
+    client = get_httpx_client()
+    url_base = "apimarketdata" if market else "interactive"
+    url = f"{endpoint}" if endpoint.startswith("http") else f"{url_base}{endpoint}"
+    headers = {"Authorization": auth_token, "Content-Type": "application/json"}
+
+    delay = backoff[0]
+    for attempt in range(retries + 1):
+        start = time.perf_counter()
+        try:
+            response = client.request(method, url, json=payload if method != "GET" else None,
+                                      params=payload if method == "GET" else None, headers=headers)
+            latency = (time.perf_counter() - start) * 1000
+            logger.info("jainam_http", extra={"endpoint": endpoint, "status": response.status_code,
+                                              "attempt": attempt, "latency_ms": latency})
+            if attempt < retries and response.status_code in RETRYABLE_STATUS:
+                time.sleep(delay)
+                delay *= backoff[1]
+                continue
+            response.status = response.status_code  # parity with Fivepaisa helper
+            return response
+        except httpx.RequestError as exc:
+            logger.warning("jainam_http_error", extra={"endpoint": endpoint, "attempt": attempt, "error": str(exc)})
+            if attempt == retries:
+                raise
+            time.sleep(delay)
+            delay *= backoff[1]
+    raise RuntimeError(f"Unable to reach Jainam endpoint after {retries + 1} attempts")
+```
+**Acceptance Criteria:**
+1. All REST-facing modules depend on `request_with_retry`; no direct `httpx` calls remain outside the helper.
+2. Backoff and retry parameters are configurable via environment variables or module constants.
+3. Unit tests simulate transient 5xx responses and confirm retry exhaustion/backoff timing.
+4. Structured logs appear in the standard OpenAlgo logging pipeline with consistent keys.
+
+### Task 2.5 – Token Lifecycle Management Enhancement (6–8 hours, **Critical**)
+
+**Current State:** `api/auth_api.py` uses OAuth-based `authenticate_broker()` pattern that doesn't apply to Jainam.
+**Recommendation:** Implement `authenticate_direct()` for direct API key/secret login (no OAuth, no request tokens).
+**Implementation Approach:**
+1. Create `authenticate_direct()` in `api/auth_api.py` that makes direct HTTP calls to XTS API endpoints
+2. No SDK wrapper needed - direct REST API calls are simpler and more maintainable
+3. Persist tokens via `database.auth_db.store_broker_auth_token`
+4. Rehydrate tokens in any consumer (REST or streaming) by reading from the DB
+
+**Reference Documentation:** See `docs/bmad/research/jainam-authentication-guide.md` for complete authentication details.
+
+**Implementation Example:**
+```python
+# broker/jainam_prop/api/auth_api.py
+import os
+import httpx
+from database.auth_db import store_broker_auth_token
+from broker.jainam_prop.api.config import get_jainam_base_url
+
+def authenticate_direct():
+    """
+    Direct authentication with Jainam XTS API (no request token needed)
+
+    Returns:
+        dict: {
+            'interactive_token': str,
+            'market_token': str,
+            'user_id': str,
+            'is_investor_client': bool
+        }
+
+    Raises:
+        ValueError: If credentials are missing
+        Exception: If authentication fails
+    """
+    # Get credentials from environment
+    interactive_api_key = os.getenv('JAINAM_INTERACTIVE_API_KEY')
+    interactive_api_secret = os.getenv('JAINAM_INTERACTIVE_API_SECRET')
+    market_api_key = os.getenv('JAINAM_MARKET_API_KEY')
+    market_api_secret = os.getenv('JAINAM_MARKET_API_SECRET')
+    base_url = get_jainam_base_url()
+
+    if not all([interactive_api_key, interactive_api_secret, market_api_key, market_api_secret]):
+        raise ValueError("Missing required Jainam API credentials in environment")
+
+    # Login to Interactive API
+    interactive_response = httpx.post(
+        f"{base_url}/interactive/user/session",
+        json={
+            "appKey": interactive_api_key,
+            "secretKey": interactive_api_secret,
+            "source": "WEBAPI"
+        },
+        timeout=30.0
+    )
+    interactive_response.raise_for_status()
+    interactive_data = interactive_response.json()
+
+    if interactive_data.get('type') != 'success':
+        raise Exception(f"Interactive login failed: {interactive_data.get('description')}")
+
+    interactive_token = interactive_data['result']['token']
+    user_id = interactive_data['result']['userID']
+    is_investor = interactive_data['result'].get('isInvestorClient', False)
+
+    # Login to Market Data API
+    market_response = httpx.post(
+        f"{base_url}/apimarketdata/auth/login",
+        json={
+            "appKey": market_api_key,
+            "secretKey": market_api_secret,
+            "source": "WEBAPI"
+        },
+        timeout=30.0
+    )
+    market_response.raise_for_status()
+    market_data = market_response.json()
+
+    if market_data.get('type') != 'success':
+        raise Exception(f"Market Data login failed: {market_data.get('description')}")
+
+    market_token = market_data['result']['token']
+
+    # Store tokens in database
+    store_broker_auth_token(
+        broker="jainam_prop",
+        user_id=user_id,
+        auth_token=interactive_token,
+        market_token=market_token
+    )
+
+    return {
+        'interactive_token': interactive_token,
+        'market_token': market_token,
+        'user_id': user_id,
+        'is_investor_client': is_investor
+    }
+```
+
+**Helper Script:** Use `broker/jainam_prop/get_jainam_tokens.py` for manual token generation during testing.
+
+**Acceptance Criteria:**
+1. `authenticate_direct()` returns structured payload with `user_id`, `interactive_token`, and `market_token`
+2. Tokens are persisted to `database.auth_db` and rehydrated automatically for streaming/REST calls
+3. No OAuth callback or request token handling needed
+4. Regression tests confirm login, persistence, and rehydration flows (mocked or sandbox)
+5. Helper script successfully generates tokens for testing
+
+### Task 2.6 – Smart Order Orchestration (10–12 hours, **High**)
+
+**Current State:** Smart-order delta logic exists in Fivepaisa retail code but not in the Pro implementation.
+**Recommendation:** Port the delta calculation from `broker/fivepaisaxts/api/order_api.py:117` and adapt it to the Pro SDK, leveraging dealer position endpoints (`get_dealerposition_netwise`) and explicit `clientID` forwarding (reference only: `_sample_strategy/xts_connect.py:78`).
+**Implementation Approach:**
+1. Fetch current net quantity via SDK call (`get_dealerposition_netwise(clientID=...)`).
+2. Compute delta vs target; early exit if delta is zero.
+3. Determine order side (`BUY`/`SELL`) based on delta sign; issue market order for absolute delta quantity using SDK `place_order`.
+4. Integrate with Task 2.4 helper for logging and error handling.
+**Illustrative Code (reference only; adapt before committing):**
+```python
+# broker/jainam_prop/api/order_api.py
+def place_smart_order(api_instance, symbol, exchange_segment, target_quantity, client_id):
+    """
+    Place smart order that calculates delta between target and current position.
+    """
+    position_response = api_instance.get_dealerposition_netwise(clientID=client_id)
+    current_quantity = int(position_response["result"][0]["NetQty"])
+
+    delta = target_quantity - current_quantity
+    if delta == 0:
+        return {"status": "success", "message": "Position already at target quantity"}
+
+    order_side = api_instance.TRANSACTION_TYPE_BUY if delta > 0 else api_instance.TRANSACTION_TYPE_SELL
+
+    return api_instance.place_order(
+        exchangeSegment=exchange_segment,
+        exchangeInstrumentID=symbol,
+        productType=api_instance.PRODUCT_MIS,
+        orderType=api_instance.ORDER_TYPE_MARKET,
+        orderSide=order_side,
+        timeInForce=api_instance.VALIDITY_DAY,
+        disclosedQuantity=0,
+        orderQuantity=abs(delta),
+        limitPrice=0,
+        stopPrice=0,
+        orderUniqueIdentifier="OPENALGO_SMART",
+        clientID=client_id,
+    )
+```
+**Acceptance Criteria:**
+1. Smart-order endpoint accepts target quantity + `clientID` and returns order identifiers on success.
+2. Delta calculation honours both long and short adjustments, including flattening to zero.
+3. Error messaging distinguishes between missing positions and failed order placements.
+4. Tests cover edge cases (already flat, reversing position, insufficient data).
+
+---
+
+## 6. PHASE 3 – STREAMING & REALTIME RELIABILITY
+
+### Goals
+- Bring Jainam Socket.IO handling up to the resilience level of Fivepaisa (`streaming/fivepaisaxts_adapter.py`), including reconnection and subscription replay logic.
+- Reuse persisted tokens, introduce reconnect/backoff logic, and ensure subscription management works across reconnects.
+- Harmonise capability mapping (supported exchanges, depth levels, message codes) while preserving Pro message types (1501/1502/1505/1510/1512).
+- Parse feed-token JWTs to validate the effective `userID` before establishing sockets.
+
+### Key Tasks
+1. **Adapter Refactor:** Mirror the Fivepaisa adapter structure—inherit from `websocket_proxy.base_adapter` (or reconcile with current `websocket_adapters.base_adapter`), add state tracking, lock usage, and reconnect thresholds.
+2. **Token Extraction:** Decode feed token JWT to extract actual user IDs (as Fivepaisa does) and log/emit them for downstream consumers.
+3. **Subscription Registry:** Normalise subscription payloads (mode → message code) using shared mapping utilities; persist subscriptions across reconnects and replay them after reconnect.
+4. **Capability Registry:** Introduce `JainamCapabilityRegistry` (modelled after `FivepaisaXTSCapabilityRegistry`) describing supported exchanges, depth levels, and fallbacks.
+5. **WebSocket Client Improvements:** Either wrap the sample SDK Socket.IO client or refactor `jainam_websocket.py` to support login-before-connect, error callbacks, and unsubscription semantics.
+6. **Telemetry & Alerts:** Emit metrics for reconnect attempts, subscription replay success, and token validation to support production monitoring.
+
+### Deliverables
+- Updated streaming adapter and client modules, with docstrings describing reconnect behaviour and subscription replay.
+- Tests or harness verifying subscription lifecycle (unit or integration with mocked Socket.IO server).
+- Operational checklist covering environment variables and expected log lines.
+
+---
+
+## 7. PHASE 3.4 – ADVANCED FEATURES
+
+### Task 3.4 – Configuration Management (3–4 hours, **Low**)
+
+**Current State:** Root URLs and SSL flags are occasionally hard-coded (e.g., `_sample_strategy/xts_connect.py:380`, reference only), risking configuration drift between environments.
+**Recommendation:** Load base URLs, SSL flags, and retry tuning from environment variables or central config files, matching the SDK expectation to read from `config.ini`.citebroker/jainam_prop/_sample_strategy/xts_PRO_SDK/Connect.py:40
+**Implementation Approach:**
+1. Extend `broker/jainam_prop/api/config.py` to read `JAINAM_BASE_URL`, `JAINAM_DISABLE_SSL`, and retry/backoff overrides, with documented defaults.
+2. Document configuration precedence: environment variable → `.env`/deployment secret → fallback constant.
+3. Update `api/auth_api.py`, `api/http.py` (Task 2.4), and streaming adapters to rely on the config helper rather than duplicating URLs.
+4. Provide example configuration for local development and production.
+**Configuration Example:**
+```ini
+# config/example.env (reference)
+JAINAM_BASE_URL=https://smpb.jainam.in:4143
+JAINAM_DISABLE_SSL=false
+JAINAM_HTTP_RETRIES=3
+JAINAM_HTTP_BACKOFF_BASE=0.25
+JAINAM_HTTP_BACKOFF_FACTOR=2.0
+```
+**Acceptance Criteria:**
+1. All modules derive root URLs via `get_jainam_base_url()` or the new config helper—no hard-coded URLs remain.
+2. SSL verification is configurable without code changes.
+3. Documentation outlines required environment variables for each deployment tier.
+
+### Task 3.5 – SDK Integration Strategy (4–6 hours, **Medium**)
+
+**Current State:** The working sample duplicates SDK classes inside `xts_connect.py`, increasing divergence risk when the upstream SDK changes.
+**Recommendation:** Standardise on importing from `broker/jainam_prop/_sample_strategy/xts_PRO_SDK` (or vendor-distributed package) and wrap custom behaviour in thin utilities to avoid editing SDK sources.
+**Implementation Approach:**
+1. Audit modules for direct copies of SDK code; replace with explicit imports (`from broker.jainam_prop._sample_strategy.xts_PRO_SDK.Connect import XTSConnect`).
+2. Encapsulate custom requirements (e.g., DataFrame shaping, logging) in helper modules that call the SDK rather than modifying SDK files.
+3. Document upgrade procedure for future SDK releases (version pin, smoke tests).
+4. Coordinate with Task 2.5 to ensure authentication wrappers leverage the shared import path.
+**Example Usage:**
+```python
+# broker/jainam_prop/api/sdk.py
+from broker.jainam_prop._sample_strategy.xts_PRO_SDK.Connect import XTSConnect
+
+def build_xts_client(api_key: str, api_secret: str, source: str, root_url: str):
+    """
+    Return a configured XTSConnect client. Wraps SDK initialisation so callers
+    never import SDK modules directly.
+    """
+    return XTSConnect(api_key, api_secret, source, root=root_url)
+```
+**Acceptance Criteria:**
+1. No production module duplicates SDK class definitions; all reuse the shared import wrapper.
+2. Upgrade playbook exists documenting how to validate future SDK drops.
+3. Linting/tests confirm wrapper module is the single import point for SDK usage.
+4. Documentation labels `_sample_strategy` paths as reference-only templates.
+
+---
+
+## 8. PHASE 4 – QUALITY HARDENING & DOCUMENTATION
+
+### Goals
+- Align automated tests with the new flows, add live validation scripts, and refresh documentation/runbooks.
+- Confirm parity with Fivepaisa across both happy-path and error scenarios.
+
+### Key Tasks
+1. **Test Suite Expansion:**
+   - Update existing pytest cases to use the new auth/token interfaces.
+   - Add regression tests for REST helper error paths, token persistence, and streaming reconnect logic (mocks/fakes).
+2. **Benchmark & Monitoring:** Extend current benchmark tests (`test_auth_benchmark.py`, `test_performance_standalone.py`) to assert login latency, smart order delta handling, and streaming reconnect time.
+3. **Documentation Refresh:** Update README / runbooks describing credential setup, token storage, streaming operations, and parity status table vs Fivepaisa.
+4. **Operational Scripts:** Provide CLI snippets or notebooks for manual validation (login, place order, fetch data, open stream).
+5. **Sign-off Review:** Conduct final review comparing features against phases and success criteria.
+
+### Deliverables
+- Passing CI suite with new tests.
+- Updated docs in `docs/bmad/research` (this plan), plugin README, and ops notes.
+- QA validation report referencing updated success criteria.
+
+---
+
+## 9. IMPLEMENTATION GUIDELINES
+
+- **Reuse Reference Patterns:** Treat Fivepaisa modules as templates for structure, logging, and error semantics. When diverging, document rationale.
+- **Lift from Sample SDK Thoughtfully:** Import or adapt only the necessary pieces from `_sample_strategy/xts_connect.py`, ensuring production code avoids unnecessary SDK baggage.
+- **Centralise Configuration:** Keep base URLs in a single module (`api/config.py`) and avoid hard-coded fallbacks outside initialisation.
+- **Token Handling:** Validate all tokens before use, attach user identifiers, and sanitise logs (mask secrets).
+- **Consistency First:** Align naming, argument order, and return shapes across Jainam and Fivepaisa to simplify cross-broker orchestration.
+
+---
+
+## 10. TESTING STRATEGY
+
+| Layer | Coverage Focus | Tooling |
+|-------|----------------|---------|
+| Unit | Auth helpers, HTTP wrapper, mapping transforms, token cache invalidation | `pytest`, fixtures, mock `httpx` |
+| Integration | Live login, order lifecycle, data endpoints, smart order delta flow | Opt-in tests requiring real credentials/environment |
+| Streaming | Mocked Socket.IO feed, reconnect scenarios, subscription persistence | `socketio.TestClient`, fault injection |
+| Performance | Authentication latency, order placement round-trip, token cache (<100 ms) | Existing benchmarks + new timing assertions |
+| Regression | Cross-compare Fivepaisa vs Jainam outputs for a fixture set | Shared test harness verifying parity |
+
+Ensure CI separates live-integration tests via markers (`pytest -m live_xts`) to avoid accidental execution.
+
+---
+
+## 11. RISK ASSESSMENT
+
+| Risk | Impact | Likelihood | Mitigation |
+|------|--------|------------|------------|
+| Breaking existing auth-dependent tests during flow rewrite | High | Medium | Stage updates behind feature flag or configuration toggle; provide adapter for legacy tokens until migration complete |
+| Socket.IO behaviour differences vs Fivepaisa | Medium | Medium | Build adapter abstraction layer with mocks; test against sandbox feed before production rollout |
+| API throttling during extensive parity testing | Medium | High | Implement rate limiting/backoff, share test credentials, schedule live runs during low-traffic windows |
+| Schema mismatches in `symbol_token` table | Medium | Low | Validate schema upfront, provide migration notes for required columns |
+
+---
+
+## 12. SUCCESS CRITERIA
+
+- ✅ Authentication delivers interactive token, market/feed token, and user ID; tokens persist via `database.auth_db` and are reusable across sessions.
+- ✅ REST endpoints share a helper, return consistent structures, and pass parity tests against Fivepaisa for orders, trades, positions, holdings, funds, quotes, and historical data.
+- ✅ Streaming adapter reconnects automatically, maintains subscriptions, and exposes capability metadata comparable to Fivepaisa.
+- ✅ All automated tests (unit, integration, streaming, performance) pass; new tests cover auth flow, HTTP helper, and streaming reconnect scenarios.
+- ✅ Documentation reflects updated flows, credentials, and operational procedures, with a parity checklist showing no critical gaps vs Fivepaisa.
+
+---
+
+**Next Action:** Kick off Phase 1 by replacing the checksum login in `api/auth_api.py` with the SDK-style direct login, persisting tokens via `database.auth_db`, and updating tests to consume the new interface.
+
+---
+
+## AUTHENTICATION REFERENCE
+
+**Complete Authentication Guide:** See `docs/bmad/research/jainam-authentication-guide.md`
+
+**Key Points:**
+- ✅ Jainam XTS API uses **direct login** (no OAuth, no request tokens, no checksum)
+- ✅ Two separate logins: Interactive API + Market Data API
+- ✅ Helper script available: `broker/jainam_prop/get_jainam_tokens.py`
+- ✅ Tokens valid for ~24 hours, can be refreshed programmatically
+
+**Quick Start for Testing:**
+```bash
+# Generate tokens manually
+cd /Users/maruth/projects/openalgo
+python broker/jainam_prop/get_jainam_tokens.py
+
+# Tokens will be saved to .env automatically
+# Use these tokens for live API testing
+```
+
+**Implementation Pattern:**
+```python
+# Direct HTTP calls to XTS API (no SDK wrapper needed)
+POST {base_url}/interactive/user/session
+  Body: {"appKey": "...", "secretKey": "...", "source": "WEBAPI"}
+  Returns: {"result": {"token": "...", "userID": "..."}}
+
+POST {base_url}/apimarketdata/auth/login
+  Body: {"appKey": "...", "secretKey": "...", "source": "WEBAPI"}
+  Returns: {"result": {"token": "...", "userID": "..."}}
+```
+
+**Authentication Endpoints:**
+- **Interactive API:** `POST {base_url}/interactive/user/session`
+- **Market Data API:** `POST {base_url}/apimarketdata/auth/login`
+- **Base URL:** `http://smpb.jainam.in:4143/` (configured in `JAINAM_BASE_URL`)
+
+**Token Usage:**
+- **Interactive Token:** Used for orders, portfolio, positions, funds (header: `Authorization: {token}`)
+- **Market Token:** Used for quotes, historical data, market depth (header: `Authorization: {token}`)
+
+**For More Details:** See complete authentication guide at `docs/bmad/research/jainam-authentication-guide.md`
+

@@ -201,7 +201,7 @@ def download_csv_indmoney_data(output_path):
 
 def reformat_symbol(row, file_segment=None):
     """
-    Reformat symbols according to OpenAlgo standards based on Indmoney data structure
+    Reformat symbols according to MarvelQuant standards based on Indmoney data structure
     """
     instrument_name = row["INSTRUMENT_NAME"]
     option_type = row.get("OPTION_TYPE", "")

@@ -1,8 +1,8 @@
-# OpenAlgo Services Documentation
+# MarvelQuant Services Documentation
 
 ## Overview
 
-OpenAlgo Services are Python functions that provide programmatic access to trading operations. These services mirror the functionality of the OpenAlgo SDK but are designed for internal use within the OpenAlgo application. Each service function accepts the same request parameters and returns the same responses as documented in the OpenAlgo SDK.
+MarvelQuant Services are Python functions that provide programmatic access to trading operations. These services mirror the functionality of the MarvelQuant SDK but are designed for internal use within the MarvelQuant application. Each service function accepts the same request parameters and returns the same responses as documented in the MarvelQuant SDK.
 
 ## Table of Contents
 
@@ -63,14 +63,14 @@ Place a new order with the broker.
 
 **Function:** `place_order(order_data, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/place_order_service.py`
+**Location:** `marvelquant/services/place_order_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | order_data | dict | Yes | Order details |
-| api_key | str | Conditional | OpenAlgo API key (for API-based calls) |
+| api_key | str | Conditional | MarvelQuant API key (for API-based calls) |
 | auth_token | str | Conditional | Direct broker authentication token (for internal calls) |
 | broker | str | Conditional | Broker name (for internal calls) |
 
@@ -171,14 +171,14 @@ Place a smart order that considers current position size.
 
 **Function:** `place_smart_order(order_data, api_key=None, auth_token=None, broker=None, smart_order_delay=None)`
 
-**Location:** `openalgo/services/place_smart_order_service.py`
+**Location:** `marvelquant/services/place_smart_order_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | order_data | dict | Yes | Smart order details |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 | smart_order_delay | str | No | Delay in seconds (default: 0.5) |
@@ -549,14 +549,14 @@ Place multiple orders simultaneously.
 
 **Function:** `place_basket_order(basket_data, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/basket_order_service.py`
+**Location:** `marvelquant/services/basket_order_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | basket_data | dict | Yes | Basket order details with orders array |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -656,14 +656,14 @@ Split a large order into multiple smaller orders.
 
 **Function:** `split_order(split_data, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/split_order_service.py`
+**Location:** `marvelquant/services/split_order_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | split_data | dict | Yes | Split order details |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -768,14 +768,14 @@ Modify an existing order.
 
 **Function:** `modify_order(order_data, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/modify_order_service.py`
+**Location:** `marvelquant/services/modify_order_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | order_data | dict | Yes | Modified order details |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -842,14 +842,14 @@ Cancel an existing order.
 
 **Function:** `cancel_order(orderid, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/cancel_order_service.py`
+**Location:** `marvelquant/services/cancel_order_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | orderid | str | Yes | Order ID to cancel |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -890,14 +890,14 @@ Cancel all open orders and trigger pending orders.
 
 **Function:** `cancel_all_orders(order_data=None, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/cancel_all_order_service.py`
+**Location:** `marvelquant/services/cancel_all_order_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | order_data | dict | No | Additional order data (optional) |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -946,14 +946,14 @@ Close all open positions across various exchanges.
 
 **Function:** `close_position(position_data=None, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/close_position_service.py`
+**Location:** `marvelquant/services/close_position_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | position_data | dict | No | Additional position data (optional) |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -996,14 +996,14 @@ Get the current status of an order.
 
 **Function:** `get_order_status(status_data, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/orderstatus_service.py`
+**Location:** `marvelquant/services/orderstatus_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | status_data | dict | Yes | Order status request data |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -1069,14 +1069,14 @@ Get the current open position for a symbol.
 
 **Function:** `get_open_position(position_data, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/openposition_service.py`
+**Location:** `marvelquant/services/openposition_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | position_data | dict | Yes | Position query data |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -1137,7 +1137,7 @@ Get market quotes for a symbol.
 
 **Function:** `get_quotes(symbol, exchange, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/quotes_service.py`
+**Location:** `marvelquant/services/quotes_service.py`
 
 **Parameters:**
 
@@ -1145,7 +1145,7 @@ Get market quotes for a symbol.
 |-----------|------|----------|-------------|
 | symbol | str | Yes | Trading symbol |
 | exchange | str | Yes | Exchange (NSE, NFO, etc.) |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -1309,7 +1309,7 @@ Get market depth for a symbol.
 
 **Function:** `get_depth(symbol, exchange, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/depth_service.py`
+**Location:** `marvelquant/services/depth_service.py`
 
 **Parameters:**
 
@@ -1317,7 +1317,7 @@ Get market depth for a symbol.
 |-----------|------|----------|-------------|
 | symbol | str | Yes | Trading symbol |
 | exchange | str | Yes | Exchange (NSE, NFO, etc.) |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -1390,7 +1390,7 @@ Get historical data for a symbol.
 
 **Function:** `get_history(symbol, exchange, interval, start_date, end_date, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/history_service.py`
+**Location:** `marvelquant/services/history_service.py`
 
 **Parameters:**
 
@@ -1401,7 +1401,7 @@ Get historical data for a symbol.
 | interval | str | Yes | Time interval (1m, 5m, 15m, 1h, D) |
 | start_date | str | Yes | Start date (YYYY-MM-DD) |
 | end_date | str | Yes | End date (YYYY-MM-DD) |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -1448,13 +1448,13 @@ Get available time intervals for historical data.
 
 **Function:** `get_intervals(api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/intervals_service.py`
+**Location:** `marvelquant/services/intervals_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -1503,7 +1503,7 @@ Get detailed information about a symbol.
 
 **Function:** `get_symbol(symbol, exchange, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/symbol_service.py`
+**Location:** `marvelquant/services/symbol_service.py`
 
 **Parameters:**
 
@@ -1511,7 +1511,7 @@ Get detailed information about a symbol.
 |-----------|------|----------|-------------|
 | symbol | str | Yes | Trading symbol |
 | exchange | str | Yes | Exchange (NSE, NFO, etc.) |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -1566,7 +1566,7 @@ Search for symbols.
 
 **Function:** `search_symbol(query, exchange, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/search_service.py`
+**Location:** `marvelquant/services/search_service.py`
 
 **Parameters:**
 
@@ -1574,7 +1574,7 @@ Search for symbols.
 |-----------|------|----------|-------------|
 | query | str | Yes | Search query |
 | exchange | str | Yes | Exchange (NSE, NFO, etc.) |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -1631,7 +1631,7 @@ Get expiry dates for a symbol.
 
 **Function:** `get_expiry(symbol, exchange, instrumenttype, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/expiry_service.py`
+**Location:** `marvelquant/services/expiry_service.py`
 
 **Parameters:**
 
@@ -1640,7 +1640,7 @@ Get expiry dates for a symbol.
 | symbol | str | Yes | Trading symbol |
 | exchange | str | Yes | Exchange (NSE, NFO, etc.) |
 | instrumenttype | str | Yes | Instrument type (options, futures) |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -2128,13 +2128,13 @@ Get account funds information.
 
 **Function:** `get_funds(api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/funds_service.py`
+**Location:** `marvelquant/services/funds_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -2290,13 +2290,13 @@ Get the order book.
 
 **Function:** `get_orderbook(api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/orderbook_service.py`
+**Location:** `marvelquant/services/orderbook_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -2359,13 +2359,13 @@ Get the trade book.
 
 **Function:** `get_tradebook(api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/tradebook_service.py`
+**Location:** `marvelquant/services/tradebook_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -2417,13 +2417,13 @@ Get the position book.
 
 **Function:** `get_positionbook(api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/positionbook_service.py`
+**Location:** `marvelquant/services/positionbook_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -2473,13 +2473,13 @@ Get account holdings.
 
 **Function:** `get_holdings(api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/holdings_service.py`
+**Location:** `marvelquant/services/holdings_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -2723,14 +2723,14 @@ Get analyzer mode status.
 
 **Function:** `get_analyzer_status(analyzer_data, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/analyzer_service.py`
+**Location:** `marvelquant/services/analyzer_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | analyzer_data | dict | Yes | Analyzer data (can be empty dict) |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -2775,14 +2775,14 @@ Toggle analyzer mode on/off.
 
 **Function:** `toggle_analyzer_mode(analyzer_data, api_key=None, auth_token=None, broker=None)`
 
-**Location:** `openalgo/services/analyzer_service.py`
+**Location:** `marvelquant/services/analyzer_service.py`
 
 **Parameters:**
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
 | analyzer_data | dict | Yes | Analyzer data containing mode |
-| api_key | str | Conditional | OpenAlgo API key |
+| api_key | str | Conditional | MarvelQuant API key |
 | auth_token | str | Conditional | Direct broker authentication token |
 | broker | str | Conditional | Broker name |
 
@@ -2837,9 +2837,9 @@ Tuple containing:
 
 ### TelegramAlertService
 
-The Telegram Alert Service provides automated notifications for order-related events via Telegram. This service is not part of the SDK yet but is available for internal use within OpenAlgo.
+The Telegram Alert Service provides automated notifications for order-related events via Telegram. This service is not part of the SDK yet but is available for internal use within MarvelQuant.
 
-**Location:** `openalgo/services/telegram_alert_service.py`
+**Location:** `marvelquant/services/telegram_alert_service.py`
 
 **Features:**
 
@@ -3270,11 +3270,11 @@ Services depend on the following modules:
 ## Support
 
 For issues or questions:
-- GitHub: https://github.com/marketcalls/openalgo
-- Documentation: https://docs.openalgo.in
+- GitHub: https://github.com/marketcalls/marvelquant
+- Documentation: https://docs.marvelquant.com
 - Discord: Join our community
 
 ---
 
 **Last Updated:** January 2025
-**Version:** OpenAlgo Dawn
+**Version:** MarvelQuant Dawn

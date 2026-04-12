@@ -72,7 +72,7 @@ def get_open_position(tradingsymbol, exchange, producttype, auth):
     Get the net quantity for a given symbol from the position book.
     This should return the NetQty which represents the net position (positive for long, negative for short).
     """
-    # Convert Trading Symbol from OpenAlgo Format to Broker Format Before Search in OpenPosition
+    # Convert Trading Symbol from MarvelQuant Format to Broker Format Before Search in OpenPosition
     tradingsymbol = get_br_symbol(tradingsymbol, exchange)
     positions_data = get_positions(auth)
 

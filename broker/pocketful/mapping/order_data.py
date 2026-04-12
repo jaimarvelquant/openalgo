@@ -150,7 +150,7 @@ def calculate_order_statistics(order_data):
 
 def transform_order_data(orders):
     """
-    Transform order data from Pocketful API format to OpenAlgo standard format.
+    Transform order data from Pocketful API format to MarvelQuant standard format.
     Handles both completed and pending orders from the combined order book.
 
     Args:
@@ -554,7 +554,7 @@ def transform_positions_data(positions_data):
 
 def transform_holdings_data(holdings_data):
     """
-    Transform holdings data from Pocketful API format to OpenAlgo standard format.
+    Transform holdings data from Pocketful API format to MarvelQuant standard format.
     Handles responses from both /api/v1/holdings and /api/v1/portfolio/demat-holdings endpoints.
     Can be called twice in the pipeline, so it detects if data is already transformed.
 
@@ -640,13 +640,13 @@ def transform_holdings_data(holdings_data):
                 oa_symbol = get_oa_symbol(tradingsymbol, exchange)
                 if oa_symbol:
                     tradingsymbol = oa_symbol
-                    logger.debug(f"DEBUG - Converted to OpenAlgo symbol: {tradingsymbol}")
+                    logger.debug(f"DEBUG - Converted to MarvelQuant symbol: {tradingsymbol}")
                 else:
                     logger.debug(
                         f"DEBUG - Could not convert to OpenAlgo symbol, using original: {tradingsymbol}"
                     )
             except Exception as e:
-                logger.error(f"DEBUG - Error converting symbol to OpenAlgo format: {e}")
+                logger.error(f"DEBUG - Error converting symbol to MarvelQuant format: {e}")
                 # If conversion fails, still use the cleaned symbol
                 logger.debug(f"DEBUG - Using original symbol: {tradingsymbol}")
 

@@ -1,0 +1,108 @@
+# ============================================================================
+# Jainam Symphony Multi-Server Configuration Example
+# ============================================================================
+# This example shows the complete configuration pattern for all Symphony 
+# servers (A, B, C) and both dealer account types (PRO, NORMAL).
+#
+# USAGE:
+# 1. Copy the configuration block for your active server/account to your .env
+# 2. Set JAINAM_ACTIVE_SYMPHONY_SERVER to your server (A, B, or C)
+# 3. Set JAINAM_ACTIVE_ACCOUNT_TYPE to your account (PRO or NORMAL)
+# 4. Fill in your actual credentials (replace example values)
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Active Configuration Control
+# ----------------------------------------------------------------------------
+# These two variables determine which credentials are loaded
+JAINAM_ACTIVE_SYMPHONY_SERVER=B
+JAINAM_ACTIVE_ACCOUNT_TYPE=PRO
+
+# ----------------------------------------------------------------------------
+# Symphony B - Pro Dealer Account (ZZJ13048)
+# ----------------------------------------------------------------------------
+JAINAM_SYMPHONY_B_PRO_INTERACTIVE_API_KEY=753d09b5c21762b4e24239
+JAINAM_SYMPHONY_B_PRO_INTERACTIVE_API_SECRET=your_interactive_secret_here
+JAINAM_SYMPHONY_B_PRO_MARKET_API_KEY=d4a77bc14c550effbbb423
+JAINAM_SYMPHONY_B_PRO_MARKET_API_SECRET=your_market_secret_here
+JAINAM_SYMPHONY_B_PRO_CLIENT_ID=ZZJ13048
+
+# ----------------------------------------------------------------------------
+# Symphony B - Normal Dealer Account (DLL7182)
+# ----------------------------------------------------------------------------
+JAINAM_SYMPHONY_B_NORMAL_INTERACTIVE_API_KEY=d229ee8bc6be3d81d35946
+JAINAM_SYMPHONY_B_NORMAL_INTERACTIVE_API_SECRET=your_interactive_secret_here
+JAINAM_SYMPHONY_B_NORMAL_MARKET_API_KEY=511c4265c2869ab1f54180
+JAINAM_SYMPHONY_B_NORMAL_MARKET_API_SECRET=your_market_secret_here
+JAINAM_SYMPHONY_B_NORMAL_CLIENT_ID=DLL7182
+
+# ----------------------------------------------------------------------------
+# Symphony A - Pro Dealer Account
+# ----------------------------------------------------------------------------
+# JAINAM_SYMPHONY_A_PRO_INTERACTIVE_API_KEY=your_key_here
+# JAINAM_SYMPHONY_A_PRO_INTERACTIVE_API_SECRET=your_secret_here
+# JAINAM_SYMPHONY_A_PRO_MARKET_API_KEY=your_key_here
+# JAINAM_SYMPHONY_A_PRO_MARKET_API_SECRET=your_secret_here
+# JAINAM_SYMPHONY_A_PRO_CLIENT_ID=ZZJ13048
+
+# ----------------------------------------------------------------------------
+# Symphony A - Normal Dealer Account
+# ----------------------------------------------------------------------------
+# JAINAM_SYMPHONY_A_NORMAL_INTERACTIVE_API_KEY=your_key_here
+# JAINAM_SYMPHONY_A_NORMAL_INTERACTIVE_API_SECRET=your_secret_here
+# JAINAM_SYMPHONY_A_NORMAL_MARKET_API_KEY=your_key_here
+# JAINAM_SYMPHONY_A_NORMAL_MARKET_API_SECRET=your_secret_here
+# JAINAM_SYMPHONY_A_NORMAL_CLIENT_ID=DLL7182
+
+# ----------------------------------------------------------------------------
+# Symphony C - Pro Dealer Account
+# ----------------------------------------------------------------------------
+# JAINAM_SYMPHONY_C_PRO_INTERACTIVE_API_KEY=your_key_here
+# JAINAM_SYMPHONY_C_PRO_INTERACTIVE_API_SECRET=your_secret_here
+# JAINAM_SYMPHONY_C_PRO_MARKET_API_KEY=your_key_here
+# JAINAM_SYMPHONY_C_PRO_MARKET_API_SECRET=your_secret_here
+# JAINAM_SYMPHONY_C_PRO_CLIENT_ID=ZZJ13048
+
+# ----------------------------------------------------------------------------
+# Symphony C - Normal Dealer Account
+# ----------------------------------------------------------------------------
+# JAINAM_SYMPHONY_C_NORMAL_INTERACTIVE_API_KEY=your_key_here
+# JAINAM_SYMPHONY_C_NORMAL_INTERACTIVE_API_SECRET=your_secret_here
+# JAINAM_SYMPHONY_C_NORMAL_MARKET_API_KEY=your_key_here
+# JAINAM_SYMPHONY_C_NORMAL_MARKET_API_SECRET=your_secret_here
+# JAINAM_SYMPHONY_C_NORMAL_CLIENT_ID=DLL7182
+
+# ============================================================================
+# QUICK REFERENCE
+# ============================================================================
+# Symphony Servers:
+#   A: https://smpa.jainam.in:6543
+#   B: https://smpb.jainam.in:4143 (currently active)
+#   C: https://smpc.jainam.in:14543
+#
+# Dealer Account ClientIDs:
+#   Pro:    ZZJ13048
+#   Normal: DLL7182
+#
+# Account Switching:
+#   Change JAINAM_ACTIVE_ACCOUNT_TYPE from PRO to NORMAL (or vice versa)
+#   Restart application for changes to take effect
+#
+# Server Switching:
+#   Change JAINAM_ACTIVE_SYMPHONY_SERVER from A/B/C
+#   Ensure credentials configured for that server
+#   Restart application for changes to take effect
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Legacy Variables (DEPRECATED - will trigger warnings)
+# ----------------------------------------------------------------------------
+# If you have these old variables, they will still work but trigger warnings:
+# JAINAM_INTERACTIVE_API_KEY=<old_value>
+# JAINAM_INTERACTIVE_API_SECRET=<old_value>
+# JAINAM_MARKET_API_KEY=<old_value>
+# JAINAM_MARKET_API_SECRET=<old_value>
+#
+# Please migrate to the new multi-server format above
+# ----------------------------------------------------------------------------
+

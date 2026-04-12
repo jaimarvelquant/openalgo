@@ -1,4 +1,4 @@
-# Contributing to OpenAlgo
+# Contributing to MarvelQuant
 
 
 ## Let's democratize algorithmic trading, together!

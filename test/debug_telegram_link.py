@@ -41,7 +41,7 @@ def debug_telegram_users():
     if users:
         for user in users:
             print(f"\n   User #{user.get('id')}:")
-            print(f"   - OpenAlgo Username: {user.get('openalgo_username', 'N/A')}")
+            print(f"   - MarvelQuant Username: {user.get('marvelquant_username', 'N/A')}")
             print(f"   - Telegram ID: {user.get('telegram_id', 'N/A')}")
             print(f"   - Telegram Username: @{user.get('telegram_username', 'N/A')}")
             print(f"   - Name: {user.get('first_name', '')} {user.get('last_name', '')}")

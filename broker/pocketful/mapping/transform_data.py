@@ -17,7 +17,7 @@ def transform_data(data, client_id=None, auth_token=None):
     - OPT (CE/PE): Price < 10: 5%, 10-100: 3%, 100-500: 2%, > 500: 1%
 
     Args:
-        data: OpenAlgo order data dictionary
+        data: MarvelQuant order data dictionary
         client_id: Client ID to use for the order, if available
         auth_token: Authentication token for fetching quotes (passed from order_api)
     """
@@ -142,7 +142,7 @@ def transform_modify_order_data(data, client_id=None):
     Transforms OpenAlgo order modification format to Pocketful order format.
 
     Args:
-        data: OpenAlgo order data dictionary
+        data: MarvelQuant order data dictionary
         client_id: Client ID to use for the order, if available
     """
     # Get broker symbol for the order
@@ -184,7 +184,7 @@ def transform_modify_order_data(data, client_id=None):
 
 def map_order_type(pricetype):
     """
-    Maps OpenAlgo pricetype to Pocketful order type.
+    Maps MarvelQuant pricetype to Pocketful order type.
     """
     order_type_mapping = {
         "MARKET": "MARKET",
@@ -197,7 +197,7 @@ def map_order_type(pricetype):
 
 def map_product_type(product):
     """
-    Maps OpenAlgo product type to Pocketful product type.
+    Maps MarvelQuant product type to Pocketful product type.
     """
     product_type_mapping = {"CNC": "CNC", "NRML": "NRML", "MIS": "MIS"}
     return product_type_mapping.get(product.upper(), "MIS")  # Default to MIS if not found
@@ -205,9 +205,9 @@ def map_product_type(product):
 
 def reverse_map_product_type(exchange, product):
     """
-    Reverse maps the broker product type to the OpenAlgo product type, considering the exchange.
+    Reverse maps the broker product type to the MarvelQuant product type, considering the exchange.
     """
-    # Exchange to OpenAlgo product type mapping for 'D'
+    # Exchange to MarvelQuant product type mapping for 'D'
     exchange_mapping = {
         "CNC": "CNC",
         "NRML": "NRML",

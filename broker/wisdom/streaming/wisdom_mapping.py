@@ -5,7 +5,7 @@ class WisdomExchangeMapper:
     """Maps between OpenAlgo exchange codes and Wisdom XTS specific exchange types"""
 
     # Exchange type mapping for Wisdom XTS broker
-    # Format: {OpenAlgo_Exchange: Wisdom_Exchange_Code}
+    # Format: {MarvelQuant_Exchange: Wisdom_Exchange_Code}
     # Based on Wisdom API documentation:
     # "NSECM": 1, "NSEFO": 2, "NSECD": 3, "BSECM": 11, "BSEFO": 12, "MCXFO": 51
     EXCHANGE_TYPES = {
@@ -100,7 +100,7 @@ class WisdomExchangeMapper:
         return 1
 
     @staticmethod
-    def get_openalgo_exchange(wisdom_code):
+    def get_marvelquant_exchange(wisdom_code):
         """
         Convert Wisdom XTS exchange code to OpenAlgo exchange code
 
@@ -108,7 +108,7 @@ class WisdomExchangeMapper:
             wisdom_code (int): Wisdom exchange code
 
         Returns:
-            str: OpenAlgo exchange code
+            str: MarvelQuant exchange code
         """
         return WisdomExchangeMapper.REVERSE_EXCHANGE_TYPES.get(
             wisdom_code, "NSE"

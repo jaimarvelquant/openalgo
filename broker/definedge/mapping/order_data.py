@@ -222,7 +222,7 @@ def transform_tradebook_data(tradebook_data):
     - tradebook_data: List of trade dictionaries from DefinedGe API
 
     Returns:
-    - List of transformed trade dictionaries matching OpenAlgo format
+    - List of transformed trade dictionaries matching MarvelQuant format
     """
     transformed_data = []
 
@@ -331,7 +331,7 @@ def map_position_data(position_data):
 
 def transform_positions_data(positions_data):
     """
-    Transform DefinedGe positions data to OpenAlgo format.
+    Transform DefinedGe positions data to MarvelQuant format.
     Following Angel's pattern for consistency.
     """
     transformed_data = []
@@ -478,7 +478,7 @@ def calculate_portfolio_statistics(holdings_data):
 
 def transform_holdings_data(holdings_data):
     """
-    Transform DefinedGe holdings data to OpenAlgo format.
+    Transform DefinedGe holdings data to MarvelQuant format.
     Following Angel's pattern for consistency.
     """
     transformed_data = []

@@ -135,15 +135,15 @@ def get_open_position(tradingsymbol, exchange, producttype, auth):
     Get open position for a specific symbol
 
     Args:
-        tradingsymbol (str): Trading symbol in OpenAlgo format
+        tradingsymbol (str): Trading symbol in MarvelQuant format
         exchange (str): Exchange (NSE, BSE, etc.)
-        producttype (str): Product type in OpenAlgo format (CNC, MIS, NRML)
+        producttype (str): Product type in MarvelQuant format (CNC, MIS, NRML)
         auth (str): Authentication token (jKey)
 
     Returns:
         str: Net quantity as string, '0' if no position found
     """
-    # Convert Trading Symbol from OpenAlgo Format to Broker Format
+    # Convert Trading Symbol from MarvelQuant Format to Broker Format
     tradingsymbol = get_br_symbol(tradingsymbol, exchange)
     if "&" in tradingsymbol:
         tradingsymbol = tradingsymbol.replace("&", "%26")
@@ -485,7 +485,7 @@ def modify_order(data, auth):
     Modify an existing order
 
     Args:
-        data (dict): Order modification data in OpenAlgo format
+        data (dict): Order modification data in MarvelQuant format
         auth (str): Authentication token (jKey)
 
     Returns:
@@ -581,7 +581,7 @@ def placeorder(data, auth):
     Place an order through Firstock API
 
     Parameters:
-        data (dict): Order data in OpenAlgo format
+        data (dict): Order data in MarvelQuant format
         auth (str): Authentication token (jKey)
 
     Returns:

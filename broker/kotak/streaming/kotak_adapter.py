@@ -22,7 +22,7 @@ logger = get_logger(__name__)
 
 class KotakWebSocketAdapter(BaseBrokerWebSocketAdapter):
     """
-    Adapter for Kotak WebSocket streaming, suitable for OpenAlgo or similar frameworks.
+    Adapter for Kotak WebSocket streaming, suitable for MarvelQuant or similar frameworks.
     Each instance is isolated and manages its own KotakWebSocket client.
     """
 
@@ -283,8 +283,8 @@ class KotakWebSocketAdapter(BaseBrokerWebSocketAdapter):
 
                 # Find the original subscription mapping - critical step
                 mapping_key = (broker_exchange, token)
-                if mapping_key in self._kotak_to_openalgo:
-                    exchange, symbol = self._kotak_to_openalgo[mapping_key]
+                if mapping_key in self._kotak_to_marvelquant:
+                    exchange, symbol = self._kotak_to_marvelquant[mapping_key]
                     cache_key = (exchange, symbol)
 
                     # For LTP data, update LTP cache
@@ -579,7 +579,7 @@ class KotakWebSocketAdapter(BaseBrokerWebSocketAdapter):
 
                     # Clean up mapping only if NO modes are active
                     if not self._symbol_modes[mapping_key]:
-                        self._kotak_to_openalgo.pop(mapping_key, None)
+                        self._kotak_to_marvelquant.pop(mapping_key, None)
                         self._symbol_modes.pop(mapping_key, None)
                         logger.debug(f"Cleaned up mapping for: {exchange}:{symbol}")
 
@@ -656,7 +656,7 @@ class KotakWebSocketAdapter(BaseBrokerWebSocketAdapter):
 
                     # Clean up mapping only if NO modes are active
                     if not self._symbol_modes[mapping_key]:
-                        self._kotak_to_openalgo.pop(mapping_key, None)
+                        self._kotak_to_marvelquant.pop(mapping_key, None)
                         self._symbol_modes.pop(mapping_key, None)
                         logger.debug(f"Cleaned up mapping for: {exchange}:{symbol}")
 

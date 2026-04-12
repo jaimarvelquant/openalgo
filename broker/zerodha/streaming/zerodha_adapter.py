@@ -25,7 +25,7 @@ from .zerodha_websocket import ZerodhaWebSocket
 class ZerodhaWebSocketAdapter(BaseBrokerWebSocketAdapter):
     """
     Fixed Zerodha-specific implementation of the WebSocket adapter.
-    Properly implements OpenAlgo WebSocket proxy interface with correct topic formatting.
+    Properly implements MarvelQuant WebSocket proxy interface with correct topic formatting.
     """
 
     def __init__(self):

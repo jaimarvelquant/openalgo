@@ -100,13 +100,13 @@ def copy_from_dataframe(df):
         raise
 
 
-# Functions for symbol format conversion between OpenAlgo and Groww formats
-def format_openalgo_to_groww_symbol(symbol, exchange):
+# Functions for symbol format conversion between MarvelQuant and Groww formats
+def format_marvelquant_to_groww_symbol(symbol, exchange):
     """
     Convert OpenAlgo symbol format to Groww symbol format
 
     Args:
-        symbol (str): Symbol in OpenAlgo format (e.g., AARTIIND29MAY25630CE)
+        symbol (str): Symbol in MarvelQuant format (e.g., AARTIIND29MAY25630CE)
         exchange (str): Exchange code (NSE, BSE, NFO, etc.)
 
     Returns:
@@ -234,7 +234,7 @@ def format_openalgo_to_groww_symbol(symbol, exchange):
     return symbol
 
 
-def format_groww_to_openalgo_symbol(groww_symbol, exchange):
+def format_groww_to_marvelquant_symbol(groww_symbol, exchange):
     """
     Convert Groww symbol format to OpenAlgo symbol format
 
@@ -243,7 +243,7 @@ def format_groww_to_openalgo_symbol(groww_symbol, exchange):
         exchange (str): Exchange code (NSE, BSE, NFO, etc.)
 
     Returns:
-        str: Symbol in OpenAlgo format (e.g., "AARTIIND29MAY25630CE")
+        str: Symbol in MarvelQuant format (e.g., "AARTIIND29MAY25630CE")
     """
     logger.info(f"Converting symbol from Groww to OpenAlgo format: {{groww_symbol}}, {exchange}")
 
@@ -344,7 +344,7 @@ def find_symbol_by_token(token, exchange):
         exchange (str): Exchange code
 
     Returns:
-        str: Symbol in OpenAlgo format, or None if not found
+        str: Symbol in MarvelQuant format, or None if not found
     """
     result = db_session.query(SymToken).filter_by(token=token, exchange=exchange).first()
     if result:
@@ -357,7 +357,7 @@ def find_token_by_symbol(symbol, exchange):
     Find token in DB by symbol and exchange
 
     Args:
-        symbol (str): Symbol in either OpenAlgo or Groww format
+        symbol (str): Symbol in either MarvelQuant or Groww format
         exchange (str): Exchange code
 
     Returns:
@@ -843,7 +843,7 @@ def process_groww_data(path):
     # For F&O instruments, format the symbol in OpenAlgo format
     fo_mask = all_instruments["exchange"] == "NFO"
     if fo_mask.any():
-        # Format F&O symbols according to OpenAlgo standard
+        # Format F&O symbols according to MarvelQuant standard
         def format_fo_symbol(row):
             if pd.isna(row["expiry"]) or row["expiry"] == "":
                 return row["symbol"]

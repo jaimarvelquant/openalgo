@@ -96,7 +96,7 @@ def get_holdings(auth):
 
 def get_open_positionss(tradingsymbol, exchange, product, auth):
     logger.debug(f"Entering get_open_positionss for {tradingsymbol}")
-    # Convert Trading Symbol from OpenAlgo Format to Broker Format (Token ID)
+    # Convert Trading Symbol from MarvelQuant Format to Broker Format (Token ID)
     logger.debug(f"Calling get_token with symbol: {tradingsymbol}, exchange: {exchange}")
     target_security_id = get_token(tradingsymbol, exchange)
     if target_security_id.isdigit():
@@ -192,7 +192,7 @@ def get_open_positionss(tradingsymbol, exchange, product, auth):
 def get_open_position(tradingsymbol, exchange, producttype, auth):
     # Convert Trading Symbol from OpenAlgo Format to Broker Format Before Search in OpenPosition
     logger.debug(f"Entering get_open_position for {tradingsymbol}")
-    # Convert Trading Symbol from OpenAlgo Format to Broker Format (Token ID)
+    # Convert Trading Symbol from MarvelQuant Format to Broker Format (Token ID)
     logger.debug(f"Calling get_token with symbol: {tradingsymbol}, exchange: {exchange}")
     target_security_id = get_token(tradingsymbol, exchange)
 

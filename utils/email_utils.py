@@ -1,5 +1,5 @@
 """
-Email Utility Functions for OpenAlgo
+Email Utility Functions for MarvelQuant
 
 This module provides email sending functionality for SMTP configuration testing
 and password reset notifications.

@@ -701,6 +701,29 @@ def broker_callback(broker, para=None):
         if broker == "dhan":
             auth_token = f"{auth_token}"
 
+        # For jainam_prop, store auth_token as JSON with user_id and is_investor_client for API calls
+        if broker == 'jainam_prop' and user_id:
+            import json
+            auth_token_json = json.dumps({
+                'token': auth_token,
+                'user_id': user_id,
+                'clientID': client_id or user_id,
+                'isInvestorClient': is_investor_client
+            })
+            logger.info(
+                "Jainam Prop: Storing auth token JSON (user_id=%s, clientID=%s, investor=%s)",
+                user_id,
+                client_id or user_id,
+                is_investor_client,
+            )
+            return handle_auth_success(
+                auth_token_json,
+                session['user'],
+                broker,
+                feed_token=feed_token,
+                user_id=client_id or user_id,
+            )
+
         # For brokers that have user_id and feed_token from authenticate_broker
         if broker in ["angel", "compositedge", "pocketful", "definedge", "dhan"]:
             # For Compositedge, handle missing session user

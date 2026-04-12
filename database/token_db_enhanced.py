@@ -667,7 +667,7 @@ def get_br_symbol(symbol: str, exchange: str) -> str | None:
 
 def get_oa_symbol(brsymbol: str, exchange: str) -> str | None:
     """
-    Get OpenAlgo symbol for a given broker symbol and exchange
+    Get MarvelQuant symbol for a given broker symbol and exchange
     """
     cache = get_cache()
 

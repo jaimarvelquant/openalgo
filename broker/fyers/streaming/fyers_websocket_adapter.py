@@ -1,6 +1,6 @@
 """
-Fyers WebSocket Adapter for OpenAlgo WebSocket Proxy
-Integrates with the OpenAlgo WebSocket proxy system
+Fyers WebSocket Adapter for MarvelQuant WebSocket Proxy
+Integrates with the MarvelQuant WebSocket proxy system
 """
 
 import json
@@ -235,7 +235,7 @@ class FyersWebSocketAdapter(BaseBrokerWebSocketAdapter):
                     return {"status": "error", "message": "Failed to reconnect Fyers adapter"}
 
             with self.lock:
-                # Convert to OpenAlgo format
+                # Convert to MarvelQuant format
                 symbol_info = [{"exchange": exchange, "symbol": symbol}]
 
                 # Create a unique callback for this specific subscription
@@ -749,7 +749,7 @@ class FyersWebSocketAdapter(BaseBrokerWebSocketAdapter):
             mode: Subscription mode
 
         Returns:
-            Mapped data in OpenAlgo format
+            Mapped data in MarvelQuant format
         """
         try:
             if not fyers_data:

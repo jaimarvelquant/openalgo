@@ -1,0 +1,51 @@
+schema: 1
+story: 1.2-1
+story_title: 'Story 1.2-1: Position-Holdings'
+gate: PASS
+status_reason: >
+  AC1–AC6 verified via code review and targeted tests (25 pytest cases +
+  regression harness) in a local virtualenv; simulated latency bench meets the
+  <5 s target and no functional blockers remain. Follow up by capturing one
+  live Jainam latency sample when credentials are available.
+reviewer: Quinn (Test Architect)
+updated: '2025-10-07T17:50:00Z'
+top_issues:
+  - Capture at least one end-to-end Jainam latency run with live credentials to confirm the <5 s IV3 requirement in production conditions.
+  - Document the virtualenv/SQLAlchemy setup (or add it to requirements) so CI and other reviewers can execute the new suites without manual fixes.
+waiver:
+  active: false
+quality_score: 94
+expires: '2025-10-21'
+evidence:
+  tests_reviewed: 25
+  risks_identified: 2
+  trace:
+    ac_covered:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+    ac_gaps: []
+nfr_validation:
+  performance:
+    status: CONCERNS
+    notes: Synthetic benchmark meets <5 s; record a live Jainam timing sample when access is granted.
+  reliability:
+    status: CONCERNS
+    notes: Confirm staging/production auth flows deliver market tokens so holdings continue to surface non-zero P&L outside mocks.
+  security:
+    status: NOT_ASSESSED
+    notes: Story does not alter auth, but live-call scripts risk leaking credentials if run with real tokens.
+  maintainability:
+    status: PASS
+    notes: Mapping/services code follows existing broker patterns; add setup note for SQLAlchemy dependency.
+recommendations:
+  immediate:
+    - action: Schedule a live Jainam latency capture (positions + holdings) once operational credentials are issued and archive the evidence alongside the simulated run.
+    - action: Publish the `.venv`/requirements update so future QA runs include SQLAlchemy without manual setup.
+  future:
+    - action: Fold the validation script assertions into pytest so regressions run automatically in CI.
+      refs:
+        - docs/bmad/stories/story-1.2-1[Position-Holdings].md

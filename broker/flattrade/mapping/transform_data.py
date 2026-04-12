@@ -94,7 +94,7 @@ def transform_data(data, token, auth_token=None):
                 f"Exchange={data['exchange']}, Error={str(e)}. Proceeding with regular market order."
             )
 
-    # Basic mapping - ensure all numeric values are strings
+    # Basic mapping - ensure all numeric values are strings and no None values
     transformed = {
         "uid": data["apikey"],
         "actid": data["apikey"],
@@ -135,6 +135,14 @@ def transform_modify_order_data(data, token):
         "ret": "DAY",
         "dscqty": str(data.get("disclosed_quantity") or 0),
     }
+    
+    # Final validation: ensure no None values and all are strings
+    for key, value in transformed.items():
+        if value is None:
+            raise ValueError(f"Transformed field '{key}' cannot be None. All Flattrade API parameters must be strings.")
+        transformed[key] = str(value)  # Ensure it's a string
+    
+    return transformed
 
     # Only include trigger price for SL/SL-M orders
     # Sending trgprc=0 for LIMIT orders causes "Trigger price invalid - 0.00" error

@@ -151,7 +151,7 @@ def get_analyzer_status(
 
     Args:
         analyzer_data: Analyzer data (currently just apikey)
-        api_key: OpenAlgo API key (for API-based calls)
+        api_key: MarvelQuant API key (for API-based calls)
         auth_token: Direct broker authentication token (for internal calls)
         broker: Direct broker name (for internal calls)
 
@@ -203,7 +203,7 @@ def toggle_analyzer_mode(
 
     Args:
         analyzer_data: Analyzer data containing mode
-        api_key: OpenAlgo API key (for API-based calls)
+        api_key: MarvelQuant API key (for API-based calls)
         auth_token: Direct broker authentication token (for internal calls)
         broker: Direct broker name (for internal calls)
 

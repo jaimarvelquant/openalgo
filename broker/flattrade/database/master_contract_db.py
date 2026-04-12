@@ -141,7 +141,7 @@ def download_csv_data(output_path):
 
 def process_flattrade_nse_data(output_path):
     """
-    Processes the Flattrade NSE data (NSE_Equity.csv) to generate OpenAlgo symbols.
+    Processes the Flattrade NSE data (NSE_Equity.csv) to generate MarvelQuant symbols.
     Separates EQ, BE symbols, and Index symbols.
     """
     logger.info("Processing Flattrade NSE Data")
@@ -189,8 +189,8 @@ def process_flattrade_nse_data(output_path):
         df["symbol"] = df["brsymbol"].copy()  # Initialize 'symbol' with 'brsymbol'
         df["tick_size"] = 0.05  # Default tick size for NSE
 
-        # Apply transformation for OpenAlgo symbols
-        def get_openalgo_symbol(broker_symbol):
+        # Apply transformation for MarvelQuant symbols
+        def get_marvelquant_symbol(broker_symbol):
             if pd.isna(broker_symbol) or not broker_symbol:  # Handle NaN and empty values
                 return broker_symbol  # Return as is, will be filtered out later
             broker_symbol = str(broker_symbol)  # Convert to string to ensure string operations work
@@ -200,7 +200,7 @@ def process_flattrade_nse_data(output_path):
             elif "-BE" in broker_symbol:
                 return broker_symbol.replace("-BE", "")
             else:
-                # For other symbols (including index), OpenAlgo symbol remains the same as broker symbol
+                # For other symbols (including index), MarvelQuant symbol remains the same as broker symbol
                 return broker_symbol
 
         # Update the 'symbol' column
@@ -276,7 +276,7 @@ def process_flattrade_nse_data(output_path):
 
 def process_flattrade_nfo_data(output_path):
     """
-    Processes the Flattrade NFO data (NFO.csv) to generate OpenAlgo symbols.
+    Processes the Flattrade NFO data (NFO.csv) to generate MarvelQuant symbols.
     Handles both futures and options formatting.
     """
     logger.info("Processing Flattrade NFO Data")
@@ -390,7 +390,7 @@ def process_flattrade_nfo_data(output_path):
 
 def process_flattrade_cds_data(output_path):
     """
-    Processes the Flattrade CDS data (Currency_Derivatives.csv) to generate OpenAlgo symbols.
+    Processes the Flattrade CDS data (Currency_Derivatives.csv) to generate MarvelQuant symbols.
     Handles both futures and options formatting.
     """
     logger.info("Processing Flattrade CDS Data")
@@ -504,7 +504,7 @@ def process_flattrade_cds_data(output_path):
 
 def process_flattrade_mcx_data(output_path):
     """
-    Processes the Flattrade MCX data (Commodity.csv) to generate OpenAlgo symbols.
+    Processes the Flattrade MCX data (Commodity.csv) to generate MarvelQuant symbols.
     Handles both futures and options formatting.
     """
     logger.info("Processing Flattrade MCX Data")
@@ -618,7 +618,7 @@ def process_flattrade_mcx_data(output_path):
 
 def process_flattrade_bse_data(output_path):
     """
-    Processes the Flattrade BSE data (BSE_Equity.csv) to generate OpenAlgo symbols.
+    Processes the Flattrade BSE data (BSE_Equity.csv) to generate MarvelQuant symbols.
     Ensures that the instrument type is always 'EQ'.
     """
     logger.info("Processing Flattrade BSE Data")
@@ -646,8 +646,8 @@ def process_flattrade_bse_data(output_path):
     df["symbol"] = df["brsymbol"]  # Initialize 'symbol' with 'brsymbol'
     df["tick_size"] = 0.05  # Default tick size for BSE
 
-    # Apply transformation for OpenAlgo symbols (no special logic needed here)
-    def get_openalgo_symbol(broker_symbol):
+    # Apply transformation for MarvelQuant symbols (no special logic needed here)
+    def get_marvelquant_symbol(broker_symbol):
         return broker_symbol
 
     # Update the 'symbol' column
@@ -704,7 +704,7 @@ def process_flattrade_bse_data(output_path):
 
 def process_flattrade_bfo_data(output_path):
     """
-    Processes the Flattrade BFO data (BFO.csv) to generate OpenAlgo symbols.
+    Processes the Flattrade BFO data (BFO.csv) to generate MarvelQuant symbols.
     Handles both futures and options formatting.
     """
     logger.info("Processing Flattrade BFO Data")

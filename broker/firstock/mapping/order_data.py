@@ -15,7 +15,7 @@ def map_order_data(order_data):
     - order_data: Either raw API response or list of pre-mapped orders
 
     Returns:
-    - List of mapped orders in OpenAlgo format
+    - List of mapped orders in MarvelQuant format
     """
     # If it's a list, data is already mapped
     if isinstance(order_data, list):
@@ -181,7 +181,7 @@ def map_trade_data(trade_data):
     - trade_data: Response from Firstock's tradebook API containing status and data fields
 
     Returns:
-    - List of mapped trades in OpenAlgo format
+    - List of mapped trades in MarvelQuant format
     """
     # If it's a list, data is already mapped
     if isinstance(trade_data, list):
@@ -293,7 +293,7 @@ def map_portfolio_data(portfolio_data):
     - portfolio_data: Response from Firstock's holdings API containing status and data fields
 
     Returns:
-    - List of mapped holdings in OpenAlgo format
+    - List of mapped holdings in MarvelQuant format
     """
     logger.info(f"Raw portfolio data: {json.dumps(portfolio_data, indent=2)}")
 
@@ -418,7 +418,7 @@ def calculate_portfolio_statistics(holdings_data):
 
 def transform_holdings_data(holdings):
     """
-    Transform holdings data to match OpenAlgo format.
+    Transform holdings data to match MarvelQuant format.
 
     Parameters:
     - holdings: List of holdings from map_portfolio_data
@@ -479,7 +479,7 @@ def map_position_data(position_data):
     - position_data: Response from Firstock's position book API containing status and data fields
 
     Returns:
-    - List of mapped positions in OpenAlgo format
+    - List of mapped positions in MarvelQuant format
     """
     # If it's a list, data is already mapped
     if isinstance(position_data, list):

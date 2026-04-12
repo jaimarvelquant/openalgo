@@ -6,9 +6,9 @@ from typing import Dict, Optional, Set
 
 
 class ZebuExchangeMapper:
-    """Maps between OpenAlgo exchange names and Zebu exchange codes"""
+    """Maps between MarvelQuant exchange names and Zebu exchange codes"""
 
-    # OpenAlgo to Zebu exchange mapping (same as Flattrade/Noren)
+    # MarvelQuant to Zebu exchange mapping (same as Flattrade/Noren)
     EXCHANGE_MAP = {
         "NSE": "NSE",
         "BSE": "BSE",

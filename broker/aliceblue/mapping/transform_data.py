@@ -69,7 +69,7 @@ def map_product_type(product):
 
 def reverse_map_product_type(product):
     """
-    Reverse maps the broker product type to the OpenAlgo product type, considering the exchange.
+    Reverse maps the broker product type to the MarvelQuant product type, considering the exchange.
     """
     # Exchange to OpenAlgo product type mapping for 'D'
     exchange_mapping = {"MKT": "MARKET", "L": "LIMIT", "SL": "SL", "SL-M": "SL-M"}

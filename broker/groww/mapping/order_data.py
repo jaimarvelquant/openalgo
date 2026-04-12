@@ -21,7 +21,7 @@ def map_order_data(order_data):
     - order_data: A dictionary with either 'data' key or raw Groww API response with 'order_list'.
 
     Returns:
-    - The modified order_data with standardized fields in OpenAlgo format.
+    - The modified order_data with standardized fields in MarvelQuant format.
     """
     logger.info("Starting map_order_data function")
     logger.debug(f"Order data type: {type(order_data)}")
@@ -117,8 +117,8 @@ def map_order_data(order_data):
                     .first()
                 )
                 if db_record and db_record.symbol:
-                    openalgo_symbol = db_record.symbol
-                    logger.info(f"Found symbol in database: {broker_symbol} -> {openalgo_symbol}")
+                    marvelquant_symbol = db_record.symbol
+                    logger.info(f"Found symbol in database: {broker_symbol} -> {marvelquant_symbol}")
             except Exception as e:
                 logger.error(f"Error looking up symbol in database: {e}")
 
@@ -276,7 +276,7 @@ def transform_order_data(orders):
         orders (dict): Order data from Groww API
 
     Returns:
-        list: Transformed orders in OpenAlgo format for orderbook.py
+        list: Transformed orders in MarvelQuant format for orderbook.py
     """
     logger.info("Starting transform_order_data function")
     logger.debug(f"Input order data type: {type(orders)}")
@@ -384,7 +384,7 @@ def transform_order_data(orders):
                                 f"Found OpenAlgo symbol in database: {broker_symbol} -> {symbol}"
                             )
         except Exception as e:
-            logger.error(f"Error looking up OpenAlgo symbol from database: {e}")
+            logger.error(f"Error looking up MarvelQuant symbol from database: {e}")
             # Fall back to the original symbol
             symbol = broker_symbol
 
@@ -452,15 +452,15 @@ def transform_order_data(orders):
                 if openalgo_symbol:
                     # Store broker symbol for reference
                     broker_symbol = symbol
-                    # Use OpenAlgo symbol format for display
-                    symbol = openalgo_symbol
+                    # Use MarvelQuant symbol format for display
+                    symbol = marvelquant_symbol
                     logger.info(f"Transformed order symbol for UI: {broker_symbol} -> {symbol}")
             except Exception as e:
                 logger.error(f"Error converting order symbol format: {e}")
 
         # Create transformed order in OpenAlgo format
         transformed_order = {
-            "symbol": symbol,  # Now guaranteed to be in OpenAlgo format
+            "symbol": symbol,  # Now guaranteed to be in MarvelQuant format
             "exchange": order.get("exchange", "NSE"),
             "action": transaction_type,
             "quantity": quantity,

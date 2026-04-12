@@ -187,7 +187,7 @@ def direct_get_order_book(auth):
                     order["exchange"] = exchange
 
                 # Now handle the symbol conversion based on the correct exchange
-                # For NFO derivatives (options or futures), convert from Groww format to OpenAlgo format
+                # For NFO derivatives (options or futures), convert from Groww format to MarvelQuant format
                 if is_derivative:
                     # Try multiple approaches to convert the symbol
 
@@ -745,7 +745,7 @@ def get_trade_book(auth):
 
         # Format trades to match OpenAlgo's expected format (as used in the REST API)
         # This matches the format expected by the order_data.py mapping functions
-        openalgo_trades = []
+        marvelquant_trades = []
         for trade in all_trades:
             # Convert price from paise to rupees if needed (Groww returns prices in paise)
             price = trade.get("price", 0)
@@ -1119,7 +1119,7 @@ def get_positions(auth):
                                         symbol_converted = True
                                     else:
                                         # Fallback to pattern matching if database lookup fails
-                                        # For Options: Convert from Groww format to OpenAlgo format
+                                        # For Options: Convert from Groww format to MarvelQuant format
                                         # Groww format: "NIFTY25051334000CE" or "BANKNIFTY25051332500PE"
                                         # OpenAlgo format: "NIFTY13MAY2534000CE" or "BANKNIFTY13MAY2532500PE"
                                         groww_pattern = re.compile(
@@ -1416,7 +1416,7 @@ def get_open_position(tradingsymbol, exchange, product, auth):
     Returns:
         str: Net quantity
     """
-    # Convert Trading Symbol from OpenAlgo Format to Broker Format Before Search
+    # Convert Trading Symbol from MarvelQuant Format to Broker Format Before Search
     tradingsymbol = get_br_symbol(tradingsymbol, exchange)
     positions_data = get_positions(auth)
     net_qty = "0"
@@ -1464,7 +1464,7 @@ def direct_place_order_api(data, auth):
     Place an order with Groww using direct API (no SDK)
 
     Args:
-        data (dict): Order data in OpenAlgo format
+        data (dict): Order data in MarvelQuant format
         auth (str): Authentication token
 
     Returns:
@@ -1752,7 +1752,7 @@ def place_order_api(data, auth):
     Place an order with Groww using direct API only (no SDK fallback)
 
     Args:
-        data (dict): Order data in OpenAlgo format
+        data (dict): Order data in MarvelQuant format
         auth (str): Authentication token
 
     Returns:
@@ -1845,7 +1845,7 @@ def place_smartorder_api(data, auth):
     Place a smart order with position management using direct API implementation
 
     Args:
-        data (dict): Order data in OpenAlgo format
+        data (dict): Order data in MarvelQuant format
         auth (str): Authentication token
 
     Returns:
@@ -2135,7 +2135,7 @@ def close_all_positions(token=None, auth=None):
     try:
         from database.token_db import get_br_symbol
     except ImportError:
-        from openalgo.database.token_db import get_br_symbol
+        from marvelquant.database.token_db import get_br_symbol
     """
     Close all open positions for the authenticated user
     """
@@ -2313,16 +2313,16 @@ def cancel_order(orderid, auth, segment=None, symbol=None, exchange=None):
         orderid (str): Order ID to cancel
         auth (str): Authentication token
         segment (str, optional): Order segment (e.g., SEGMENT_CASH). If None, will be detected from order book.
-        symbol (str, optional): Trading symbol in OpenAlgo format
+        symbol (str, optional): Trading symbol in MarvelQuant format
         exchange (str, optional): Exchange code
 
     Returns:
         tuple: (response data, status code)
     """
     try:
-        # If symbol is provided, convert it from OpenAlgo to Groww format
+        # If symbol is provided, convert it from MarvelQuant to Groww format
         if symbol and exchange:
-            groww_symbol = format_openalgo_to_groww_symbol(symbol, exchange)
+            groww_symbol = format_marvelquant_to_groww_symbol(symbol, exchange)
             logger.info(f"Symbol conversion for cancel order: {symbol} -> {groww_symbol}")
 
         # If segment is not provided, try to determine it from order book

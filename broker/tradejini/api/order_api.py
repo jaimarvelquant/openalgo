@@ -127,7 +127,7 @@ def get_order_book(auth):
         auth (str): Authentication token
 
     Returns:
-        dict: Order book data in OpenAlgo format
+        dict: Order book data in MarvelQuant format
     """
     try:
         # Get API key from environment
@@ -235,7 +235,7 @@ def get_trade_book(auth):
         auth (str): Authentication token
 
     Returns:
-        dict: Trade book data in OpenAlgo format {'data': [...], 'status': 'success'}
+        dict: Trade book data in MarvelQuant format {'data': [...], 'status': 'success'}
     """
     try:
         # Get API key from environment
@@ -366,7 +366,7 @@ def get_positions(auth):
         auth (str): Authentication token
 
     Returns:
-        dict: Positions data in OpenAlgo format
+        dict: Positions data in MarvelQuant format
     """
     try:
         # Get API key from environment
@@ -454,11 +454,11 @@ def get_positions(auth):
 
                     # Determine the final symbol to use
                     final_symbol = ""
-                    if openalgo_symbol:
-                        final_symbol = openalgo_symbol
-                        logger.info(f"Using OpenAlgo symbol: {final_symbol}")
+                    if marvelquant_symbol:
+                        final_symbol = marvelquant_symbol
+                        logger.info(f"Using MarvelQuant symbol: {final_symbol}")
                     else:
-                        # Fallback to exchange symbol if OpenAlgo symbol isn't available
+                        # Fallback to exchange symbol if MarvelQuant symbol isn't available
                         final_symbol = exchange_symbol
                         logger.info(f"Fallback to exchange symbol: {final_symbol}")
 
@@ -525,7 +525,7 @@ def get_holdings(auth):
         auth (str): Authentication token
 
     Returns:
-        dict: Holdings data in OpenAlgo format
+        dict: Holdings data in MarvelQuant format
         {
             "data": {
                 "holdings": [
@@ -1177,7 +1177,7 @@ def close_all_positions(current_api_key, auth):
         auth (str): Authentication token
 
     Returns:
-        dict: Response with status and message in OpenAlgo format
+        dict: Response with status and message in MarvelQuant format
               {
                   'status': 'success' or 'error',
                   'message': 'Descriptive message'

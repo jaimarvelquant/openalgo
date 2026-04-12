@@ -98,7 +98,7 @@ def get_symbol_info(
     Args:
         symbol: Symbol to look up
         exchange: Exchange to look up the symbol in
-        api_key: OpenAlgo API key (for API-based calls)
+        api_key: MarvelQuant API key (for API-based calls)
         auth_token: Direct broker authentication token (for internal calls)
         broker: Direct broker name (for internal calls)
 

@@ -5,7 +5,7 @@ class FivepaisaXTSExchangeMapper:
     """Maps between OpenAlgo exchange codes and Fivepaisa XTS specific exchange types"""
 
     # Exchange type mapping for Fivepaisa XTS broker
-    # Format: {OpenAlgo_Exchange: Fivepaisa_Exchange_Code}
+    # Format: {MarvelQuant_Exchange: Fivepaisa_Exchange_Code}
     # Based on Fivepaisa API documentation:
     # "NSECM": 1, "NSEFO": 2, "NSECD": 3, "BSECM": 11, "BSEFO": 12, "MCXFO": 51
     EXCHANGE_TYPES = {
@@ -100,7 +100,7 @@ class FivepaisaXTSExchangeMapper:
         return 1
 
     @staticmethod
-    def get_openalgo_exchange(fivepaisaxts_code):
+    def get_marvelquant_exchange(fivepaisaxts_code):
         """
         Convert Fivepaisa XTS exchange code to OpenAlgo exchange code
 
@@ -108,7 +108,7 @@ class FivepaisaXTSExchangeMapper:
             fivepaisaxts_code (int): Fivepaisa exchange code
 
         Returns:
-            str: OpenAlgo exchange code
+            str: MarvelQuant exchange code
         """
         return FivepaisaXTSExchangeMapper.REVERSE_EXCHANGE_TYPES.get(
             fivepaisaxts_code, "NSE"

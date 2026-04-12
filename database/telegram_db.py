@@ -93,9 +93,9 @@ class TelegramUser(Base):
 
     id = Column(Integer, primary_key=True)
     telegram_id = Column(Integer, unique=True, nullable=False, index=True)
-    openalgo_username = Column(String(255), nullable=False, index=True)
+    marvelquant_username = Column(String(255), nullable=False, index=True)
     encrypted_api_key = Column(Text)  # Encrypted API key for secure storage
-    host_url = Column(String(500))  # OpenAlgo host URL
+    host_url = Column(String(500))  # MarvelQuant host URL
     first_name = Column(String(255))
     last_name = Column(String(255))
     telegram_username = Column(String(255))
@@ -316,7 +316,7 @@ def create_or_update_telegram_user(
 
         if user:
             # Update existing user
-            user.openalgo_username = username
+            user.marvelquant_username = username
             if encrypted_key:
                 user.encrypted_api_key = encrypted_key
             if host_url:
@@ -331,7 +331,7 @@ def create_or_update_telegram_user(
             # Create new user
             user = TelegramUser(
                 telegram_id=telegram_id,
-                openalgo_username=username,
+                marvelquant_username=username,
                 encrypted_api_key=encrypted_key,
                 host_url=host_url,
                 first_name=first_name,

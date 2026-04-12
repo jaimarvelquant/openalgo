@@ -1,6 +1,6 @@
 """
 Fyers Symbol to HSM Token Converter
-Converts OpenAlgo symbols to Fyers HSM format for WebSocket streaming
+Converts MarvelQuant symbols to Fyers HSM format for WebSocket streaming
 Uses database lookup for brsymbol mapping
 """
 
@@ -74,7 +74,7 @@ class FyersTokenConverter:
         self, symbol_exchange_pairs: list[tuple[str, str]]
     ) -> dict[tuple[str, str], str]:
         """
-        Lookup brsymbols from database using OpenAlgo symbol and exchange
+        Lookup brsymbols from database using MarvelQuant symbol and exchange
         Uses the existing get_br_symbol function from database.token_db
 
         Args:
@@ -154,7 +154,7 @@ class FyersTokenConverter:
                 return [], {}, invalid_symbols
 
         except Exception as e:
-            self.logger.error(f"OpenAlgo symbol conversion error: {e}")
+            self.logger.error(f"MarvelQuant symbol conversion error: {e}")
             return [], {}, [f"{info['symbol']}@{info['exchange']}" for info in symbol_info_list]
 
     def convert_symbols_to_hsm(

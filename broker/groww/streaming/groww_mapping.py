@@ -20,7 +20,7 @@ class GrowwExchangeMapper:
     }
 
     @classmethod
-    def get_exchange(cls, openalgo_exchange: str) -> str:
+    def get_exchange(cls, marvelquant_exchange: str) -> str:
         """
         Get Groww exchange from OpenAlgo exchange code
 
@@ -34,7 +34,7 @@ class GrowwExchangeMapper:
         return mapping.get("exchange", openalgo_exchange)
 
     @classmethod
-    def get_segment(cls, openalgo_exchange: str) -> str:
+    def get_segment(cls, marvelquant_exchange: str) -> str:
         """
         Get Groww segment from OpenAlgo exchange code
 
@@ -48,7 +48,7 @@ class GrowwExchangeMapper:
         return mapping.get("segment", "CASH")
 
     @classmethod
-    def get_exchange_segment(cls, openalgo_exchange: str) -> tuple:
+    def get_exchange_segment(cls, marvelquant_exchange: str) -> tuple:
         """
         Get both exchange and segment from OpenAlgo exchange code
 

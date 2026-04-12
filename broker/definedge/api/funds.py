@@ -10,7 +10,7 @@ logger = get_logger(__name__)
 
 def get_margin_data(auth_token):
     """Fetch margin data from DefinedGe Securities API using the provided auth token."""
-    # Initialize with default values following OpenAlgo format
+    # Initialize with default values following MarvelQuant format
     processed_margin_data = {
         "availablecash": "0.00",
         "collateral": "0.00",

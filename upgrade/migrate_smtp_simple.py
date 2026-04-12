@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
-Universal SMTP Migration for OpenAlgo - With Automatic Path Resolution
+Universal SMTP Migration for MarvelQuant - With Automatic Path Resolution
 
-This script adds SMTP configuration columns to the OpenAlgo database.
+This script adds SMTP configuration columns to the MarvelQuant database.
 Automatically resolves database paths regardless of where it's run from.
 
 Usage (run from anywhere):

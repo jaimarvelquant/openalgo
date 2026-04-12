@@ -5,7 +5,7 @@ class IbullsExchangeMapper:
     """Maps between OpenAlgo exchange codes and Ibulls XTS specific exchange types"""
 
     # Exchange type mapping for Ibulls XTS broker
-    # Format: {OpenAlgo_Exchange: iBulls_Exchange_Code}
+    # Format: {MarvelQuant_Exchange: iBulls_Exchange_Code}
     # Based on Ibulls API documentation:
     # "NSECM": 1, "NSEFO": 2, "NSECD": 3, "BSECM": 11, "BSEFO": 12, "MCXFO": 51
     EXCHANGE_TYPES = {
@@ -100,7 +100,7 @@ class IbullsExchangeMapper:
         return 1
 
     @staticmethod
-    def get_openalgo_exchange(ibulls_code):
+    def get_marvelquant_exchange(ibulls_code):
         """
         Convert Ibulls XTS exchange code to OpenAlgo exchange code
 
@@ -108,7 +108,7 @@ class IbullsExchangeMapper:
             ibulls_code (int): iBulls exchange code
 
         Returns:
-            str: OpenAlgo exchange code
+            str: MarvelQuant exchange code
         """
         return IbullsExchangeMapper.REVERSE_EXCHANGE_TYPES.get(
             ibulls_code, "NSE"

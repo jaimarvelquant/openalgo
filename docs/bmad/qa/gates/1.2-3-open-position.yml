@@ -1,0 +1,47 @@
+schema: 1
+story: 1.2-3
+story_title: 'Story 1.2-3: Open-Position'
+gate: PASS
+status_reason: >
+  List payloads now bypass the `.get(...)` crash path, execution time logging is
+  in place, and the dedicated pytest suite exercises long/short/not-found/error
+  scenarios successfully.
+reviewer: Quinn (Test Architect)
+updated: '2025-10-07T23:45:00Z'
+top_issues:
+  - Watch: Input validation is implicit; keep call sites supplying normalized strings to avoid false negatives.
+waiver:
+  active: false
+quality_score: 95
+expires: '2025-10-21'
+evidence:
+  tests_reviewed: 20
+  risks_identified: 1
+  trace:
+    ac_covered:
+      - 1
+      - 2
+      - 3
+      - 4
+      - 5
+      - 6
+    ac_gaps: []
+nfr_validation:
+  security:
+    status: PASS
+    notes: No auth or credential handling changes introduced by this story.
+  performance:
+    status: PASS
+    notes: `_finish(...)` instrumentation records duration on every path; runtime limited by upstream API call.
+  reliability:
+    status: PASS
+    notes: List/dict payload handling and exception guards cover the smart-order dependency scenarios.
+  maintainability:
+    status: PASS
+    notes: Comprehensive pytest suite (20 cases) protects regressions across payload variations.
+recommendations:
+  immediate: []
+  future:
+    - action: Add lightweight input normalization/validation to warn on empty/None parameters before lookup.
+      refs:
+        - broker/jainam_prop/api/order_api.py:575

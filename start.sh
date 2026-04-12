@@ -207,13 +207,13 @@ fi
 echo "[OpenAlgo] Starting WebSocket proxy server on port 8765..."
 /app/.venv/bin/python -m websocket_proxy.server &
 WEBSOCKET_PID=$!
-echo "[OpenAlgo] WebSocket proxy server started with PID $WEBSOCKET_PID"
+echo "[MarvelQuant] WebSocket proxy server started with PID $WEBSOCKET_PID"
 
 # ============================================
 # CLEANUP HANDLER
 # ============================================
 cleanup() {
-    echo "[OpenAlgo] Shutting down..."
+    echo "[MarvelQuant] Shutting down..."
     if [ ! -z "$WEBSOCKET_PID" ]; then
         kill $WEBSOCKET_PID 2>/dev/null
     fi

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-OpenAlgo – New Broker Integration Test
+MarvelQuant – New Broker Integration Test
 • Stage‑by‑stage progress output
 • Immediate reporting of any failing symbol / order‑id
 • Final green / red roll‑up

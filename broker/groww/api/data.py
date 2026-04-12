@@ -135,7 +135,7 @@ class BrokerData:
             {"max_days": float("inf"), "min_interval": "10080"},  # >1080 days: 10080 min minimum
         ]
 
-    def _convert_openalgo_to_groww_derivative_symbol(self, symbol):
+    def _convert_marvelquant_to_groww_derivative_symbol(self, symbol):
         """
         Convert OpenAlgo NFO/BFO symbol format to Groww format
 
@@ -213,7 +213,7 @@ class BrokerData:
                 logger.debug(f"Found broker symbol in database: {trading_symbol}")
             else:
                 # If not in database, convert format
-                trading_symbol = self._convert_openalgo_to_groww_derivative_symbol(symbol)
+                trading_symbol = self._convert_marvelquant_to_groww_derivative_symbol(symbol)
                 logger.debug(f"Converted derivative symbol: {symbol} -> {trading_symbol}")
         else:
             # For equity, use broker symbol if available
@@ -879,7 +879,7 @@ class BrokerData:
                 }
 
                 # Create the DataFrame with timestamp as a column (not an index)
-                # NOTE: For OpenAlgoXTS, return non-indexed DataFrame with timestamp as a column
+                # NOTE: For MarvelQuantXTS, return non-indexed DataFrame with timestamp as a column
                 # This matches the FivePaisa pattern that has been proven to work correctly
                 result_df = pd.DataFrame(data)
 
@@ -1053,7 +1053,7 @@ class BrokerData:
             timeout (int): Timeout in seconds
 
         Returns:
-            Dict[str, Any]: Quote data in OpenAlgo format
+            Dict[str, Any]: Quote data in MarvelQuant format
         """
         logger.info(f"Getting quotes using direct API calls for: {symbol_list}")
 
@@ -1447,7 +1447,7 @@ class BrokerData:
             "oi": quote.get("oi", 0),  # Add Open Interest field
         }
 
-        logger.debug(f"Final OpenAlgo quote format (data only): {result}")
+        logger.debug(f"Final MarvelQuant quote format (data only): {result}")
         return result
 
         # Commented out alternate implementation
@@ -1547,7 +1547,7 @@ class BrokerData:
             timeout (int): Timeout in seconds
 
         Returns:
-            Dict[str, Any]: Market depth data in OpenAlgo format
+            Dict[str, Any]: Market depth data in MarvelQuant format
         """
         logger.info(f"Getting market depth using direct API calls for: {symbol_list}")
 
@@ -1613,7 +1613,7 @@ class BrokerData:
                 logger.debug(f"Found broker symbol in database: {trading_symbol}")
             else:
                 # If not in database, convert format
-                trading_symbol = self._convert_openalgo_to_groww_derivative_symbol(symbol)
+                trading_symbol = self._convert_marvelquant_to_groww_derivative_symbol(symbol)
                 logger.debug(f"Converted derivative symbol: {symbol} -> {trading_symbol}")
         else:
             # For equity, use broker symbol if available
@@ -1775,7 +1775,7 @@ class BrokerData:
             timeout (int): Timeout in seconds
 
         Returns:
-            Dict[str, Any]: Market depth data in OpenAlgo format
+            Dict[str, Any]: Market depth data in MarvelQuant format
         """
         return self.get_depth(symbol_list, timeout)
 

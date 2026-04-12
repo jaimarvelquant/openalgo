@@ -58,7 +58,7 @@ def get_margin_data(auth_token):
         # Extract key margin fields from the data array
         data_items = margin_data["data"]
 
-        # Map Motilal Oswal fields to OpenAlgo standard fields
+        # Map Motilal Oswal fields to MarvelQuant standard fields
         margin_dict = {}
         for item in data_items:
             srno = item.get("srno")

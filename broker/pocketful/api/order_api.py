@@ -592,7 +592,7 @@ def place_order_api(data, auth_token):
         else:
             return None, info_response, None
     logger.info(f"Client ID: {client_id}")
-    # Transform OpenAlgo order format to Pocketful format
+    # Transform MarvelQuant order format to Pocketful format
     newdata = transform_data(data, client_id=client_id)
     logger.info(f"Transformed data: {newdata}")
     # Make the API request

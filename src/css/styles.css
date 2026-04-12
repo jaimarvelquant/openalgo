@@ -1,10 +1,8 @@
 /* Tailwind CSS v4 imports */
 @import "tailwindcss";
 
-/* DaisyUI Plugin with all built-in themes */
-@plugin "daisyui" {
-  themes: light --default, dark --prefersdark, cupcake, bumblebee, emerald, corporate, synthwave, retro, cyberpunk, valentine, halloween, garden, aqua, lofi, pastel, fantasy, wireframe, luxury, dracula, cmyk, autumn, business, acid, lemonade, night, coffee, winter, dim, nord, sunset;
-}
+/* DaisyUI Plugin */
+@plugin "daisyui";
 
 /* Custom Dracula theme color overrides - Pink for symbol names only */
 [data-theme="dracula"] {

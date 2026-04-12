@@ -5,7 +5,7 @@ class IiflExchangeMapper:
     """Maps between OpenAlgo exchange codes and Iifl XTS specific exchange types"""
 
     # Exchange type mapping for Iifl XTS broker
-    # Format: {OpenAlgo_Exchange: Iifl_Exchange_Code}
+    # Format: {MarvelQuant_Exchange: Iifl_Exchange_Code}
     # Based on Iifl API documentation:
     # "NSECM": 1, "NSEFO": 2, "NSECD": 3, "BSECM": 11, "BSEFO": 12, "MCXFO": 51
     EXCHANGE_TYPES = {
@@ -100,7 +100,7 @@ class IiflExchangeMapper:
         return 1
 
     @staticmethod
-    def get_openalgo_exchange(iifl_code):
+    def get_marvelquant_exchange(iifl_code):
         """
         Convert Iifl XTS exchange code to OpenAlgo exchange code
 
@@ -108,7 +108,7 @@ class IiflExchangeMapper:
             iifl_code (int): Iifl exchange code
 
         Returns:
-            str: OpenAlgo exchange code
+            str: MarvelQuant exchange code
         """
         return IiflExchangeMapper.REVERSE_EXCHANGE_TYPES.get(
             iifl_code, "NSE"

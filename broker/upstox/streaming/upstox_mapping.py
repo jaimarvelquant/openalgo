@@ -7,7 +7,7 @@ class UpstoxExchangeMapper:
     """Maps between OpenAlgo exchange codes and Upstox specific exchange types"""
 
     # Exchange type mapping for Upstox broker
-    # Format: {OpenAlgo_Exchange: Upstox_Exchange_Code}
+    # Format: {MarvelQuant_Exchange: Upstox_Exchange_Code}
     EXCHANGE_TYPES = {
         # NSE Segments
         "NSE": "NSE_EQ",  # NSE Cash Market
@@ -72,7 +72,7 @@ class UpstoxExchangeMapper:
         return "NSE_EQ"
 
     @staticmethod
-    def get_openalgo_exchange(upstox_code):
+    def get_marvelquant_exchange(upstox_code):
         """
         Convert Upstox exchange code to OpenAlgo exchange code
 
@@ -80,7 +80,7 @@ class UpstoxExchangeMapper:
             upstox_code (str): Upstox exchange code
 
         Returns:
-            str: OpenAlgo exchange code
+            str: MarvelQuant exchange code
         """
         return UpstoxExchangeMapper.REVERSE_EXCHANGE_TYPES.get(
             upstox_code, "NSE"

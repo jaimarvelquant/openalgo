@@ -11,7 +11,7 @@ api_key = "your-openalgo-api-key"
 
 # Set the strategy details and trading parameters
 strategy = "Supertrend Python"
-symbol = "RELIANCE"  # OpenAlgo Symbol
+symbol = "RELIANCE"  # MarvelQuant Symbol
 exchange = "NSE"
 product = "MIS"
 quantity = 1
@@ -90,7 +90,7 @@ def supertrend_strategy():
             end_date = datetime.now().strftime("%Y-%m-%d")
             start_date = (datetime.now() - timedelta(days=7)).strftime("%Y-%m-%d")
 
-            # Fetch 1-minute historical data using OpenAlgo
+            # Fetch 1-minute historical data using MarvelQuant
             df = client.history(
                 symbol=symbol,
                 exchange=exchange,

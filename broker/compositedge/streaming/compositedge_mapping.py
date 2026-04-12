@@ -5,7 +5,7 @@ class CompositedgeExchangeMapper:
     """Maps between OpenAlgo exchange codes and Compositedge XTS specific exchange types"""
 
     # Exchange type mapping for Compositedge XTS broker
-    # Format: {OpenAlgo_Exchange: Compositedge_Exchange_Code}
+    # Format: {MarvelQuant_Exchange: Compositedge_Exchange_Code}
     # Based on Compositedge API documentation:
     # "NSECM": 1, "NSEFO": 2, "NSECD": 3, "BSECM": 11, "BSEFO": 12, "MCXFO": 51
     EXCHANGE_TYPES = {
@@ -100,7 +100,7 @@ class CompositedgeExchangeMapper:
         return 1
 
     @staticmethod
-    def get_openalgo_exchange(compositedge_code):
+    def get_marvelquant_exchange(compositedge_code):
         """
         Convert Compositedge XTS exchange code to OpenAlgo exchange code
 
@@ -108,7 +108,7 @@ class CompositedgeExchangeMapper:
             compositedge_code (int): Compositedge exchange code
 
         Returns:
-            str: OpenAlgo exchange code
+            str: MarvelQuant exchange code
         """
         return CompositedgeExchangeMapper.REVERSE_EXCHANGE_TYPES.get(
             compositedge_code, "NSE"

@@ -115,7 +115,7 @@ def process_definedge_nse_csv(path):
     try:
         df = pd.read_csv(path)
 
-        # Map DefinedGe NSE columns to OpenAlgo schema
+        # Map DefinedGe NSE columns to MarvelQuant schema
         # Assuming DefinedGe uses standard format: Symbol, Token, Name, etc.
         processed_df = pd.DataFrame()
 

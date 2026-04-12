@@ -901,7 +901,7 @@ class AliceblueWebSocketAdapter(BaseBrokerWebSocketAdapter):
             # Find the original subscription to get the correct exchange and symbol
             # This is important because the client subscribes with NSE_INDEX for NIFTY
             # but the data comes with NSE exchange
-            # Also, for NFO/BFO symbols, AliceBlue returns broker symbols but we need OpenAlgo symbols
+            # Also, for NFO/BFO symbols, AliceBlue returns broker symbols but we need MarvelQuant symbols
             sub_key = symbol_key  # Use the same key as created above
             self.logger.debug(f"Looking for subscription with key: {sub_key}")
             original_exchange = exchange  # Default to mapped exchange

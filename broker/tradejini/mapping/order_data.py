@@ -110,7 +110,7 @@ def transform_order_data(orders):
     - orders: List of orders with modified fields
 
     Returns:
-    - Dictionary with orders in OpenAlgo format
+    - Dictionary with orders in MarvelQuant format
     """
     # print(f"[DEBUG] transform_order_data - Input orders: {orders}")
 
@@ -122,7 +122,7 @@ def transform_order_data(orders):
     transformed_orders = []
 
     for order in orders:
-        # Convert to OpenAlgo format if needed
+        # Convert to MarvelQuant format if needed
         transformed_order = {
             "action": order.get("action", ""),
             "exchange": order.get("exchange", ""),
@@ -242,7 +242,7 @@ def transform_tradebook_data(trades):
         trades: List of mapped trade dictionaries or raw API response
 
     Returns:
-        dict: Trade book data in OpenAlgo format with {'data': [...], 'status': 'success'}
+        dict: Trade book data in MarvelQuant format with {'data': [...], 'status': 'success'}
     """
     logger.debug(f"transform_tradebook_data - Input trades type: {type(trades)}")
 
@@ -454,11 +454,11 @@ def map_position_data(position_data):
 
             # Determine the final symbol to use
             final_symbol = ""
-            if openalgo_symbol:
-                final_symbol = openalgo_symbol
-                logger.info(f"Using OpenAlgo symbol: {final_symbol}")
+            if marvelquant_symbol:
+                final_symbol = marvelquant_symbol
+                logger.info(f"Using MarvelQuant symbol: {final_symbol}")
             else:
-                # Fallback to exchange symbol if OpenAlgo symbol isn't available
+                # Fallback to exchange symbol if MarvelQuant symbol isn't available
                 final_symbol = exchange_symbol
                 logger.info(f"Fallback to exchange symbol: {final_symbol}")
 
@@ -485,7 +485,7 @@ def map_position_data(position_data):
 
 def transform_positions_data(positions_data):
     """
-    Transform mapped position data to OpenAlgo format.
+    Transform mapped position data to MarvelQuant format.
     DEPRECATED: This function is kept for backward compatibility only.
     Position transformation is now done directly in get_positions function.
     """
@@ -680,7 +680,7 @@ def transform_holdings_data(holdings_data):
         holdings_data (list): List of holdings dictionaries from TradeJini API
 
     Returns:
-        dict: Holdings data in OpenAlgo format
+        dict: Holdings data in MarvelQuant format
         {
             "data": {
                 "holdings": [

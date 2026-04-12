@@ -1,0 +1,259 @@
+<story-context id="bmad/bmm/workflows/4-implementation/story-context/template" v="1.0">
+  <metadata>
+    <epicId>1.4</epicId>
+    <storyId>1.4-1</storyId>
+    <title>HTTP Helper with Retry Logic</title>
+    <status>Draft</status>
+    <generatedAt>2025-10-12</generatedAt>
+    <generator>BMAD Story Context Workflow</generator>
+    <sourceStoryPath>/Users/maruth/projects/openalgo/docs/bmad/stories/story-1.4-1-http-helper-with-retry-logic.md</sourceStoryPath>
+  </metadata>
+
+  <story>
+    <asA>a developer implementing Jainam Prop REST API calls</asA>
+    <iWant>a centralized HTTP helper function with retry logic and structured logging</iWant>
+    <soThat>all API calls have consistent error handling, automatic retries on transient failures, and detailed telemetry for debugging</soThat>
+    <tasks>
+      <task id="1" ac="1">
+        <description>Copy base function from FivePaisaXTS</description>
+        <subtasks>
+          <subtask id="1.1">Copy get_api_response() from broker/fivepaisaxts/api/order_api.py:15-44 (15 min)</subtask>
+          <subtask id="1.2">Create broker/jainam_prop/api/http_helper.py (5 min)</subtask>
+        </subtasks>
+      </task>
+      <task id="2" ac="1">
+        <description>Adapt for Jainam with retry logic</description>
+        <subtasks>
+          <subtask id="2.1">Replace INTERACTIVE_URL with get_jainam_base_url() (10 min)</subtask>
+          <subtask id="2.2">Add retry loop with exponential backoff (15 min)</subtask>
+          <subtask id="2.3">Add structured logging (endpoint, method, status, latency, attempt) (5 min)</subtask>
+          <subtask id="2.4">Add network error handling (5 min)</subtask>
+        </subtasks>
+      </task>
+      <task id="3" ac="2">
+        <description>Refactor order_api.py</description>
+        <subtasks>
+          <subtask id="3.1">Import get_api_response from http_helper (5 min)</subtask>
+          <subtask id="3.2">Replace get_order_book() endpoint (10 min)</subtask>
+          <subtask id="3.3">Replace get_trade_book() endpoint (10 min)</subtask>
+          <subtask id="3.4">Replace get_positions() endpoint (10 min)</subtask>
+          <subtask id="3.5">Replace get_holdings() endpoint (10 min)</subtask>
+          <subtask id="3.6">Replace place_order_api() endpoint (15 min)</subtask>
+          <subtask id="3.7">Replace modify_order_api() endpoint (10 min)</subtask>
+          <subtask id="3.8">Replace cancel_order_api() endpoint (10 min)</subtask>
+          <subtask id="3.9">Test each endpoint (20 min)</subtask>
+        </subtasks>
+      </task>
+      <task id="4" ac="3">
+        <description>Refactor data.py and funds.py</description>
+        <subtasks>
+          <subtask id="4.1">Apply same refactoring pattern to data.py (30 min)</subtask>
+          <subtask id="4.2">Apply same refactoring pattern to funds.py (30 min)</subtask>
+          <subtask id="4.3">Test all endpoints (20 min)</subtask>
+        </subtasks>
+      </task>
+      <task id="5" ac="4">
+        <description>Add configuration</description>
+        <subtasks>
+          <subtask id="5.1">Add retry config to config.py (10 min)</subtask>
+          <subtask id="5.2">Update helper to use config values (5 min)</subtask>
+          <subtask id="5.3">Update .env.example with retry configuration (5 min)</subtask>
+        </subtasks>
+      </task>
+      <task id="6" ac="all">
+        <description>Testing</description>
+        <subtasks>
+          <subtask id="6.1">Unit tests for successful request (10 min)</subtask>
+          <subtask id="6.2">Unit tests for retry on 500 error (10 min)</subtask>
+          <subtask id="6.3">Unit tests for no retry on 400 errors (10 min)</subtask>
+          <subtask id="6.4">Unit tests for network error retry (10 min)</subtask>
+          <subtask id="6.5">Integration test for order book with retry (10 min)</subtask>
+          <subtask id="6.6">Integration test for order placement with retry (10 min)</subtask>
+        </subtasks>
+      </task>
+    </tasks>
+  </story>
+
+  <acceptanceCriteria>
+    <criterion id="AC1">
+      <title>Create HTTP Helper Module</title>
+      <requirements>
+        <requirement>File: broker/jainam_prop/api/http_helper.py</requirement>
+        <requirement>Function uses shared httpx client from utils.httpx_client.get_httpx_client()</requirement>
+        <requirement>Retries on 5xx, 429, network errors</requirement>
+        <requirement>Exponential backoff: delay = min(backoff_min * (2 ** attempt), backoff_max)</requirement>
+        <requirement>Structured logging includes: endpoint, method, status, latency, attempt</requirement>
+        <requirement>Returns JSON response with response.status attribute</requirement>
+      </requirements>
+    </criterion>
+    <criterion id="AC2">
+      <title>Refactor order_api.py to Use Helper</title>
+      <requirements>
+        <requirement>All GET endpoints refactored to use get_api_response()</requirement>
+        <requirement>All POST endpoints refactored</requirement>
+        <requirement>All PUT/DELETE endpoints refactored</requirement>
+        <requirement>No direct httpx calls remain in order_api.py</requirement>
+        <requirement>Dealer account clientID parameter preserved</requirement>
+      </requirements>
+    </criterion>
+    <criterion id="AC3">
+      <title>Refactor data.py and funds.py</title>
+      <requirements>
+        <requirement>All modules use get_api_response() helper</requirement>
+        <requirement>Consistent error handling across all modules</requirement>
+        <requirement>No direct httpx calls outside helper</requirement>
+      </requirements>
+    </criterion>
+    <criterion id="AC4">
+      <title>Add Configuration for Retry Behavior</title>
+      <requirements>
+        <requirement>Configuration values in broker/jainam_prop/api/config.py</requirement>
+        <requirement>Values can be overridden via environment variables</requirement>
+        <requirement>Default values are sensible for production</requirement>
+        <requirement>.env.example updated with retry configuration</requirement>
+      </requirements>
+    </criterion>
+  </acceptanceCriteria>
+
+  <artifacts>
+    <docs>
+      <doc>
+        <path>/Users/maruth/projects/openalgo/docs/bmad/research/jainam-code-reuse-analysis.md</path>
+        <title>Comprehensive Code Reuse Analysis for Jainam Prop Integration</title>
+        <section>Section 3: API Implementation Code Reuse Analysis</section>
+        <snippet>FivePaisaXTS get_api_response() function (lines 15-44) provides 90% reusable pattern for HTTP helper with shared httpx client usage, consistent request/response handling, GET/POST/PUT/DELETE method support, and JSON response handling with status code</snippet>
+      </doc>
+      <doc>
+        <path>/Users/maruth/projects/openalgo/docs/bmad/jainam-prop-completion-prd.md</path>
+        <title>Jainam Prop Broker Integration Completion - Brownfield Enhancement PRD</title>
+        <section>Section 2.2: Non-Functional Requirements</section>
+        <snippet>NFR3 requires retry logic for transient network failures: retry failed API calls up to 3 times with exponential backoff (1s, 2s, 4s), only retry on network errors (Timeout, ConnectionError), not on business logic errors (400, 401, 403)</snippet>
+      </doc>
+      <doc>
+        <path>/Users/maruth/projects/openalgo/docs/httpx_client_documentation.md</path>
+        <title>Shared HTTPX Client Documentation</title>
+        <section>Overview</section>
+        <snippet>Global httpx client with connection pooling (max 20 keepalive, 50 max connections, 120s timeout), HTTP/2 support with HTTP/1.1 fallback, protocol auto-negotiation</snippet>
+      </doc>
+    </docs>
+    <code>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/broker/fivepaisaxts/api/order_api.py</path>
+        <kind>function</kind>
+        <symbol>get_api_response</symbol>
+        <lines>15-44</lines>
+        <reason>Reference implementation for HTTP helper - 90% reusable pattern showing shared httpx client usage, header construction, method handling (GET/POST/PUT/DELETE), response status compatibility</reason>
+      </artifact>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/utils/httpx_client.py</path>
+        <kind>module</kind>
+        <symbol>get_httpx_client</symbol>
+        <lines>15-30</lines>
+        <reason>Shared HTTP client with connection pooling that must be used by the HTTP helper - provides automatic protocol negotiation, connection pooling (20 keepalive, 50 max), 120s timeout</reason>
+      </artifact>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/broker/jainam_prop/api/order_api.py</path>
+        <kind>module</kind>
+        <symbol>place_order_api,get_order_book,get_positions,get_holdings,get_trade_book</symbol>
+        <lines>1-1262</lines>
+        <reason>Existing Jainam modules that will be refactored to use the new HTTP helper - currently make direct httpx calls that need to be replaced with centralized helper</reason>
+      </artifact>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/broker/jainam_prop/api/config.py</path>
+        <kind>module</kind>
+        <symbol>get_jainam_base_url</symbol>
+        <lines>unknown</lines>
+        <reason>Base URL configuration that HTTP helper will use - replaces hardcoded INTERACTIVE_URL pattern from FivePaisaXTS</reason>
+      </artifact>
+      <artifact>
+        <path>/Users/maruth/projects/openalgo/utils/logging.py</path>
+        <kind>module</kind>
+        <symbol>get_logger</symbol>
+        <lines>unknown</lines>
+        <reason>Logging utility for structured logging in HTTP helper - will log endpoint, method, status, latency, attempt for each API call</reason>
+      </artifact>
+    </code>
+    <dependencies>
+      <python>
+        <package name="httpx" version="latest" usage="HTTP client library - shared client with connection pooling and retry support"/>
+        <package name="python" version="3.8+" usage="Minimum Python version requirement"/>
+      </python>
+    </dependencies>
+  </artifacts>
+
+  <constraints>
+    <constraint>HTTP helper must use shared httpx client from utils.httpx_client.get_httpx_client() - DO NOT create new httpx clients</constraint>
+    <constraint>Configuration values must be loaded from broker/jainam_prop/api/config.py and support environment variable overrides</constraint>
+    <constraint>Retry logic must ONLY retry on network errors (Timeout, ConnectionError, 5xx, 429) - DO NOT retry on business logic errors (400, 401, 403)</constraint>
+    <constraint>Response object must include response.status attribute for backward compatibility with existing codebase</constraint>
+    <constraint>Structured logging must include: endpoint, method, status, latency, attempt number for debugging and monitoring</constraint>
+    <constraint>Function signature must match pattern: get_api_response(endpoint, auth, method="GET", payload=None, retries=3, backoff_min=0.25, backoff_max=2.0)</constraint>
+    <constraint>All refactored modules (order_api.py, data.py, funds.py) must use the helper - NO direct httpx calls should remain</constraint>
+    <constraint>Dealer account clientID parameter must be preserved in all API calls - critical for Pro/Normal dealer accounts</constraint>
+  </constraints>
+
+  <interfaces>
+    <interface>
+      <name>get_httpx_client</name>
+      <kind>function</kind>
+      <signature>get_httpx_client() -> httpx.Client</signature>
+      <path>/Users/maruth/projects/openalgo/utils/httpx_client.py</path>
+      <description>Returns shared HTTP client with connection pooling - MUST be called to get client instance</description>
+    </interface>
+    <interface>
+      <name>get_jainam_base_url</name>
+      <kind>function</kind>
+      <signature>get_jainam_base_url() -> str</signature>
+      <path>/Users/maruth/projects/openalgo/broker/jainam_prop/api/config.py</path>
+      <description>Returns Jainam base URL - replaces hardcoded INTERACTIVE_URL pattern</description>
+    </interface>
+    <interface>
+      <name>get_logger</name>
+      <kind>function</kind>
+      <signature>get_logger(name: str) -> Logger</signature>
+      <path>/Users/maruth/projects/openalgo/utils/logging.py</path>
+      <description>Returns configured logger instance for structured logging</description>
+    </interface>
+    <interface>
+      <name>get_api_response</name>
+      <kind>function</kind>
+      <signature>get_api_response(endpoint: str, auth: str, method: str = "GET", payload: dict = None, retries: int = 3, backoff_min: float = 0.25, backoff_max: float = 2.0) -> dict</signature>
+      <path>/Users/maruth/projects/openalgo/broker/jainam_prop/api/http_helper.py</path>
+      <description>NEW HTTP helper function to be created - centralizes all HTTP API calls with retry logic and structured logging</description>
+    </interface>
+  </interfaces>
+
+  <tests>
+    <standards>
+      Testing standards from Dev Notes:
+      - Unit tests in broker/jainam_prop/api/test_http_helper.py with pytest
+      - Test successful API call (happy path with 200 response)
+      - Test retry logic on 500 error with exponential backoff verification (delays: 0.25s, 0.5s, 1.0s)
+      - Test no retry on client errors (400, 401, 403 should fail immediately)
+      - Test retry on network errors (Timeout, ConnectionError exceptions)
+      - Integration tests in broker/jainam_prop/test_order_api_refactored.py
+      - Test order book retrieval with retry logic using real Jainam API
+      - Test order placement with retry logic (POST) using real Jainam API
+      - Coverage target: >90% for http_helper.py
+      - Use mocking for unit tests (httpx.Client.get/post), real API for integration tests
+    </standards>
+    <locations>
+      <location>broker/jainam_prop/api/test_http_helper.py</location>
+      <location>broker/jainam_prop/test_order_api_refactored.py</location>
+      <location>broker/jainam_prop/conftest.py</location>
+    </locations>
+    <ideas>
+      <idea ac="AC1">Unit test: Mock successful GET request to /interactive/orders, verify response.status attribute and JSON parsing</idea>
+      <idea ac="AC1">Unit test: Mock 500 error response, verify 3 retries with exponential backoff (0.25s, 0.5s, 1.0s delays), verify structured logging of attempts</idea>
+      <idea ac="AC1">Unit test: Mock 400 error response, verify NO retry (immediate failure), verify single log entry</idea>
+      <idea ac="AC1">Unit test: Mock network error (Timeout exception), verify retry behavior with exponential backoff</idea>
+      <idea ac="AC1">Unit test: Mock 429 rate limit error, verify retry with exponential backoff</idea>
+      <idea ac="AC2">Integration test: Call get_order_book() using HTTP helper, verify real Jainam API response, check latency < 5s</idea>
+      <idea ac="AC2">Integration test: Place test order using HTTP helper, verify order ID returned, verify dealer clientID preserved in request</idea>
+      <idea ac="AC3">Integration test: Call get_quotes() from data.py using HTTP helper, verify market data token usage</idea>
+      <idea ac="AC3">Integration test: Call get_margin() from funds.py using HTTP helper, verify response format</idea>
+      <idea ac="AC4">Unit test: Verify config values loaded from environment variables (JAINAM_RETRY_ATTEMPTS, JAINAM_RETRY_BACKOFF_MIN, JAINAM_RETRY_BACKOFF_MAX)</idea>
+      <idea ac="AC4">Unit test: Verify config defaults used when environment variables not set (retries=3, backoff_min=0.25, backoff_max=2.0)</idea>
+    </ideas>
+  </tests>
+</story-context>

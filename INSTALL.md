@@ -1,8 +1,8 @@
-# OpenAlgo Installation Guide
+# MarvelQuant Installation Guide
 
 ## Prerequisites
 
-Before installing OpenAlgo, ensure you have the following prerequisites installed:
+Before installing MarvelQuant, ensure you have the following prerequisites installed:
 
 - **Visual Studio Code (VS Code)** installed on Windows.
 - **Python** version 3.10 or 3.11 installed.
@@ -17,9 +17,9 @@ Before installing OpenAlgo, ensure you have the following prerequisites installe
    - Install the Python, Pylance, and Jupyter extensions
 
 2. **Clone the Repository**: 
-   Open the VS Code Terminal and clone the OpenAlgo repository:
+   Open the VS Code Terminal and clone the MarvelQuant repository:
    ```bash
-   git clone https://github.com/marketcalls/openalgo
+   git clone https://github.com/marketcalls/marvelquant
    ```
 
 3. **Install Python Dependencies**: 
@@ -34,14 +34,41 @@ Before installing OpenAlgo, ensure you have the following prerequisites installe
    pip install -r requirements-nginx.txt
    ```
 
+   **Recommended virtual environment workflow (all platforms):**
+
+   1. Create an isolated environment in the project root:
+      ```bash
+      python3 -m venv .venv
+      ```
+      On Windows PowerShell, use `python -m venv .venv`.
+
+   2. Activate the environment:
+      ```bash
+      source .venv/bin/activate            # macOS / Linux
+      .\.venv\Scripts\Activate.ps1         # Windows PowerShell
+      ```
+
+   3. Upgrade pip and install dependencies inside the venv:
+      ```bash
+      python -m pip install --upgrade pip
+      python -m pip install -r requirements.txt
+      ```
+      (If your shell reports an encoding error, convert the UTF-16 `requirements.txt`
+      to UTF-8 or run `python -m pip install SQLAlchemy flask-sqlalchemy` manually.)
+
+   4. Verify the ORM dependencies needed for Jainam validation scripts:
+      ```bash
+      python -c "import sqlalchemy, flask_sqlalchemy; print('SQLAlchemy ready')"
+      ```
+
 4. **Install Node.js Dependencies**: 
    ```bash
-   cd openalgo
+   cd marvelquant
    npm install
    ```
 
 5. **Configure Environment Variables**: 
-   - Rename `.sample.env` to `.env` in the `openalgo` folder
+   - Rename `.sample.env` to `.env` in the `marvelquant` folder
    - Update the `.env` file with your specific configurations
 
 ## CSS Compilation Setup
@@ -113,4 +140,4 @@ If you encounter any issues during installation:
    - Check if your firewall allows WebSocket connections
    - Verify Socket.IO client version matches server version
 
-For more detailed configuration instructions, visit [https://docs.openalgo.in](https://docs.openalgo.in)
+For more detailed configuration instructions, visit [https://docs.marvelquant.com](https://docs.marvelquant.com)

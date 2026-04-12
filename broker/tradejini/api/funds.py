@@ -25,7 +25,7 @@ def get_margin_data(auth_token):
         auth_token (str): The authentication token
 
     Returns:
-        dict: Processed margin data in OpenAlgo format
+        dict: Processed margin data in MarvelQuant format
     """
     try:
         # Get API key from environment

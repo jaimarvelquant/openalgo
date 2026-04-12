@@ -1,6 +1,6 @@
 """
 Fyers Data Mapping
-Maps Fyers HSM data to OpenAlgo format for compatibility
+Maps Fyers HSM data to MarvelQuant format for compatibility
 """
 
 import logging
@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 class FyersDataMapper:
     """
-    Maps Fyers HSM WebSocket data to OpenAlgo format
+    Maps Fyers HSM WebSocket data to MarvelQuant format
     """
 
     def __init__(self):
@@ -28,7 +28,7 @@ class FyersDataMapper:
             fyers_data: Raw data from Fyers HSM WebSocket
 
         Returns:
-            OpenAlgo LTP format dict or None if mapping fails
+            MarvelQuant LTP format dict or None if mapping fails
         """
         try:
             if not fyers_data or "ltp" not in fyers_data:
@@ -92,7 +92,7 @@ class FyersDataMapper:
             fyers_data: Raw data from Fyers HSM WebSocket
 
         Returns:
-            OpenAlgo Quote format dict or None if mapping fails
+            MarvelQuant Quote format dict or None if mapping fails
         """
         try:
             if not fyers_data:
@@ -178,7 +178,7 @@ class FyersDataMapper:
             fyers_data: Raw depth data from Fyers HSM WebSocket
 
         Returns:
-            OpenAlgo Depth format dict or None if mapping fails
+            MarvelQuant Depth format dict or None if mapping fails
         """
         try:
             if not fyers_data or fyers_data.get("type") != "dp":
@@ -331,14 +331,14 @@ class FyersDataMapper:
 
     def map_index_to_synthetic_depth(self, fyers_data: dict[str, Any]) -> dict[str, Any] | None:
         """
-        Map Fyers index data to synthetic OpenAlgo Depth format
+        Map Fyers index data to synthetic MarvelQuant Depth format
         Since indices don't have real depth, create synthetic depth from quote data
 
         Args:
             fyers_data: Raw index data from Fyers HSM WebSocket
 
         Returns:
-            OpenAlgo Depth format dict or None if mapping fails
+            MarvelQuant Depth format dict or None if mapping fails
         """
         try:
             if not fyers_data or fyers_data.get("type") != "if":
@@ -435,7 +435,7 @@ class FyersDataMapper:
             requested_type: Requested data type ("LTP", "Quote", or "Depth")
 
         Returns:
-            Mapped OpenAlgo data or None if mapping fails
+            Mapped MarvelQuant data or None if mapping fails
         """
         if not fyers_data:
             return None
@@ -444,20 +444,20 @@ class FyersDataMapper:
         fyers_type = fyers_data.get("type", "sf")
 
         if requested_type == "LTP":
-            return self.map_to_openalgo_ltp(fyers_data)
+            return self.map_to_marvelquant_ltp(fyers_data)
         elif requested_type == "Quote":
-            return self.map_to_openalgo_quote(fyers_data)
+            return self.map_to_marvelquant_quote(fyers_data)
         elif requested_type == "Depth" and fyers_type == "dp":
-            return self.map_to_openalgo_depth(fyers_data)
+            return self.map_to_marvelquant_depth(fyers_data)
         elif requested_type == "Depth" and fyers_type == "if":
             # Index depth request - create synthetic depth from index data
             return self.map_index_to_synthetic_depth(fyers_data)
         elif fyers_type == "sf":
             # Default to Quote for symbol feed
-            return self.map_to_openalgo_quote(fyers_data)
+            return self.map_to_marvelquant_quote(fyers_data)
         elif fyers_type == "if":
             # Index data - treat as Quote
-            return self.map_to_openalgo_quote(fyers_data)
+            return self.map_to_marvelquant_quote(fyers_data)
         elif fyers_type == "dp":
             # Depth data
             return self.map_to_openalgo_depth(fyers_data)

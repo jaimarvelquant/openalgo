@@ -186,8 +186,8 @@ def get_open_position(
     """Get open position for a specific trading symbol
 
     Args:
-        tradingsymbol (str): Trading symbol in OpenAlgo format
-        exchange (str): Exchange in OpenAlgo format
+        tradingsymbol (str): Trading symbol in MarvelQuant format
+        exchange (str): Exchange in MarvelQuant format
         Exch (str): Exchange in 5Paisa format
         ExchType (str): Exchange type in 5Paisa format
         producttype (str): Product type (MIS, NRML, etc.)
@@ -197,7 +197,7 @@ def get_open_position(
         str: Net quantity as string, '0' if no position found
     """
     try:
-        # Convert Trading Symbol from OpenAlgo Format to Broker Format Before Search in OpenPosition
+        # Convert Trading Symbol from MarvelQuant Format to Broker Format Before Search in OpenPosition
         token = int(get_token(tradingsymbol, exchange))  # Convert token to integer
         tradingsymbol = get_br_symbol(tradingsymbol, exchange)
         positions_data = get_positions(auth)
