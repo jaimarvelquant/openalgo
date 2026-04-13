@@ -40,7 +40,7 @@ def format_order_data(order_data):
                 if isinstance(value, (int, float)):
                     # Keep quantity fields as integers
                     if key.lower() in quantity_fields:
-                        formatted_item[key] = int(value)
+                        formatted_item[key] = float(value)
                     else:
                         formatted_item[key] = format_decimal(value)
                 else:

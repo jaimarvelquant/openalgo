@@ -1,6 +1,8 @@
 import pandas as pd
+from datetime import datetime
 from utils.logging import get_logger
 from broker.ibkr.api.order_api import get_ib_connection
+from broker.ibkr.mapping.transform_data import transform_data
 
 logger = get_logger(__name__)
 
@@ -14,14 +16,9 @@ class BrokerData:
             raise Exception("Failed to connect to IBKR TWS")
         
         try:
-            from ib_insync import Contract
-            parts = symbol.split(':')
-            symbol_only = parts[0]
-            currency = parts[1] if len(parts) > 1 else "USD"
-            exch = parts[2] if len(parts) > 2 else "SMART"
-            sec_type = parts[3] if len(parts) > 3 else "STK"
-
-            contract = Contract(symbol=symbol_only, secType=sec_type, exchange=exch, currency=currency)
+            # Use centralized transform_data for intelligent contract discovery
+            payload = transform_data({"symbol": symbol})
+            contract = payload['contract']
             ib.qualifyContracts(contract)
             
             ticker = ib.reqTickers(contract)[0]
@@ -46,29 +43,45 @@ class BrokerData:
             raise Exception("Failed to connect to IBKR TWS")
 
         try:
-            from ib_insync import Contract
-            parts = symbol.split(':')
-            symbol_only = parts[0]
-            currency = parts[1] if len(parts) > 1 else "USD"
-            exch = parts[2] if len(parts) > 2 else "SMART"
-            sec_type = parts[3] if len(parts) > 3 else "STK"
-
-            contract = Contract(symbol=symbol_only, secType=sec_type, exchange=exch, currency=currency)
+            # Use centralized transform_data for intelligent contract discovery
+            payload = transform_data({"symbol": symbol, "exchange": exchange})
+            contract = payload['contract']
             ib.qualifyContracts(contract)
 
             # Map interval to IBKR duration/barSize
-            # Simple mapping for now
-            bar_size = "1 min"
-            if interval == "1m": bar_size = "1 min"
-            elif interval == "5m": bar_size = "5 mins"
-            elif interval == "15m": bar_size = "15 mins"
-            elif interval == "1h": bar_size = "1 hour"
-            elif interval == "D": bar_size = "1 day"
+            # Map interval to IBKR duration/barSize
+            bar_mapping = {"1m": "1 min", "5m": "5 mins", "15m": "15 mins", "1h": "1 hour", "D": "1 day"}
+            bar_size = bar_mapping.get(interval, "1 min")
+
+            # Calculate duration string
+            start = datetime.strptime(start_date, "%Y-%m-%d")
+            end = datetime.strptime(end_date, "%Y-%m-%d")
+            # Format endDateTime correctly for IBKR (YYYYMMDD HH:mm:ss)
+            end_dt_str = end.strftime("%Y%m%d 23:59:59")
+            
+            if interval == "D":
+                # For Daily data, use standard buckets for better stability
+                if diff_days <= 30:
+                    duration = "1 M"
+                elif diff_days <= 365:
+                    duration = "1 Y"
+                else:
+                    duration = f"{(diff_days // 365) + 1} Y"
+            else:
+                # Intraday duration logic
+                if diff_days <= 1:
+                    duration = "1 D"
+                elif diff_days <= 7:
+                    duration = f"{diff_days} D"
+                elif diff_days <= 30:
+                    duration = "1 M"
+                else:
+                    duration = f"{(diff_days // 30) + 1} M"
 
             bars = ib.reqHistoricalData(
                 contract,
-                endDateTime='',
-                durationStr='1 D',
+                endDateTime=end_dt_str,
+                durationStr=duration,
                 barSizeSetting=bar_size,
                 whatToShow='TRADES',
                 useRTH=True

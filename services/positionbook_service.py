@@ -35,7 +35,7 @@ def format_position_data(position_data):
     if isinstance(position_data, list):
         return [
             {
-                key: int(value)
+                key: float(value)
                 if (key.lower() in quantity_fields and isinstance(value, (int, float)))
                 else (format_decimal(value) if isinstance(value, (int, float)) else value)
                 for key, value in item.items()

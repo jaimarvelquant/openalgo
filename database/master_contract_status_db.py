@@ -44,8 +44,15 @@ class MasterContractStatus(Base):
     is_ready = Column(Boolean, default=False)
 
 
-# Create table if it doesn't exist
-Base.metadata.create_all(bind=engine)
+def init_db():
+    """Initialize the database and create tables if they don't exist"""
+    try:
+        from database.db_init_helper import init_db_with_logging
+        init_db_with_logging(Base, engine, "Master Contract Status DB", logger)
+    except Exception as e:
+        logger.error(f"Error in Master Contract Status DB init_db: {e}")
+        # Fallback to direct creation if helper fails
+        Base.metadata.create_all(bind=engine)
 
 
 def init_broker_status(broker):

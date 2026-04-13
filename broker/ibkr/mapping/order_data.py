@@ -50,7 +50,6 @@ def transform_order_data(order_data):
     import math
     transformed = []
     for order in order_data:
-        # Standardize status
         status = order.get("status", "").lower()
         if status in ["filled", "complete"]:
             status = "complete"
@@ -67,7 +66,6 @@ def transform_order_data(order_data):
         avg_price = float(order.get("avg_price", 0.0))
         trigger_price = float(order.get("trigger_price", 0.0))
 
-        # NaN safety
         if math.isnan(qty): qty = 0.0
         if math.isnan(filled_qty): filled_qty = 0.0
         if math.isnan(price): price = 0.0
@@ -76,10 +74,12 @@ def transform_order_data(order_data):
 
         transformed.append({
             "orderid": order.get("id"),
+            "tradingsymbol": order.get("symbol"),
             "symbol": order.get("symbol"),
-            "exchange": order.get("exchange", "IBKR"),
+            "exchange": "IBKR",
             "action": order.get("action"),
             "quantity": qty,
+            "qty": qty,
             "filledqty": filled_qty,
             "price": price,
             "trigger_price": trigger_price,
@@ -87,7 +87,7 @@ def transform_order_data(order_data):
             "status": status,
             "order_status": status,
             "pricetype": order.get("pricetype"),
-            "product": order.get("product", "NRML"),
+            "product": "NRML",
             "timestamp": order.get("timestamp", "")
         })
     return transformed
@@ -103,38 +103,41 @@ def map_position_data(position_data):
 def transform_positions_data(positions_data):
     """
     Standardizes IBKR position data for the OpenAlgo frontend.
+    Handles various key formats from the internal API.
     """
     import math
     transformed = []
     for pos in positions_data:
-        qty = float(pos.get("netQty", 0))
-        avg_price = float(pos.get("avgPrice", 0))
-        pnl = float(pos.get("pnl", 0.0))
-        ltp = float(pos.get("ltp", 0.0))
+        # Robust key handling
+        qty = float(pos.get("netqty") or pos.get("netQty") or pos.get("quantity") or 0)
+        avg_price = float(pos.get("averagePrice") or pos.get("avgPrice") or pos.get("average_price") or 0)
+        pnl = float(pos.get("pnl") or pos.get("unrealized_pnl") or 0.0)
+        ltp = float(pos.get("ltp") or 0.0)
         
-        # Replace NaN with 0.0 for frontend safety
         if math.isnan(pnl): pnl = 0.0
         if math.isnan(ltp): ltp = 0.0
         if math.isnan(avg_price): avg_price = 0.0
         if math.isnan(qty): qty = 0.0
         
-        # Calculate PnL percentage if possible
         pnl_percent = 0.0
-        if avg_price > 0 and abs(qty) > 0:
-            investment = abs(avg_price * qty)
-            pnl_percent = (pnl / investment) * 100
+        if avg_price != 0 and abs(qty) > 0:
+            pnl_percent = (pnl / abs(avg_price * qty)) * 100
             
         if math.isnan(pnl_percent): pnl_percent = 0.0
             
         transformed.append({
+            "tradingsymbol": str(pos.get("tradingsymbol") or pos.get("symbol") or ""),
             "symbol": str(pos.get("symbol") or ""),
             "exchange": str(pos.get("exchange") or "IBKR"),
-            "product": str(pos.get("productType", "NRML")),
+            "product": "NRML",
+            "producttype": "NRML",
             "quantity": qty,
+            "netqty": qty,
             "average_price": avg_price,
             "ltp": ltp,
             "pnl": pnl,
-            "pnlpercent": pnl_percent
+            "pnlpercent": pnl_percent,
+            "account": str(pos.get("account") or "")
         })
     return transformed
 

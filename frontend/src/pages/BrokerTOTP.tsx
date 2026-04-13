@@ -8,6 +8,13 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import { useAuthStore } from '@/stores/authStore'
 
 // Field configuration type
@@ -22,6 +29,7 @@ interface FieldConfig {
   prefix?: string
   hint?: string
   optional?: boolean
+  options?: { label: string; value: string }[]
 }
 
 interface BrokerConfig {
@@ -278,6 +286,35 @@ const brokerFields: Record<string, BrokerConfig> = {
     ],
     callbackUrl: '/deltaex/callback',
   },
+  alpaca: {
+    fields: [
+      {
+        name: 'api_key',
+        label: 'API Key ID',
+        type: 'text',
+        placeholder: 'Enter your Alpaca API Key ID',
+      },
+      {
+        name: 'api_secret',
+        label: 'API Secret',
+        type: 'password',
+        placeholder: 'Enter your Alpaca Secret Key',
+      },
+      {
+        name: 'environment',
+        label: 'Trading Environment',
+        type: 'select',
+        placeholder: 'Select environment',
+        hint: 'Choose Paper for testing or Live for real trading',
+        options: [
+          { label: 'Paper Trading', value: 'paper' },
+          { label: 'Live Trading', value: 'live' },
+        ],
+      },
+    ],
+    callbackUrl: '/alpaca/callback',
+    hiddenFields: {},
+  },
   default: {
     fields: [
       { name: 'userid', label: 'User ID', type: 'text', placeholder: 'Enter your User ID' },
@@ -311,6 +348,7 @@ const brokerNames: Record<string, string> = {
   tradejini: 'Tradejini',
   zebu: 'Zebu',
   deltaex: 'Delta Exchange',
+  alpaca: 'Alpaca Markets',
   jmfinancial: 'JM Financial',
 }
 
@@ -338,10 +376,11 @@ export default function BrokerTOTP() {
       try {
         const response = await fetch('/auth/broker-config')
         const data = await response.json()
-        if (data.status === 'success' && normalizedBroker === 'deltaex') {
+        if (data.status === 'success' && (normalizedBroker === 'deltaex' || normalizedBroker === 'alpaca')) {
           setFormData({
             api_key: data.broker_api_key || '',
             api_secret: data.broker_api_secret || '',
+            environment: data.broker_name === 'alpaca' ? 'paper' : '',
           })
         }
       } catch (err) {
@@ -484,26 +523,47 @@ export default function BrokerTOTP() {
                         {field.prefix}
                       </span>
                     )}
-                    <Input
-                      id={field.name}
-                      type={field.type}
-                      inputMode={field.inputMode}
-                      placeholder={field.placeholder}
-                      value={formData[field.name] || ''}
-                      onChange={(e) => handleInputChange(field.name, e.target.value, field)}
-                      required={!field.optional}
-                      disabled={isLoading}
-                      maxLength={field.maxLength}
-                      pattern={field.pattern}
-                      autoComplete={
-                        field.type === 'password'
-                          ? 'current-password'
-                          : field.inputMode === 'numeric'
-                            ? 'one-time-code'
-                            : 'off'
-                      }
-                      className={field.prefix ? 'pl-12' : ''}
-                    />
+                    {field.type === 'select' ? (
+                      <Select
+                        value={formData[field.name] || ''}
+                        onValueChange={(value) =>
+                          handleInputChange(field.name, value, field)
+                        }
+                        disabled={isLoading}
+                      >
+                        <SelectTrigger id={field.name} className="w-full">
+                          <SelectValue placeholder={field.placeholder} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {field.options?.map((opt) => (
+                            <SelectItem key={opt.value} value={opt.value}>
+                              {opt.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : (
+                      <Input
+                        id={field.name}
+                        type={field.type}
+                        inputMode={field.inputMode}
+                        placeholder={field.placeholder}
+                        value={formData[field.name] || ''}
+                        onChange={(e) => handleInputChange(field.name, e.target.value, field)}
+                        required={!field.optional}
+                        disabled={isLoading}
+                        maxLength={field.maxLength}
+                        pattern={field.pattern}
+                        autoComplete={
+                          field.type === 'password'
+                            ? 'current-password'
+                            : field.inputMode === 'numeric'
+                              ? 'one-time-code'
+                              : 'off'
+                        }
+                        className={field.prefix ? 'pl-12' : ''}
+                      />
+                    )}
                   </div>
                   {field.hint && <p className="text-xs text-muted-foreground">{field.hint}</p>}
                 </div>

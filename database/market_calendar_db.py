@@ -47,7 +47,7 @@ Base = declarative_base()
 Base.query = db_session.query_property()
 
 # Supported exchanges
-SUPPORTED_EXCHANGES = ["NSE", "BSE", "NFO", "BFO", "MCX", "BCD", "CDS"]
+SUPPORTED_EXCHANGES = ["NSE", "BSE", "NFO", "BFO", "MCX", "BCD", "CDS", "ALPACA"]
 
 # Holiday types
 HOLIDAY_TYPES = ["TRADING_HOLIDAY", "SETTLEMENT_HOLIDAY", "SPECIAL_SESSION"]
@@ -61,6 +61,7 @@ DEFAULT_MARKET_TIMINGS = {
     "CDS": {"start_offset": 32400000, "end_offset": 61200000},  # 09:00 - 17:00
     "BCD": {"start_offset": 32400000, "end_offset": 61200000},  # 09:00 - 17:00
     "MCX": {"start_offset": 32400000, "end_offset": 86100000},  # 09:00 - 23:55
+    "ALPACA": {"start_offset": 32400000, "end_offset": 86100000},  # 09:00 - 23:55 (covers part of US session + crypto)
 }
 
 

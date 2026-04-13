@@ -47,14 +47,18 @@ def get_ib_connection(auth, offset=0, specific_cid=None):
                 if current_id == 0: current_id = random.randint(1, 1000)
                 
                 print(f"[SERVICE PULSE] IBKR Connect Attempt {attempt+1}: cid={current_id} on port {port}")
-                ib.connect(host, port, clientId=current_id, timeout=4)
+                # Increased timeout to 10s for more stability
+                ib.connect(host, port, clientId=current_id, timeout=10)
                 if ib.isConnected(): 
                     print(f"[SERVICE PULSE] IBKR Connected Successfully (cid={current_id})")
+                    # Wait for API to be ready
+                    ib.sleep(0.5)
                     return ib
             except Exception as e:
                 print(f"[SERVICE PULSE] IBKR Connect Failed (cid={current_id}): {e}")
                 if ib.isConnected(): ib.disconnect()
-                ib.sleep(0.1)
+                # Random jittered sleep between attempts
+                ib.sleep(0.2 + random.random() * 0.3)
                 continue
         return None
     except Exception as e:

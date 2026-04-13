@@ -45,6 +45,7 @@ const allBrokers = [
   { id: 'wisdom', name: 'Wisdom Capital', authType: 'totp' },
   { id: 'zebu', name: 'Zebu', authType: 'totp' },
   { id: 'zerodha', name: 'Zerodha', authType: 'oauth' },
+  { id: 'alpaca', name: 'Alpaca Markets', authType: 'totp' },
   { id: 'ibkr', name: 'Interactive Brokers (IBKR)', authType: 'totp' },
   { id: 'deltaex', name: 'Delta Exchange', authType: 'totp' },
 ] as const
@@ -154,6 +155,7 @@ export default function BrokerSelect() {
       case 'zebu':
       case 'ibkr':
       case 'deltaex':
+      case 'alpaca':
         // TOTP brokers - redirect to callback page which shows form (or direct auth for IBKR)
         loginUrl = `/${selectedBroker}/callback`
         break
